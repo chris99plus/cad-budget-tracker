@@ -11,6 +11,9 @@ const userSchema = new Schema<User>({
 const UserModel = mongoose.model('User', userSchema);
 
 
+/**
+ * Repository implementation which uses a mongo db using the mongoose framework
+ */
 export class MongooseUserRepository implements UserRepository {
     connectionString: string;
 
@@ -23,9 +26,11 @@ export class MongooseUserRepository implements UserRepository {
         await mongoose.connect(this.connectionString);
     }
 
-    async createUser(user: User): Promise<void> {
+    async createUser(user: User): Promise<User> {
         const createdUser = new UserModel(user);
-        await createdUser.save();
+        createdUser._id = new mongoose.Types.ObjectId();
+
+        return await createdUser.save();
     }
 
     async getUserByName(username: string): Promise<User|null> {
