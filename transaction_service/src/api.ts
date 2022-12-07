@@ -1,22 +1,25 @@
 import express, {Request, Response} from 'express';
-import mongoose from 'mongoose';
 import { Transaction } from './models/transactions';
-import { db } from './server'; 
+import dotenv from 'dotenv'
+dotenv.config()
 
 const router = express.Router()
 
-router.get('/', (req: Request, res: Response) => {
+const endpointPrefix = "/api/" + process.env.API_VERSION
+console.log("API Version " + process.env.API_VERSION)
+
+router.get(endpointPrefix + '/', (req: Request, res: Response) => {
     res.send('Well done!');
 });
 
-router.get('/transactions', (req: Request, res: Response) => {
+router.get(endpointPrefix + '/transactions', (req: Request, res: Response) => {
     Transaction.find({}).then( function(allTransactions) {
         console.log(allTransactions);
         res.status(200).send(allTransactions);
     });
 })
 
-router.post('/transactions', (req: Request, res: Response) => {
+router.post(endpointPrefix + '/transactions', (req: Request, res: Response) => {
     console.log(req.body);
     var newTransaction = new Transaction({
         amount: req.body.amount, type: req.body.type,

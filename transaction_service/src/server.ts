@@ -1,28 +1,19 @@
 import express from 'express';
-import mongoose from 'mongoose';
 import { json } from 'body-parser'
 import dotenv from 'dotenv'
-dotenv.config();
-
 import { transaction_router } from './api';
+import { databaseConnection } from './db'
 
-const port = 4000;
+dotenv.config();
 
 const app = express();
 app.use(json());
 app.use(transaction_router);
 
-const mongoUrl = "fill this out"
+databaseConnection();
 
-mongoose.connect(mongoUrl, () => {
-    console.log('Connected to Database')
-})
+const port = process.env.PORT;
 
-const db = mongoose.connection;
-
-
-app.listen(process.env.PORT, () => {
-    console.log(`The service is listening on port ${process.env.PORT}!`);
+app.listen(port, () => {
+    console.log(`The service is listening on port ${port}!`);
 });
-
-export { db }
