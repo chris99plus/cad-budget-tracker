@@ -1,16 +1,18 @@
 import express from 'express';
 import { MongooseUserRepository } from './data/MongooseUserRepository';
 import { AuthenticationService } from './service/AuthenticationService';
+import * as dotenv from 'dotenv'
 
-const port = 4000;
+dotenv.config();
 
-const app = express();
+const port = process.env.SERVER_PORT ?? 4000;
+const mongoDbConnectionString = process.env.MONGODB_CONNECTION_STRING ?? "";
 
-app.use(express.json())
-
-const repository = new MongooseUserRepository("mongodb://localhost:27017/authentication");
+const repository = new MongooseUserRepository(mongoDbConnectionString);
 const authenticationService = new AuthenticationService(repository);
 
+const app = express();
+app.use(express.json())
 
 app.post('/api/v1/auth/users', async (req, res) => {
     try {

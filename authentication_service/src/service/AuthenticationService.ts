@@ -5,9 +5,6 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 
-export const SECRET_KEY = "Y!lC6r15O@$PzJqVzZ&7P2B9!JquUfKh0f*oJE^1$U!^4!h5ZK";
-
-
 /**
  * This service implements the authentication logic
  */
@@ -95,7 +92,7 @@ export class AuthenticationService {
                 name: user.username,
                 email: user.email
             },
-            SECRET_KEY,
+            process.env.JWT_SECRET_KEY ?? "",
             {
                 expiresIn: '2 days',
             }
