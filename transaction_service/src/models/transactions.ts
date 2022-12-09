@@ -1,10 +1,5 @@
-import { time } from "console";
 import mongoose from "mongoose";
 
-enum TransactionType {
-    income = "income",
-    expense = "expense"
-}
 
 const transactionSchema = new mongoose.Schema({
     amount: Number,
@@ -13,8 +8,10 @@ const transactionSchema = new mongoose.Schema({
     comment: String,
     timestamp: Date,
     category: String
-})
+}, {
+    versionKey: false
+});
 
-const Transaction = mongoose.model('Transaction', transactionSchema, 'transactions')
+const TransactionModel = mongoose.model('Transaction', transactionSchema, 'transactions');
 
-export { Transaction }
+export { TransactionModel }

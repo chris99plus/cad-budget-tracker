@@ -1,27 +1,18 @@
 import express from 'express';
-import { json } from 'body-parser';
 import dotenv from 'dotenv';
+import { json } from 'body-parser';
 import { transaction_router } from './api';
-import { databaseConnection } from './db';
-import cors from "cors";
+import { connectDatabase } from './db';
 
 dotenv.config();
 
 const app = express();
 app.use(json());
-const corsOptions ={
-    origin:['http://localhost:3000'], 
-    credentials:true,            
-    optionSuccessStatus:200
-}
-app.use(cors(corsOptions));
 app.use(transaction_router);
 
+connectDatabase();
 
-
-databaseConnection();
-
-const port = process.env.PORT;
+const port = process.env.SERVER_PORT;
 
 app.listen(port, () => {
     console.log(`The service is listening on port ${port}!`);
