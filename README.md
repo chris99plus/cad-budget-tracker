@@ -28,8 +28,8 @@ Body:
 Response:
 ```json
 {
-	"id": string,
-	"amount": numeric,
+    "id": string,
+    "amount": numeric,
     "type": "income"|"expense",
     "description": string,
     "comment": string,
