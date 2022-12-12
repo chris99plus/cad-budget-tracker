@@ -132,7 +132,8 @@ export class AuthenticationService {
             JSON.parse(JSON.stringify(new UserInformation(
                 user._id?.toString(),
                 user.username,
-                user.email
+                user.email,
+                cashbookId
             ))),
             process.env.JWT_SECRET_KEY ?? "",
             {
