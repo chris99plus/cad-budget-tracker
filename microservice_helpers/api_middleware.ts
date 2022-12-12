@@ -15,10 +15,12 @@ export const apiHandler = (fn: (req: Request, res: Response) => Promise<any>) =>
                 data: data
             })
         )
-        .catch(err =>
+        .catch(err => {
+            console.log(err);
             res.status(400).send({
                 successful: false,
-                error: err
+                message: err
             })
+        }
         );
 };

@@ -1,9 +1,10 @@
 import { User, UserRepository } from "../data/UserRepository";
 import { CreateUserRequest, CreateUserResponse } from "../requests/CreateUserRequest";
 import { LoginRequest, LoginResponse } from "../requests/LoginRequest";
+import { TenantServiceWrapper } from "./TenantServiceWrapper";
+import { UserInformation } from "../../../microservice_helpers";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { UserInformation } from "../../../microservice_helpers";
 
 
 /**
@@ -11,13 +12,22 @@ import { UserInformation } from "../../../microservice_helpers";
  */
 export class AuthenticationService {
     userRepository: UserRepository;
+    tenantService: TenantServiceWrapper;
 
-    constructor(userRepository: UserRepository) {
+    constructor(userRepository: UserRepository, tenantService: TenantServiceWrapper) {
         this.userRepository = userRepository;
+        this.tenantService = tenantService;
     }
 
     async createUser(data: CreateUserRequest): Promise<CreateUserResponse> {
         this.validateUserData(data);
+
+        // TODO: Make the tenant creation and user creation one atomic operation.
+
+        let tenantName = null;
+        if (data.licenseType == "enterprise") {
+            tenantName = await this.createTenantOrResolveSecret(data);
+        }
 
         let passwordHash = await this.getPasswordHash(data.password);
 
@@ -25,12 +35,31 @@ export class AuthenticationService {
             data.username,
             data.email,
             data.licenseType,
-            passwordHash
+            passwordHash,
+            tenantName
         ));
 
         return {
             authToken: this.createJwt(createdUser)
         };
+    }
+
+    async createTenantOrResolveSecret(data: CreateUserRequest): Promise<string> {
+        if (data.createTenant == false && data.tenantSecret != null) {
+            return await this.tenantService.validateTenantSecretAndGetTenantNameOrThrow(
+                data.tenantSecret
+            );
+        }
+        else if (data.createTenant == true && data.tenantName != null) {
+            await this.tenantService.createNewTenantOrThrow(
+                data.tenantName
+            );
+            
+            return data.tenantName;
+        }
+        else {
+            throw `When licenceType='enterprise' createTenant must be true or false and tenantName or tenantSecret must be set`;
+        }
     }
 
     async login(data: LoginRequest): Promise<LoginResponse> {
@@ -88,11 +117,14 @@ export class AuthenticationService {
 
     private createJwt(user: User): string {
         const token = jwt.sign(
-            new UserInformation(
+            // Ugly but works. I want it to be a UserInformation in order
+            // to guarantee type safety when using the JWT later.
+            // See: https://stackoverflow.com/a/73075855/4563449
+            JSON.parse(JSON.stringify(new UserInformation(
                 user._id?.toString(),
                 user.username,
                 user.email
-            ),
+            ))),
             process.env.JWT_SECRET_KEY ?? "",
             {
                 expiresIn: '2 days',

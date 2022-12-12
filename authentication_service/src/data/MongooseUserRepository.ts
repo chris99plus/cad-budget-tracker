@@ -8,7 +8,8 @@ const userSchema = new Schema<User>({
     username: { type: String, unique: true, required: true },
     email: { type: String, unique: true, required: true },
     licenseType: { type: String, required: true },
-    passwordHash: { type: String, required: true }
+    passwordHash: { type: String, required: true },
+    tenantName: { type: String, required: false }
 });
 
 const UserModel = mongoose.model('User', userSchema);
