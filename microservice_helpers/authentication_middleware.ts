@@ -7,7 +7,8 @@ export interface AuthenticatedRequest extends Request {
 
 
 /**
- * Middleware function which can be used to secure endpoints needing authentication
+ * Middleware function which can be used to secure endpoints needing authentication.
+ * Note that the JWT_SECRET_KEY environment variable must be set.
  */
 export const auth = async (req: Request, res: Response, next: NextFunction) => {
     try {
