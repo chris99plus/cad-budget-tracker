@@ -116,6 +116,15 @@ export class AuthenticationService {
     }
 
     private createJwt(user: User): string {
+        var cashbookId = "";
+
+        if(user.licenseType == "enterprise") {
+            cashbookId = "tenant-name"; // TODO: Set the tenant name as soon as the tenant service is merged
+        }
+        else {
+            cashbookId = user._id;
+        }
+
         const token = jwt.sign(
             // Ugly but works. I want it to be a UserInformation in order
             // to guarantee type safety when using the JWT later.

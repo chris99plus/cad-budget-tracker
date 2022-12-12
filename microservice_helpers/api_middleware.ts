@@ -21,6 +21,5 @@ export const apiHandler = (fn: (req: Request, res: Response) => Promise<any>) =>
                 successful: false,
                 message: err
             })
-        }
-        );
+        });
 };
