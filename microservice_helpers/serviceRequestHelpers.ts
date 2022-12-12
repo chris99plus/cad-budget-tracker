@@ -5,9 +5,6 @@ import fetch from 'node-fetch';
  * Execute a GET request to the given microservice.
  */
 export async function makeServiceCallGet<T>(serviceUrl: string, path: string): Promise<T> {
-
-    console.log(serviceUrl + path)
-
     let response = await fetch(
         serviceUrl + path,
         {
@@ -32,9 +29,6 @@ export async function makeServiceCallPost<T>(
     path: string,
     body: any
 ): Promise<T | null> {
-    console.log(serviceUrl + path)
-    console.log(JSON.stringify(body))
-
     let response = await fetch(
         serviceUrl + path,
         {
