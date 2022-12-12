@@ -41,9 +41,6 @@ export async function makeServiceCallPost<T>(
 
     let responseJson = <any>await response.json();
 
-
-    console.log(responseJson);
-
     if (!responseJson.successful) {
         throw responseJson.message;
     }

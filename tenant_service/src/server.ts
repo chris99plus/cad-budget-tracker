@@ -1,6 +1,7 @@
 import express from 'express';
 import { MongooseTenantRepository } from './data/MongooseTenantRepository';
 import { TenantService } from './service/TenantService';
+import { apiHandler } from '../../microservice_helpers';
 import * as dotenv from 'dotenv'
 
 dotenv.config();
@@ -14,63 +15,23 @@ const tenantService = new TenantService(repository);
 const app = express();
 app.use(express.json())
 
-app.post('/api/v1/tenants', async (req, res) => {
-    try {
-        let result = await tenantService.createTenant(req.body);
+app.post('/api/v1/tenants', apiHandler(async (req, res) => {
+    return await tenantService.createTenant(req.body);
+}));
 
-        res.send({
-            successful: true,
-            data: result
-        });
-    }
-    catch (err) {
-        res.status(400).send({
-            successful: false,
-            message: err
-        });
-    }
-});
+app.get('/api/v1/tenants/:tenant_secret/status', apiHandler(async (req, res) => {
+    return await tenantService.getTenantStatus(req.params.tenant_secret);
+}));
 
-app.get('/api/v1/tenants/:tenant_secret/status', async (req, res) => {
-    try {
-        let result = await tenantService.getTenantStatus(req.params.tenant_secret);
-
-        res.send({
-            successful: true,
-            data: result
-        });
-    }
-    catch (err) {
-        res.status(400).send({
-            successful: false,
-            message: err
-        });
-    }
-});
-
-app.get('/api/v1/tenants/:tenant_secret', async (req, res) => {
-    try {
-        let result = await tenantService.getTenantBySecret(req.params.tenant_secret);
-
-        res.send({
-            successful: true,
-            data: result
-        });
-    }
-    catch (err) {
-        res.status(400).send({
-            successful: false,
-            message: err
-        });
-    }
-});
-
+app.get('/api/v1/tenants/:tenant_secret', apiHandler(async (req, res) => {
+    return await tenantService.getTenantBySecret(req.params.tenant_secret);
+}));
 
 async function main() {
     await repository.connect();
 
     app.listen(port, () => {
-        console.log(`The service is listening on port ${port}!`);
+        console.log(`The tenant service is listening on port ${port}!`);
     });
 }
 

@@ -16,7 +16,7 @@ async function main() {
     await connectDatabase();
 
     app.listen(port, () => {
-        console.log(`The service is listening on port ${port}!`);
+        console.log(`The transaction service is listening on port ${port}!`);
     });
 }
 

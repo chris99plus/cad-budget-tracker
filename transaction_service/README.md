@@ -12,6 +12,14 @@ npm install --global yarn
 yarn install
 ```
 
+Create a `.env` file with the following variables:
+
+```
+SERVER_PORT=4000
+MONGODB_CONNECTION_STRING="mongodb://localhost:27017/transaction"
+JWT_SECRET_KEY="..."
+```
+
 ## Development
 Run the microservice in development mode:
 ```

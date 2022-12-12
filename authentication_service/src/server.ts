@@ -35,7 +35,7 @@ async function main() {
     await repository.connect();
 
     app.listen(port, () => {
-        console.log(`The service is listening on port ${port}!`);
+        console.log(`The authentication service is listening on port ${port}!`);
     });
 }
 

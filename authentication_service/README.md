@@ -16,8 +16,9 @@ Create a `.env` file with the following variables:
 
 ```
 JWT_SECRET_KEY=" < any at least 32 characters long password >"
-SERVER_PORT=4000
+SERVER_PORT=4001
 MONGODB_CONNECTION_STRING="mongodb://localhost:27017/authentication"
+TENANT_SERVICE_URL="http://localhost:4002"
 ```
 
 ## Development

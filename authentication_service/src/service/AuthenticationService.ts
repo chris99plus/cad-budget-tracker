@@ -54,7 +54,7 @@ export class AuthenticationService {
             await this.tenantService.createNewTenantOrThrow(
                 data.tenantName
             );
-            
+
             return data.tenantName;
         }
         else {
@@ -116,18 +116,7 @@ export class AuthenticationService {
     }
 
     private createJwt(user: User): string {
-        var cashbookId = "";
-
-        if(user.licenseType == "enterprise") {
-            if(user.tenantName == null) {
-                throw "Enterprise user does not have a tenant!"
-            }
-
-            cashbookId = user.tenantName;
-        }
-        else {
-            cashbookId = user._id;
-        }
+        const cashbookId = this.determineCashbookIdOfUser(user);
 
         const token = jwt.sign(
             // Ugly but works. I want it to be a UserInformation in order
@@ -146,5 +135,18 @@ export class AuthenticationService {
         );
 
         return token;
+    }
+
+    private determineCashbookIdOfUser(user: User): string {
+        if (user.licenseType == "enterprise") {
+            if (user.tenantName == null) {
+                throw "Enterprise user does not have a tenant!"
+            }
+
+            return user.tenantName;
+        }
+        else {
+            return user._id;
+        }
     }
 }

@@ -15,7 +15,7 @@ yarn install
 Create a `.env` file with the following variables:
 
 ```
-SERVER_PORT=4000
+SERVER_PORT=4002
 MONGODB_CONNECTION_STRING="mongodb://localhost:27017/authentication"
 ```
 
