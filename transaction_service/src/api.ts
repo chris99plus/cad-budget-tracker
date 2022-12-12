@@ -1,90 +1,41 @@
 import express, { Request, Response } from 'express';
+import { apiHandler, auth } from '../../microservice_helpers';
 import { TransactionModel } from './models/transactions';
 
 const router = express.Router()
 
+router.get('/api/v1/transactions', auth, apiHandler(async (req: Request, res: Response) => {
+    return await TransactionModel.find({});
+}));
 
-router.get('/api/v1/transactions', async (req: Request, res: Response) => {
-    try {
-        let allTransactions = await TransactionModel.find({});
+router.get('/api/v1/transactions/:transactionId', auth, apiHandler(async (req: Request, res: Response) => {
+    let transaction = await TransactionModel.findById(req.params.transactionId);
 
-        res.send({
-            successful: true,
-            data: allTransactions
-        });
+    if (transaction == null) {
+        throw "Transaction not found."
     }
-    catch (err) {
-        res.status(400).send({
-            successful: false,
-            message: err
-        });
-    }
-});
 
-router.get('/api/v1/transactions/:transactionId', async (req: Request, res: Response) => {
-    try {
-        let transaction = await TransactionModel.findById(req.params.transactionId);
+    return transaction;
+}));
 
-        if (transaction == null) {
-            throw "Transaction not found."
-        }
+router.post('/api/v1/transactions', auth, apiHandler(async (req: Request, res: Response) => {
+    const transactionData = req.body;
 
-        res.send({
-            successful: true,
-            data: transaction
-        });
-    }
-    catch (err) {
-        res.status(400).send({
-            successful: false,
-            message: err
-        });
-    }
-});
+    const newTransaction = new TransactionModel({
+        amount: transactionData.amount,
+        type: transactionData.type,
+        description: transactionData.description,
+        comment: transactionData.comment,
+        timestamp: transactionData.timestamp,
+        category: transactionData.category
+    });
 
-router.post('/api/v1/transactions', async (req: Request, res: Response) => {
-    try {
-        const transactionData = req.body;
+    return await newTransaction.save();
+}));
 
-        const newTransaction = new TransactionModel({
-            amount: transactionData.amount,
-            type: transactionData.type,
-            description: transactionData.description,
-            comment: transactionData.comment,
-            timestamp: transactionData.timestamp,
-            category: transactionData.category
-        });
-
-        let createdTransaction = await newTransaction.save();
-
-        res.send({
-            successful: true,
-            data: createdTransaction
-        });
-    }
-    catch (err) {
-        res.status(400).send({
-            successful: false,
-            message: err
-        });
-    }
-});
-
-router.delete('/api/v1/transactions/:transactionId', async (req: Request, res: Response) => {
-    try {
-        await TransactionModel.findByIdAndDelete(req.params.transactionId);
-
-        res.send({
-            successful: true,
-            data: {}
-        });
-    }
-    catch (err) {
-        res.status(400).send({
-            successful: false,
-            message: err
-        });
-    }
-});
+router.delete('/api/v1/transactions/:transactionId', auth, apiHandler(async (req: Request, res: Response) => {
+    await TransactionModel.findByIdAndDelete(req.params.transactionId);
+    return {};
+}));
 
 export { router as transaction_router }
