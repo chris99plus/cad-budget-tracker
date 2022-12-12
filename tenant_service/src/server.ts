@@ -6,7 +6,7 @@ import * as dotenv from 'dotenv'
 
 dotenv.config();
 
-const port = process.env.SERVER_PORT ?? 4000;
+const port = process.env.SERVER_PORT ?? 4002;
 const mongoDbConnectionString = process.env.MONGODB_CONNECTION_STRING ?? "";
 
 const repository = new MongooseTenantRepository(mongoDbConnectionString);

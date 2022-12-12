@@ -7,7 +7,7 @@ import * as dotenv from 'dotenv';
 
 dotenv.config();
 
-const port = process.env.SERVER_PORT ?? 4000;
+const port = process.env.SERVER_PORT ?? 4001;
 const mongoDbConnectionString = process.env.MONGODB_CONNECTION_STRING ?? "";
 const tenantServiceUrl = process.env.TENANT_SERVICE_URL ?? "";
 
