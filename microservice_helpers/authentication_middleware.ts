@@ -1,8 +1,8 @@
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 
 export interface AuthenticatedRequest extends Request {
-    token: string | JwtPayload;
+    user: UserInformation | null;
 }
 
 
@@ -18,11 +18,16 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
             throw new Error();
         }
 
-        const decoded = jwt.verify(
+        const decoded = <any>jwt.verify(
             token,
             process.env.JWT_SECRET_KEY ?? ""
         );
-        (req as AuthenticatedRequest).token = decoded;
+
+        (req as AuthenticatedRequest).user = new UserInformation(
+            decoded._id,
+            decoded.name,
+            decoded.email
+        );
 
         next();
     } catch (err) {
@@ -32,3 +37,25 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
         });
     }
 };
+
+
+export class UserInformation {
+    _id: string;
+    name: string;
+    email: string;
+
+    constructor(id: string, name: string, email: string) {
+        this._id = id;
+        this.name = name;
+        this.email = email;
+    }
+}
+
+export function getUserInformation(req: Request): UserInformation|null {
+    if(req.hasOwnProperty("user")) {
+        return (req as AuthenticatedRequest).user ?? null;
+    }
+    else {
+        return null;
+    }
+}
