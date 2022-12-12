@@ -119,7 +119,11 @@ export class AuthenticationService {
         var cashbookId = "";
 
         if(user.licenseType == "enterprise") {
-            cashbookId = "tenant-name"; // TODO: Set the tenant name as soon as the tenant service is merged
+            if(user.tenantName == null) {
+                throw "Enterprise user does not have a tenant!"
+            }
+
+            cashbookId = user.tenantName;
         }
         else {
             cashbookId = user._id;
