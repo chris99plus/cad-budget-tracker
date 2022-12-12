@@ -3,6 +3,7 @@ import { CreateUserRequest, CreateUserResponse } from "../requests/CreateUserReq
 import { LoginRequest, LoginResponse } from "../requests/LoginRequest";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { UserInformation } from "../../../microservice_helpers";
 
 
 /**
@@ -79,19 +80,19 @@ export class AuthenticationService {
 
     private isPasswordValid(password: string): boolean {
         let longEnough = password.length > 8;
-    
+
         // TODO: Implement more password rules
-    
+
         return longEnough;
     }
 
     private createJwt(user: User): string {
         const token = jwt.sign(
-            {
-                _id: user._id?.toString(),
-                name: user.username,
-                email: user.email
-            },
+            new UserInformation(
+                user._id?.toString(),
+                user.username,
+                user.email
+            ),
             process.env.JWT_SECRET_KEY ?? "",
             {
                 expiresIn: '2 days',

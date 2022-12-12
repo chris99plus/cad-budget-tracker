@@ -10,10 +10,14 @@ const app = express();
 app.use(json());
 app.use(transaction_router);
 
-connectDatabase();
-
 const port = process.env.SERVER_PORT;
 
-app.listen(port, () => {
-    console.log(`The service is listening on port ${port}!`);
-});
+async function main() {
+    await connectDatabase();
+
+    app.listen(port, () => {
+        console.log(`The service is listening on port ${port}!`);
+    });
+}
+
+main();
