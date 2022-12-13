@@ -157,7 +157,10 @@ Request:
     "username": string,
     "email": string,
     "password": string,
-    "licenseType": "free"|"standard"|"enterprise"
+    "licenseType": "free"|"standard"|"enterprise",
+	"createTenant": boolean, // Must be set when licenseType = "enterprise"
+	"tenantSecret": string?, // Must be set when createTenant = false
+	"tenantName": string? // Must be set when createTenant = true
 }
 ```
 

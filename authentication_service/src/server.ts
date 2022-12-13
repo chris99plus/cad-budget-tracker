@@ -2,15 +2,18 @@ import express from 'express';
 import { MongooseUserRepository } from './data/MongooseUserRepository';
 import { AuthenticationService } from './service/AuthenticationService';
 import { apiHandler, auth, getUserInformation } from '../../microservice_helpers';
+import { TenantServiceWrapperImpl } from './service/TenantServiceWrapper';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
 
 const port = process.env.SERVER_PORT ?? 4000;
 const mongoDbConnectionString = process.env.MONGODB_CONNECTION_STRING ?? "";
+const tenantServiceUrl = process.env.TENANT_SERVICE_URL ?? "";
 
 const repository = new MongooseUserRepository(mongoDbConnectionString);
-const authenticationService = new AuthenticationService(repository);
+const tenantService = new TenantServiceWrapperImpl(tenantServiceUrl);
+const authenticationService = new AuthenticationService(repository, tenantService);
 
 const app = express();
 app.use(express.json())
@@ -32,7 +35,7 @@ async function main() {
     await repository.connect();
 
     app.listen(port, () => {
-        console.log(`The service is listening on port ${port}!`);
+        console.log(`The authentication service is listening on port ${port}!`);
     });
 }
 

@@ -1,6 +1,6 @@
-# Transaction Service
+# Tenant Service
 
-This service manages the creation and deletion of transactions.
+This service manages the creation of tenants and their infrastructure.
 
 
 ## Development setup
@@ -15,9 +15,8 @@ yarn install
 Create a `.env` file with the following variables:
 
 ```
-SERVER_PORT=4000
-MONGODB_CONNECTION_STRING="mongodb://localhost:27017/transaction"
-JWT_SECRET_KEY="..."
+SERVER_PORT=4002
+MONGODB_CONNECTION_STRING="mongodb://localhost:27017/authentication"
 ```
 
 ## Development

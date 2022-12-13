@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
+import { Decipher } from 'crypto';
 
 export interface AuthenticatedRequest extends Request {
     user: UserInformation | null;
@@ -26,7 +27,8 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
         (req as AuthenticatedRequest).user = new UserInformation(
             decoded._id,
             decoded.name,
-            decoded.email
+            decoded.email,
+            decoded.cashbookId
         );
 
         next();
@@ -43,11 +45,13 @@ export class UserInformation {
     _id: string;
     name: string;
     email: string;
+    cashbookId: string;
 
-    constructor(id: string, name: string, email: string) {
+    constructor(id: string, name: string, email: string, cashbookId: string) {
         this._id = id;
         this.name = name;
         this.email = email;
+        this.cashbookId = cashbookId;
     }
 }
 
