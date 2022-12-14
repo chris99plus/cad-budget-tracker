@@ -24,3 +24,10 @@ Run the microservice in development mode:
 ```
 yarn dev
 ```
+
+## Build the docker image
+To build the docker image run the following command in the repository root directory:
+
+```
+docker build -t tenant_service -f .\tenant_service\Dockerfile .
+```
