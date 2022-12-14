@@ -1,18 +1,25 @@
 FROM node:18.10 as builder
 
-WORKDIR /usr/app
-COPY . .
+COPY ./tenant_service usr/tenant_service
+COPY ./microservice_helpers usr/microservice_helpers
+WORKDIR /usr/tenant_service
 RUN yarn install
 RUN yarn build
 
 FROM node:18.10 as server
 
-WORKDIR /usr/app
-COPY --from=builder /usr/app/dist/ dist/
-COPY --from=builder /usr/app/package.json .
-COPY --from=builder /usr/app/yarn.lock .
+COPY --from=builder /usr/microservice_helpers/ /usr/microservice_helpers/
+
+WORKDIR /usr/tenant_service
+
+COPY --from=builder /usr/tenant_service/dist/ dist/
+COPY --from=builder /usr/tenant_service/package.json .
+COPY --from=builder /usr/tenant_service/yarn.lock .
+
+
 RUN yarn install --production
 
+ENV SERVER_PORT=4000
 EXPOSE 4000
 
 CMD [ "yarn", "start" ]
