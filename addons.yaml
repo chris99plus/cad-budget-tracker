@@ -7,7 +7,7 @@ microk8s-addons:
 
   # List of addons.
   addons:
-    - name: microk8s-budget-tracker
+    - name: budget-tracker
       description: Budget Tracker application
 
       # Addon version.
