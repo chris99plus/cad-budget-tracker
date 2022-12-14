@@ -1,7 +1,13 @@
 FROM node:18.10 as builder
 
-COPY ./authentication_service usr/authentication_service
-COPY ./microservice_helpers usr/microservice_helpers
+# Copy and build common dependency code
+COPY ./microservice_helpers /usr/microservice_helpers
+WORKDIR /usr/microservice_helpers
+RUN yarn install
+RUN yarn build
+
+# Copy and build the microservice code
+COPY ./authentication_service /usr/authentication_service
 WORKDIR /usr/authentication_service
 RUN yarn install
 RUN yarn build

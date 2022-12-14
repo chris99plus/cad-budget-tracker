@@ -1,7 +1,13 @@
 FROM node:18.10 as builder
 
-COPY ./transaction_service usr/transaction_service
-COPY ./microservice_helpers usr/microservice_helpers
+# Copy and build common dependency code
+COPY ./microservice_helpers /usr/microservice_helpers
+WORKDIR /usr/microservice_helpers
+RUN yarn install
+RUN yarn build
+
+# Copy and build the microservice code
+COPY ./transaction_service /usr/transaction_service
 WORKDIR /usr/transaction_service
 RUN yarn install
 RUN yarn build
