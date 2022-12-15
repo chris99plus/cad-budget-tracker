@@ -2,14 +2,14 @@
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ include "transaction_service.fullname" . }}
+  name: {{ include "transactionService.fullname" . }}
   labels:
-    {{- include "transaction_service.labels" . | nindent 4 }}
+    {{- include "transactionService.labels" . | nindent 4 }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ include "transaction_service.fullname" . }}
+    name: {{ include "transactionService.fullname" . }}
   minReplicas: {{ .Values.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.autoscaling.maxReplicas }}
   metrics:

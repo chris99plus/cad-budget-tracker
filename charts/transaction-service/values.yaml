@@ -5,6 +5,7 @@
 replicaCount: 1
 
 image:
+  registry: localhost:32000
   repository: transaction_service
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
@@ -24,6 +25,16 @@ securityContext: {}
 service:
   type: ClusterIP
   port: 80
+
+db:
+  enabled: false
+  # host: localhost
+  port: 27017
+  collection: transaction
+
+mongodb:
+  auth:
+    enabled: false
 
 resources: {}
 

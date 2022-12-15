@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "transaction_service.fullname" . }}
+  name: {{ include "transactionService.fullname" . }}
   labels:
-    {{- include "transaction_service.labels" . | nindent 4 }}
+    {{- include "transactionService.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "transaction_service.selectorLabels" . | nindent 6 }}
+      {{- include "transactionService.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -18,20 +18,19 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "transaction_service.selectorLabels" . | nindent 8 }}
+        {{- include "transactionService.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "transaction_service.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          image: {{ include "transactionService.image" . | quote }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
@@ -39,22 +38,24 @@ spec:
               protocol: TCP
           env:
           - name: SERVER_PORT
-            value: 80
+            value: "80"
           - name: MONGODB_CONNECTION_STRING
-            value: {{ .Values.db }}
+            value: {{ include "transactionService.connection_string" . }}
+          {{- if .Values.tenantSecret }}
           - name: JWT_SECRET_KEY
             valueFrom:
               secretKeyRef:
                 name: {{ .Values.tenantSecret }}
                 key: jwtSecret
-          livenessProbe:
-            httpGet:
-              path: /
-              port: http
-          readinessProbe:
-            httpGet:
-              path: /
-              port: http
+          {{- end }}
+          # livenessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
+          # readinessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

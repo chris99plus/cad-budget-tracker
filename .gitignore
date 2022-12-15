@@ -2,6 +2,7 @@ dist
 node_modules
 .env
 *.tsbuildinfo
+charts/*/charts
 .terraform
 terraform.tfvars
 terraform.tfstate
