@@ -30,7 +30,7 @@ jobs:
         with:
           context: .
           file: tenant_service/Dockerfile
-          push: true
+          push: false
           tags: ghcr.io/chris99plus/tenant_service:latest
       
       - name: Build and push

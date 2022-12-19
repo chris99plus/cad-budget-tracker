@@ -15,6 +15,13 @@ terraform {
       version = "~>3.0"
     }
   }
+
+  backend "azurerm" {
+    resource_group_name = "budget-tracker-pipeline-rg"
+    storage_account_name = "budgettrackerterraform"
+    container_name       = "terraform"
+    key                  = "prod.terraform.tfstate"
+  }
 }
 
 provider "azurerm" {
