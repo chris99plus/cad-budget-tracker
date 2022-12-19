@@ -4,3 +4,6 @@ node_modules
 *.tsbuildinfo
 .terraform
 terraform.tfvars
+terraform.tfstate
+.terraform.tfstate.lock.info
+.terraform.lock.hcl
