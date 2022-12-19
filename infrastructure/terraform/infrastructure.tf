@@ -1,4 +1,4 @@
-variable "subscription_id" {
+variable "AZURE_SUBSCRIPTION_ID" {
   type = string
 }
 
@@ -27,7 +27,7 @@ terraform {
 provider "azurerm" {
   features {}
 
-  subscription_id = var.subscription_id
+  subscription_id = var.AZURE_SUBSCRIPTION_ID
 }
 
 resource "azurerm_resource_group" "rg" {
