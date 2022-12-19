@@ -27,5 +27,11 @@ Run the microservice in development mode:
 yarn dev
 ```
 
+## Build the docker image
+To build the docker image run the following command in the repository root directory:
+
+```
+docker build -t authentication_service -f .\authentication_service\Dockerfile .
+```
 
 Add a change to test the github action
