@@ -24,7 +24,7 @@ jobs:
         id: init
         run: terraform init -input=false
         env:
-          ARM_CLIENT_ID: "dd0dbadb-f4bf-47a0-b3e8-4799b31021a0" #${{ secrets.AZURE_AD_CLIENT_ID }}
+          ARM_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
           ARM_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
           ARM_SUBSCRIPTION_ID: "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
           ARM_TENANT_ID: "${{ secrets.AZURE_AD_TENANT_ID }}"
@@ -37,7 +37,7 @@ jobs:
         run: |
           terraform plan -input=false -no-color -out tf.plan
         env:
-          ARM_CLIENT_ID: "dd0dbadb-f4bf-47a0-b3e8-4799b31021a0" #${{ secrets.AZURE_AD_CLIENT_ID }}
+          ARM_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
           ARM_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
           ARM_SUBSCRIPTION_ID: "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
           ARM_TENANT_ID: "${{ secrets.AZURE_AD_TENANT_ID }}"
