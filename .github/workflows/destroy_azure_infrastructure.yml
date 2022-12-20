@@ -1,11 +1,11 @@
-name: Apply terraform on Azure
+name: Destroy terraform on Azure
 
 on:
   pull_request:
     paths:
-      - infrastructure/terraform_invalid_to_suppress_execution/**
+      - infrastructure/terraform/**
 
-run-name: Apply terraform on Azure
+run-name: Destroy terraform on Azure
 
 jobs:
   terraform:
@@ -31,23 +31,10 @@ jobs:
         working-directory: ./infrastructure/terraform
         shell: bash
 
-      - name: Terraform Plan
-        id: plan
+      - name: Terraform Destroy
+        id: destroy
         run: |
-          terraform plan -input=false -no-color -out tf.plan
-        env:
-          ARM_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
-          ARM_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
-          ARM_SUBSCRIPTION_ID: "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
-          ARM_TENANT_ID: "${{ secrets.AZURE_AD_TENANT_ID }}"
-          TF_VAR_AZURE_SUBSCRIPTION_ID: "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
-        working-directory: ./infrastructure/terraform
-        shell: bash
-
-      - name: Terraform Apply
-        id: apply
-        run: |
-          terraform apply -input=false -no-color -auto-approve
+          terraform destroy -input=false -no-color -auto-approve
         env:
           ARM_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
           ARM_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
