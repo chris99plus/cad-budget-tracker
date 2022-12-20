@@ -47,7 +47,7 @@ jobs:
       - name: Terraform Apply
         id: apply
         run: |
-          terraform apply -input=false -no-color
+          terraform apply -input=false -no-color -auto-approve
         env:
           ARM_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
           ARM_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
