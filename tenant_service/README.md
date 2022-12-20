@@ -31,5 +31,3 @@ To build the docker image run the following command in the repository root direc
 ```
 docker build -t tenant_service -f .\tenant_service\Dockerfile .
 ```
-
-Add a change to test the github action
