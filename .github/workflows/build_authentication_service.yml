@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - authentication_service/**
+  workflow_dispatch:
 
 run-name: Build authentication service
 

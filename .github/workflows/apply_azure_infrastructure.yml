@@ -1,9 +1,6 @@
 name: Apply terraform on Azure
 
-on:
-  pull_request:
-    paths:
-      - infrastructure/terraform_invalid_to_suppress_execution/**
+on: [workflow_dispatch]
 
 run-name: Apply terraform on Azure
 

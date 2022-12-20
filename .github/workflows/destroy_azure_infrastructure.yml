@@ -1,9 +1,6 @@
 name: Destroy terraform on Azure
 
-on:
-  pull_request:
-    paths:
-      - infrastructure/terraform/**
+on: [workflow_dispatch]
 
 run-name: Destroy terraform on Azure
 

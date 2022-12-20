@@ -3,7 +3,9 @@ name: Plan terraform on Azure
 on:
   pull_request:
     paths:
-      - infrastructure/terraform_invalid_to_suppress_execution/**
+      - infrastructure/**
+  workflow_dispatch:
+
 
 run-name: Plan terraform on Azure
 
