@@ -5,7 +5,7 @@ on:
     paths:
       - infrastructure/terraform/**
 
-run-name: Apply terraform on Azure
+run-name: Plan terraform on Azure
 
 jobs:
   terraform:
