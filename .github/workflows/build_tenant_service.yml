@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - tenant_service/**
+      - microservice_helpers/**
   workflow_dispatch:
 
 run-name: Build tenant service

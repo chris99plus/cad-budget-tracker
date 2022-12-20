@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - authentication_service/**
+      - microservice_helpers/**
   workflow_dispatch:
 
 run-name: Build authentication service

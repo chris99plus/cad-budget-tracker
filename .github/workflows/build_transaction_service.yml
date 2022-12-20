@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - transaction_service/**
+      - microservice_helpers/**
   workflow_dispatch:
 
 run-name: Build transaction service
