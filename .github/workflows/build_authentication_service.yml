@@ -42,4 +42,4 @@ jobs:
           context: .
           file: authentication_service/Dockerfile
           push: true
-          tags: ghcr.io/chris99plus/msi-cloud-exercise:latest
+          tags: ghcr.io/chris99plus/authentication_service:latest

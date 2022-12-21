@@ -42,4 +42,4 @@ jobs:
           context: .
           file: transaction_service/Dockerfile
           push: true
-          tags: ghcr.io/chris99plus/msi-cloud-exercise:latest
+          tags: ghcr.io/chris99plus/transaction_service:latest
