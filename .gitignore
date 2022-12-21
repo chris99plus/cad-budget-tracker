@@ -2,3 +2,8 @@ dist
 node_modules
 .env
 *.tsbuildinfo
+.terraform
+terraform.tfvars
+terraform.tfstate
+.terraform.tfstate.lock.info
+.terraform.lock.hcl
