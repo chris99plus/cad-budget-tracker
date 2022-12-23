@@ -6,34 +6,53 @@ interface incomeTransactions {
     created: string;
   }
 
+const secondPipelineStage = {
+    $group: {
+        _id: "$category",
+        value: {$sum: "$amount"}
+    }
+};
+
+async function getIncomeReport(cashbookId:any, start:Date, end:Date) {
+    const pipelineIncomeReport = [
+        {
+            $match: {
+                cashbookId: cashbookId,
+                timestamp: {$gte: start, $lte: end},
+                type: "income"
+        } },
+        secondPipelineStage
+    ];
+    return await TransactionModel.aggregate(pipelineIncomeReport);
+}
+
+async function getExpensesReport(cashbookId:any, start:Date, end:Date) {
+    const pipelineExpenseReport = [
+        {
+            $match: {
+                cashbookId: cashbookId,
+                timestamp: {$gte: start, $lte: end},
+                type: "expense"
+        } },
+        secondPipelineStage
+    ];
+    return await TransactionModel.aggregate(pipelineExpenseReport);
+}
+
 async function getReportTransactions(cashbook:any, start:Date, end:Date) {
     console.log(cashbook);
     console.log(start);
     console.log(end);
-    /*return await TransactionModel.find({
-        cashbookId: {$in: cashbookId},
-        timestamp: {$gte: start, $lte: end}
-    })*/
-    const firstPipelineStage_Incomes = {$match: {
-        cashbookId: {$in: cashbook},
-        timestamp: {$gte: start, $lte: end},
-        type: {$in: "expense"}
-    } };
-
-    const pipeline = [
-        {$match: {
-            cashbookId: cashbook,
-            timestamp: {$gte: start, $lte: end},
-            type: "expense"
-        } },
-        {
-            $group: {
-                _id: "$category",
-                value: {$sum: "$amount"}
-            }
-        }
-    ];
-    return await TransactionModel.aggregate(pipeline);
+    return {
+        "income": await getIncomeReport(cashbook, start, end),
+        "expenses": await getExpensesReport(cashbook, start, end)
+    }
+    
+    /*const expenses = TransactionModel.aggregate(pipelineExpensesReport);
+    return {
+        "income": income,
+        "expenses": expenses
+    }*/
     /*
     const incomeTransactions = {};
     categoriesIncome.forEach(category => {
