@@ -1,10 +1,7 @@
+import { ReportModel } from "./models/reports";
 import { TransactionModel } from "./models/transactions"
 
-interface incomeTransactions {
-    name:    string;
-    age:     number;
-    created: string;
-  }
+
 
 const secondPipelineStage = {
     $group: {
@@ -12,19 +9,6 @@ const secondPipelineStage = {
         value: {$sum: "$amount"}
     }
 };
-
-async function getIncomeReport(cashbookId:any, start:Date, end:Date) {
-    const pipelineIncomeReport = [
-        {
-            $match: {
-                cashbookId: cashbookId,
-                timestamp: {$gte: start, $lte: end},
-                type: "income"
-        } },
-        secondPipelineStage
-    ];
-    return await TransactionModel.aggregate(pipelineIncomeReport);
-}
 
 async function getTransactionsGrouped(cashbookId:any, start:Date, end:Date, type:string) {
     const pipelineExpenseReport = [
@@ -39,63 +23,66 @@ async function getTransactionsGrouped(cashbookId:any, start:Date, end:Date, type
     return await TransactionModel.aggregate(pipelineExpenseReport);
 }
 
-async function getReportTransactions(cashbook:any, start:Date, end:Date) {
-    console.log(cashbook);
-    console.log(start);
-    console.log(end);
-    const actualStart = new Date("2022-12-23T00:00:00.000Z");
-    const actualEnd = new Date("2022-12-23T17:16:15.514Z");
-    const income = await getTransactionsGrouped(cashbook, actualStart, actualEnd, "income");
-    const expenses  = await getTransactionsGrouped(cashbook, actualStart, actualEnd, "expense");
-    const incomeSubReport = await createSubReport(income);
-    const expensesSubReport = await createSubReport(expenses);
-    return {total: incomeSubReport.total-expensesSubReport.total, income: incomeSubReport, expenses: expensesSubReport}
-
-}
-
-interface category {
-    name: String,
-    value: number,
-    percent: number
-}
-
-interface subreport {
-    total: number,
-    categories: category[]
-}
-
-interface report {
-    total: number,
-    income: subreport,
-    expenses: subreport
-}
-
 
 async function createSubReport(groupedTransactions: any) {
     let total = Number(0);
     for(let i in groupedTransactions) {
-        console.log(groupedTransactions[i]._id)
-        total = total + Number(groupedTransactions[i].value);
+        total = (total + Number(groupedTransactions[i].value));
     }
-    console.log(total);
     let categories = [];    
     for(let j in groupedTransactions) {
         groupedTransactions[j];
         categories.push({
             name: groupedTransactions[j]._id,
-            value: groupedTransactions[j].value,
-            percent: groupedTransactions[j].value/total
+            value: (groupedTransactions[j].value).toFixed(2),
+            percent: ((groupedTransactions[j].value/total)*100).toFixed(2)
         });
     }
-    return {total: total, categories: categories};
+    return {total: total.toFixed(2), categories: categories};
 }
 
 export async function createReport(cashbookId:any, start:Date, end:Date) {
-    const transactionsOfReport = getReportTransactions(cashbookId, start, end);
-    /*const incomeTransactions[];
-    (await transactionsOfReport).forEach(element => {
-        
-    });*/
-    console.log(transactionsOfReport);
-    return await transactionsOfReport;
+    const actualStart = new Date("2022-12-23T00:00:00.000Z");
+    const actualEnd = new Date("2022-12-23T17:16:15.514Z");
+    const income = await getTransactionsGrouped(cashbookId, actualStart, actualEnd, "income");
+    const expenses  = await getTransactionsGrouped(cashbookId, actualStart, actualEnd, "expense");
+    const incomeSubReport = await createSubReport(income);
+    const expensesSubReport = await createSubReport(expenses);
+    var total = Number(incomeSubReport.total)-Number(expensesSubReport.total);
+    return {total: (Math.round(total * 100) / 100).toFixed(2), income: incomeSubReport, expenses: expensesSubReport}
+}
+
+export async function createWeeklyReports(start:Date, end:Date) {
+    const pipelineCashbookIds = [
+        {
+            $group: {
+                _id: "$cashbookId"
+        } },
+    ];
+    const cashbookIds = await TransactionModel.aggregate(pipelineCashbookIds);
+    var newReports = [];
+    for(let i in cashbookIds) {
+        const currentCashbook = cashbookIds[i]._id;
+        var newReportData = await createReport(currentCashbook, start, end);
+        console.log(newReportData);
+        const newReport = new ReportModel({
+            cashbookId: currentCashbook,
+            start: start,
+            end: end,
+            total: newReportData.total,
+            income: newReportData.income,
+            expenses: newReportData.expenses
+        })
+        const newReportEntry = await newReport.save();
+        newReports.push({cashbookId: currentCashbook, _id: newReportEntry._id})
+    }
+    return newReports;
+}
+
+export function getFirstDayOfWeek(d: Date) {
+    d.setUTCHours(0, 0, 0, 0);
+  d = new Date(d);
+  var day = d.getDay(),
+      diff = d.getDate() - day + (day == 0 ? -6:1);
+  return new Date(d.setDate(diff))
 }
