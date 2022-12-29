@@ -6,6 +6,11 @@ Project for the Cloud Application Development course
 - Every microservice has its own directory at the root level of the repository.
 - To contribute to this repository we work in dedicated branches and create pull requests to bring the changes into the main branch
 
+# Local development
+To start the microservices for local development run:
+```
+docker compose up
+```
 
 
 # API Specification
