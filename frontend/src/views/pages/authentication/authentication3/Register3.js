@@ -19,6 +19,11 @@ const Register = () => {
     const theme = useTheme();
     const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
 
+    const params = new Proxy(new URLSearchParams(window.location.search), {
+        get: (licenceType, prop) => licenceType.get(prop)
+    });
+    let licenceType = params.licenceType;
+
     return (
         <AuthWrapper1>
             <Grid container direction="column" justifyContent="flex-end" sx={{ minHeight: '100vh' }}>
@@ -28,7 +33,7 @@ const Register = () => {
                             <AuthCardWrapper>
                                 <Grid container spacing={2} alignItems="center" justifyContent="center">
                                     <Grid item sx={{ mb: 3 }}>
-                                        <Link to="#">
+                                        <Link className="linkLogo" to="#">
                                             <Logo />
                                         </Link>
                                     </Grid>
@@ -52,15 +57,13 @@ const Register = () => {
                                                         variant="caption"
                                                         fontSize="16px"
                                                         textAlign={matchDownSM ? 'center' : 'inherit'}
-                                                    >
-                                                        Enter your credentials to continue
-                                                    </Typography>
+                                                    ></Typography>
                                                 </Stack>
                                             </Grid>
                                         </Grid>
                                     </Grid>
                                     <Grid item xs={12}>
-                                        <AuthRegister />
+                                        <AuthRegister licencetype={licenceType} />
                                     </Grid>
                                     <Grid item xs={12}>
                                         <Divider />

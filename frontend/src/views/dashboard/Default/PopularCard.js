@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
+import * as React from 'react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -15,7 +16,12 @@ import { gridSpacing } from 'store/constant';
 import ChevronRightOutlinedIcon from '@mui/icons-material/ChevronRightOutlined';
 import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
 import KeyboardArrowUpOutlinedIcon from '@mui/icons-material/KeyboardArrowUpOutlined';
-import KeyboardArrowDownOutlinedIcon from '@mui/icons-material/KeyboardArrowDownOutlined';
+import Dialog from '@mui/material/Dialog';
+import TextField from '@mui/material/TextField';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 // apis
 import TrasactionDataService from '../../../services/transactions';
@@ -27,6 +33,13 @@ const PopularCard = ({ isLoading }) => {
 
     const [anchorEl, setAnchorEl] = useState(null);
     const [transaction, setTransaction] = useState([]);
+    const [open, setOpen] = React.useState(false);
+    const [transactionName, setTransactionName] = useState(null);
+    const [transactionValue, setTransactionValue] = useState(null);
+    const [transactionContent, setTransactionContent] = useState(null);
+    const [transactionComment, setTransactionComment] = useState(null);
+    const [transactionCurrency, setTransactionCurrency] = useState('EUR');
+    const [error, setError] = useState(false);
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -36,16 +49,73 @@ const PopularCard = ({ isLoading }) => {
         setAnchorEl(null);
     };
 
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClickClose = () => {
+        setOpen(false);
+    };
+
+    const handleClickAdd = () => {
+        if (
+            transactionName != null &&
+            transactionValue != null &&
+            transactionContent != null &&
+            transactionComment != null &&
+            transactionCurrency != null
+        ) {
+            var data = {
+                amount: transactionValue,
+                type: transactionContent,
+                description: transactionName,
+                comment: transactionComment,
+                timestamp: '',
+                category: ''
+            };
+            TrasactionDataService.postTransaction(data)
+                .then((response) => {
+                    //console.log(response.data);
+                })
+                .catch((e) => {
+                    //console.log(e);
+                });
+            setOpen(false);
+            setError(false);
+        } else {
+            setError('Please Select all Fields');
+        }
+    };
+
+    const currencies = [
+        {
+            value: 'USD',
+            label: '$'
+        },
+        {
+            value: 'EUR',
+            label: '€'
+        },
+        {
+            value: 'BTC',
+            label: '฿'
+        },
+        {
+            value: 'JPY',
+            label: '¥'
+        }
+    ];
+
     useEffect(() => {
         TrasactionDataService.getAll()
             .then((response) => {
                 setTransaction(response.data);
-                console.log(response.data);
+                //console.log(response.data);
             })
             .catch((e) => {
-                console.log(e);
+                //console.log(e);
             });
-    }, []);
+    }, [open]);
 
     return (
         <>
@@ -57,18 +127,94 @@ const PopularCard = ({ isLoading }) => {
                         <Grid container spacing={gridSpacing}>
                             <Grid item xs={12}>
                                 <Grid container alignContent="center" justifyContent="space-between">
-                                    <Grid item>
+                                    <Grid item flex="true" alignContent="center">
                                         <Typography variant="h4">Transaktionen</Typography>
                                     </Grid>
                                     <Button
                                         disableElevation
-                                        variant={'text'}
+                                        variant={'outlined'}
                                         size="small"
                                         sx={{ color: 'inherit' }}
-                                        onClick={(e) => handleChangeTime(e, false)}
+                                        onClick={handleClickOpen}
                                     >
                                         Add Transaktion
                                     </Button>
+                                    <Dialog
+                                        open={open}
+                                        onClose={handleClose}
+                                        aria-labelledby="alert-dialog-title"
+                                        aria-describedby="alert-dialog-description"
+                                    >
+                                        <DialogTitle id="alert-dialog-title">{'Add Transaction'}</DialogTitle>
+                                        {error && (
+                                            <DialogContentText id="alert-dialog-description" marginLeft="25px" color="red">
+                                                {error}
+                                            </DialogContentText>
+                                        )}
+                                        <DialogContent autoComplete="off">
+                                            <TextField
+                                                margin="dense"
+                                                id="outlined-select-currency"
+                                                fullWidth
+                                                select
+                                                label="Select"
+                                                defaultValue="EUR"
+                                                helperText="Please select your currency"
+                                                onChange={(newValue) => setTransactionCurrency(newValue.target.value)}
+                                            >
+                                                {currencies.map((option) => (
+                                                    <MenuItem key={option.value} value={option.value}>
+                                                        {option.label}
+                                                    </MenuItem>
+                                                ))}
+                                            </TextField>
+                                            <TextField
+                                                margin="dense"
+                                                id="name"
+                                                label="Content of your Transaction"
+                                                type="text"
+                                                fullWidth
+                                                variant="outlined"
+                                                autoComplete="off"
+                                                onChange={(newValue) => setTransactionContent(newValue.target.value)}
+                                            />
+                                            <TextField
+                                                margin="dense"
+                                                id="name"
+                                                label="Name of your Transaction"
+                                                type="text"
+                                                fullWidth
+                                                variant="outlined"
+                                                autoComplete="off"
+                                                onChange={(newValue) => setTransactionName(newValue.target.value)}
+                                            />
+                                            <TextField
+                                                margin="dense"
+                                                id="name"
+                                                label="Comment for your Transaction"
+                                                type="text"
+                                                fullWidth
+                                                variant="outlined"
+                                                autoComplete="off"
+                                                onChange={(newValue) => setTransactionComment(newValue.target.value)}
+                                            />
+                                            <TextField
+                                                margin="dense"
+                                                id="name"
+                                                label="Value of your Transaction"
+                                                type="number"
+                                                fullWidth
+                                                variant="outlined"
+                                                autoComplete="off"
+                                                maxRows={10}
+                                                onChange={(newValue) => setTransactionValue(newValue.target.value)}
+                                            />
+                                        </DialogContent>
+                                        <DialogActions>
+                                            <Button onClick={handleClickClose}>Close</Button>
+                                            <Button onClick={handleClickAdd}>Add</Button>
+                                        </DialogActions>
+                                    </Dialog>
                                     <Grid item>
                                         <MoreHorizOutlinedIcon
                                             fontSize="small"

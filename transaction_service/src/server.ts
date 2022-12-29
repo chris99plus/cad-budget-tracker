@@ -5,6 +5,7 @@ import { transaction_router } from './api';
 import { connectDatabase } from './db';
 
 dotenv.config();
+dotenv.config();
 
 const app = express();
 app.use(json());

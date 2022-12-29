@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import AuthService from '../../../../services/auth';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -38,20 +39,21 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 // ===========================|| FIREBASE - REGISTER ||=========================== //
 
-const FirebaseRegister = ({ ...others }) => {
+const Register = ({ ...others }) => {
     const theme = useTheme();
     const scriptedRef = useScriptRef();
     const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
-    const customization = useSelector((state) => state.customization);
     const [showPassword, setShowPassword] = useState(false);
-    const [checked, setChecked] = useState(true);
+    const [username, setUsername] = useState(false);
+    const [email, setEmail] = useState(false);
+    const [password, setPassword] = useState(false);
+    const [createTenant, setCreateTenant] = useState(false);
+    const [tenantID, setTenantID] = useState(false);
+    const [tenantName, setTenantName] = useState(false);
+    const [error, setError] = useState(false);
 
     const [strength, setStrength] = useState(0);
     const [level, setLevel] = useState();
-
-    const googleHandler = async () => {
-        console.error('Register');
-    };
 
     const handleClickShowPassword = () => {
         setShowPassword(!showPassword);
@@ -67,60 +69,55 @@ const FirebaseRegister = ({ ...others }) => {
         setLevel(strengthColor(temp));
     };
 
-    useEffect(() => {
-        changePassword('123456');
-    }, []);
+    function signUpCall() {
+        if (username && email && password) {
+            var data = {
+                username: username,
+                email: email,
+                password: password,
+                licenseType: others.licencetype,
+                createTenant: createTenant,
+                tenantSecret: tenantID,
+                tenantName: tenantName
+            };
+            if (others.licencetype == 'enterprise' && !createTenant && tenantName) {
+                console.log(tenantName);
+                AuthService.createUser(data)
+                    .then((response) => {
+                        console.log(response.data);
+                    })
+                    .catch((e) => {
+                        console.log(e);
+                    });
+            }
+            if (others.licencetype == 'enterprise' && createTenant && tenantID) {
+                AuthService.createUser(data)
+                    .then((response) => {
+                        console.log(response.data);
+                    })
+                    .catch((e) => {
+                        console.log(e);
+                    });
+            }
+        } else {
+            setError('Please fill all fields!');
+        }
+    }
 
     return (
         <>
             <Grid container direction="column" justifyContent="center" spacing={2}>
-                <Grid item xs={12}>
-                    <AnimateButton>
-                        <Button
-                            variant="outlined"
-                            fullWidth
-                            onClick={googleHandler}
-                            size="large"
-                            sx={{
-                                color: 'grey.700',
-                                backgroundColor: theme.palette.grey[50],
-                                borderColor: theme.palette.grey[100]
-                            }}
-                        >
-                            <Box sx={{ mr: { xs: 1, sm: 2, width: 20 } }}>
-                                <img src={Google} alt="google" width={16} height={16} style={{ marginRight: matchDownSM ? 8 : 16 }} />
-                            </Box>
-                            Sign up with Google
-                        </Button>
-                    </AnimateButton>
-                </Grid>
-                <Grid item xs={12}>
-                    <Box sx={{ alignItems: 'center', display: 'flex' }}>
-                        <Divider sx={{ flexGrow: 1 }} orientation="horizontal" />
-                        <Button
-                            variant="outlined"
-                            sx={{
-                                cursor: 'unset',
-                                m: 2,
-                                py: 0.5,
-                                px: 7,
-                                borderColor: `${theme.palette.grey[100]} !important`,
-                                color: `${theme.palette.grey[900]}!important`,
-                                fontWeight: 500,
-                                borderRadius: `${customization.borderRadius}px`
-                            }}
-                            disableRipple
-                            disabled
-                        >
-                            OR
-                        </Button>
-                        <Divider sx={{ flexGrow: 1 }} orientation="horizontal" />
-                    </Box>
-                </Grid>
-                <Grid item xs={12} container alignItems="center" justifyContent="center">
+                <Grid item xs={12}></Grid>
+                <Grid item xs={12}></Grid>
+                <Grid item xs={12} container alignItems="center" justifyContent="center" flexDirection="column">
                     <Box sx={{ mb: 2 }}>
                         <Typography variant="subtitle1">Sign up with Email address</Typography>
                     </Box>
+                    {error && (
+                        <Box sx={{ mb: 2 }}>
+                            <Typography color="red">{error}</Typography>
+                        </Box>
+                    )}
                 </Grid>
             </Grid>
 
@@ -153,38 +150,31 @@ const FirebaseRegister = ({ ...others }) => {
                 {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
                     <form noValidate onSubmit={handleSubmit} {...others}>
                         <Grid container spacing={matchDownSM ? 0 : 2}>
-                            <Grid item xs={12} sm={6}>
+                            <Grid item xs={12} sm={12}>
                                 <TextField
                                     fullWidth
-                                    label="First Name"
+                                    label="Username"
                                     margin="normal"
                                     name="fname"
                                     type="text"
                                     defaultValue=""
-                                    sx={{ ...theme.typography.customInput }}
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={6}>
-                                <TextField
-                                    fullWidth
-                                    label="Last Name"
-                                    margin="normal"
-                                    name="lname"
-                                    type="text"
-                                    defaultValue=""
+                                    onChange={(newValue) => setUsername(newValue.target.value)}
                                     sx={{ ...theme.typography.customInput }}
                                 />
                             </Grid>
                         </Grid>
                         <FormControl fullWidth error={Boolean(touched.email && errors.email)} sx={{ ...theme.typography.customInput }}>
-                            <InputLabel htmlFor="outlined-adornment-email-register">Email Address / Username</InputLabel>
+                            <InputLabel htmlFor="outlined-adornment-email-register">Email Address</InputLabel>
                             <OutlinedInput
                                 id="outlined-adornment-email-register"
                                 type="email"
                                 value={values.email}
                                 name="email"
                                 onBlur={handleBlur}
-                                onChange={handleChange}
+                                onChange={(e) => {
+                                    setEmail(e.target.value);
+                                    handleChange(e);
+                                }}
                                 inputProps={{}}
                             />
                             {touched.email && errors.email && (
@@ -208,6 +198,7 @@ const FirebaseRegister = ({ ...others }) => {
                                 label="Password"
                                 onBlur={handleBlur}
                                 onChange={(e) => {
+                                    setPassword(e.target.value);
                                     handleChange(e);
                                     changePassword(e.target.value);
                                 }}
@@ -232,7 +223,6 @@ const FirebaseRegister = ({ ...others }) => {
                                 </FormHelperText>
                             )}
                         </FormControl>
-
                         {strength !== 0 && (
                             <FormControl fullWidth>
                                 <Box sx={{ mb: 2 }}>
@@ -252,29 +242,62 @@ const FirebaseRegister = ({ ...others }) => {
                                 </Box>
                             </FormControl>
                         )}
-
-                        <Grid container alignItems="center" justifyContent="space-between">
-                            <Grid item>
+                        {others.licencetype == 'enterprise' && (
+                            <FormControl>
                                 <FormControlLabel
-                                    control={
-                                        <Checkbox
-                                            checked={checked}
-                                            onChange={(event) => setChecked(event.target.checked)}
-                                            name="checked"
-                                            color="primary"
-                                        />
-                                    }
-                                    label={
-                                        <Typography variant="subtitle1">
-                                            Agree with &nbsp;
-                                            <Typography variant="subtitle1" component={Link} to="#">
-                                                Terms & Condition.
-                                            </Typography>
-                                        </Typography>
-                                    }
+                                    control={<Checkbox onClick={() => setCreateTenant(!createTenant)} />}
+                                    label="Join existing Tenant"
                                 />
-                            </Grid>
-                        </Grid>
+                            </FormControl>
+                        )}
+                        {createTenant && others.licencetype == 'enterprise' && (
+                            <TextField
+                                fullWidth
+                                label="Tenant-ID"
+                                margin="normal"
+                                name="fname"
+                                type="text"
+                                variant="outlined"
+                                onChange={(newValue) => setTenantID(newValue.target.value)}
+                                defaultValue=""
+                            />
+                        )}
+                        {!createTenant && others.licencetype == 'enterprise' && (
+                            <TextField
+                                fullWidth
+                                label="Tenant-Name"
+                                margin="normal"
+                                name="fname"
+                                type="text"
+                                variant="outlined"
+                                onChange={(newValue) => setTenantName(newValue.target.value)}
+                                defaultValue=""
+                            />
+                        )}
+                        {!createTenant && others.licencetype == 'enterprise' && (
+                            <TextField
+                                fullWidth
+                                label="Credit-Card Number"
+                                margin="normal"
+                                name="fname"
+                                type="text"
+                                variant="filled"
+                                defaultValue=""
+                                disabled
+                            />
+                        )}
+                        {others.licencetype == 'premium' && (
+                            <TextField
+                                fullWidth
+                                label="Credit-Card Number"
+                                margin="normal"
+                                name="fname"
+                                type="text"
+                                variant="filled"
+                                defaultValue=""
+                                disabled
+                            />
+                        )}
                         {errors.submit && (
                             <Box sx={{ mt: 3 }}>
                                 <FormHelperText error>{errors.submit}</FormHelperText>
@@ -291,6 +314,7 @@ const FirebaseRegister = ({ ...others }) => {
                                     type="submit"
                                     variant="contained"
                                     color="secondary"
+                                    onClick={signUpCall}
                                 >
                                     Sign up
                                 </Button>
@@ -303,4 +327,4 @@ const FirebaseRegister = ({ ...others }) => {
     );
 };
 
-export default FirebaseRegister;
+export default Register;
