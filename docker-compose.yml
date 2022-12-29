@@ -33,6 +33,7 @@ services:
     depends_on:
       - mongodb
     environment:
+      - JWT_SECRET_KEY="9p4LA9^9@n4@z6sVTE6r3#hNhseHB8AwnzQ"
       - SERVER_PORT=4000
       - MONGODB_CONNECTION_STRING=mongodb://mongodb:27017/authentication
     networks:
