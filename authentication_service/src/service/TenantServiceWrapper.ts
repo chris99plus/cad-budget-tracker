@@ -1,4 +1,4 @@
-import { makeServiceCallGet, makeServiceCallPost } from '../../../microservice_helpers';
+import { createServiceToken, makeServiceCallGet, makeServiceCallPost } from '../../../microservice_helpers';
 
 
 /**
@@ -20,7 +20,8 @@ export class TenantServiceWrapperImpl implements TenantServiceWrapper {
     async validateTenantSecretAndGetTenantNameOrThrow(secret: string): Promise<string> {
         let response = await makeServiceCallGet<any>(
             this.tenantServiceUrl,
-            `/api/v1/tenants/${secret}`
+            `/api/v1/tenants/${secret}`,
+            createServiceToken()
         );
 
         return response?.tenant_name;
@@ -33,7 +34,8 @@ export class TenantServiceWrapperImpl implements TenantServiceWrapper {
             `/api/v1/tenants`,
             {
                 tenant_name: tenantName
-            }
+            },
+            createServiceToken()
         );
     }
 }

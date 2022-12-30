@@ -2,7 +2,7 @@ import { User, UserRepository } from "../data/UserRepository";
 import { CreateUserRequest, CreateUserResponse } from "../requests/CreateUserRequest";
 import { LoginRequest, LoginResponse } from "../requests/LoginRequest";
 import { TenantServiceWrapper } from "./TenantServiceWrapper";
-import { UserInformation } from "../../../microservice_helpers";
+import { JwtTokenProperties } from "../../../microservice_helpers";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
@@ -122,7 +122,8 @@ export class AuthenticationService {
             // Ugly but works. I want it to be a UserInformation in order
             // to guarantee type safety when using the JWT later.
             // See: https://stackoverflow.com/a/73075855/4563449
-            JSON.parse(JSON.stringify(new UserInformation(
+            JSON.parse(JSON.stringify(new JwtTokenProperties(
+                false,
                 user._id?.toString(),
                 user.username,
                 user.email,
