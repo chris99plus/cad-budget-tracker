@@ -24,7 +24,7 @@ async function main() {
             console.log(`The report service is listening on port ${port}!`);
         });
     } else if(process.env.EXECUTION_MODE == "cron-job") {
-        const transactionServiceWrapper = new TransactionServiceWrapperImpl("http://localhost:4003")
+        const transactionServiceWrapper = new TransactionServiceWrapperImpl(process.env.TRANSACTION_SERVICE_URL)
         const reportService = new ReportService(transactionServiceWrapper);
         console.log("Service runs as cron-job to create weekly reports");
         const now = new Date();
