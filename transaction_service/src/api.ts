@@ -38,7 +38,7 @@ router.post('/api/v1/cashbooks/:cashbookId/transactions', auth, apiHandler(async
 }));
 
 
-router.get('/api/v1/cashbooks/:cashbookId/transactions', apiHandler(async (req: Request, res: Response) => {
+router.get('/api/v1/cashbooks/:cashbookId/transactions', auth, apiHandler(async (req: Request, res: Response) => {
     const cashbookId = req.params.cashbookId;
     const start = req.query.start;
     const end = req.query.end;
@@ -58,7 +58,7 @@ router.get('/api/v1/cashbooks/:cashbookId/transactions', apiHandler(async (req: 
     return await TransactionModel.find(query);
 }));
 
-router.get('/api/v1/cashbooks/cashbookIds', apiHandler(async (req: Request, res: Response) => {
+router.get('/api/v1/cashbooks/cashbookIds', auth,  apiHandler(async (req: Request, res: Response) => {
     var cashbooks = await TransactionModel.aggregate([
         {
             $group: {

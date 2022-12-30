@@ -11,7 +11,7 @@ const transactionServiceWrapper = new TransactionServiceWrapperImpl("http://loca
 const reportService = new ReportService(transactionServiceWrapper);
 
 
-router.get('/api/v1/cashbooks/:cashbookId/reports/daily/:day', apiHandler(async (req: Request, res: Response) => {
+router.get('/api/v1/cashbooks/:cashbookId/reports/daily/:day', auth, apiHandler(async (req: Request, res: Response) => {
     var day = req.params.day;
     var beginOfDay = new Date();
     var endOfDay = new Date();
@@ -36,14 +36,14 @@ router.get('/api/v1/cashbooks/:cashbookId/reports/daily/:day', apiHandler(async 
     return reportService.getGroupedTransactions(cashbookId, req.query.start, req.query.end);
 }));*/
 
-router.get('/api/v1/cashbooks/:cashbookId/reports/weekly/current', apiHandler(async (req: Request, res: Response) => {
+router.get('/api/v1/cashbooks/:cashbookId/reports/weekly/current', auth, apiHandler(async (req: Request, res: Response) => {
     var now = new Date();
     var firstDayOfWeek = getFirstDayOfWeek(now);
     const report = reportService.createReport(req.params.cashbookId, firstDayOfWeek, now);
     return await report;
 }));
 
-router.get('/api/v1/cashbooks/:cashbookId/reports/weekly', apiHandler(async (req: Request, res: Response) => {
+router.get('/api/v1/cashbooks/:cashbookId/reports/weekly', auth, apiHandler(async (req: Request, res: Response) => {
     return await ReportModel.find({"cashbookId": req.params.cashbookId});
 }));
 

@@ -1,4 +1,4 @@
-import { makeServiceCallGet } from '../../../microservice_helpers';
+import { createServiceToken, makeServiceCallGet } from '../../../microservice_helpers';
 
 /**
  * Interface which wraps functionality of the transaction microservice.
@@ -19,7 +19,8 @@ export class TransactionServiceWrapperImpl implements TransactionServiceWrapper 
     async getTransactionsByCashbookTimestampsAndType(cashbookId: string, start: Date, end: Date, type: String): Promise<string> {
         let response = await makeServiceCallGet<any>(
             this.transactionServiceUrl,
-            `/api/v1/cashbooks/${cashbookId}/transactions?start=${start}&end=${end}&type=${type}`
+            `/api/v1/cashbooks/${cashbookId}/transactions?start=${start}&end=${end}&type=${type}`,
+            createServiceToken()
         );
         return response;
     }
@@ -27,7 +28,8 @@ export class TransactionServiceWrapperImpl implements TransactionServiceWrapper 
     async getCashbookIdsOfTransactions(): Promise<string[]> {
         let response = await makeServiceCallGet<any>(
             this.transactionServiceUrl,
-            "/api/v1/cashbooks/cashbookIds"
+            "/api/v1/cashbooks/cashbookIds",
+            createServiceToken()
         );
 
         return response;
