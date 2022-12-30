@@ -1,0 +1,60 @@
+version: '3.9'
+
+services:
+  mongodb:
+    image: mongo
+    volumes:
+      - ./db:/data/db:rw
+    networks:
+    - cad_backend_network
+
+  authentication_service:
+    build: 
+      context: .
+      dockerfile: ./authentication_service/Dockerfile
+    ports:
+      - "4001:4000"
+    depends_on:
+      - mongodb
+    environment:
+      - JWT_SECRET_KEY="9p4LA9^9@n4@z6sVTE6r3#hNhseHB8AwnzQ"
+      - SERVER_PORT=4000
+      - MONGODB_CONNECTION_STRING=mongodb://mongodb:27017/authentication
+      - TENANT_SERVICE_URL=http://tenant_service:4000
+    networks:
+    - cad_backend_network
+
+  tenant_service:
+    build: 
+      context: .
+      dockerfile: ./tenant_service/Dockerfile
+    ports:
+      - "4002:4000"
+    depends_on:
+      - mongodb
+    environment:
+      - JWT_SECRET_KEY="9p4LA9^9@n4@z6sVTE6r3#hNhseHB8AwnzQ"
+      - SERVER_PORT=4000
+      - MONGODB_CONNECTION_STRING=mongodb://mongodb:27017/authentication
+    networks:
+    - cad_backend_network
+
+  transaction_service:
+    build: 
+      context: .
+      dockerfile: ./transaction_service/Dockerfile
+    ports:
+      - "4003:4000"
+    depends_on:
+      - mongodb
+    environment:
+      - SERVER_PORT=4000
+      - MONGODB_CONNECTION_STRING=mongodb://mongodb:27017/transaction
+      - JWT_SECRET_KEY="9p4LA9^9@n4@z6sVTE6r3#hNhseHB8AwnzQ"
+    networks:
+    - cad_backend_network
+
+
+networks:
+  cad_backend_network:
+    name: cad_backend_network
