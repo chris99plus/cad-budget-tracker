@@ -11,33 +11,40 @@ const transactionServiceWrapper = new TransactionServiceWrapperImpl("http://loca
 const reportService = new ReportService(transactionServiceWrapper);
 
 
-router.get('/api/v1/reports/daily/today', apiHandler(async (req: Request, res: Response) => {
-    var now = new Date();
-    var beginOfToday = new Date();
-    beginOfToday.setUTCHours(0,0,0,0);
-    const report = await reportService.createReport(req.query.cashbookId, beginOfToday, now);
-    return await report;
+router.get('/api/v1/cashbooks/:cashbookId/reports/daily/:day', apiHandler(async (req: Request, res: Response) => {
+    var day = req.params.day;
+    var beginOfDay = new Date();
+    var endOfDay = new Date();
+    if(day == "today") {
+        beginOfDay.setUTCHours(0,0,0,0);
+    } else if(new Date(day) > beginOfDay) {
+        throw "The day of which the daily report is requested is in the future."
+    } 
+    else {
+        beginOfDay = new Date(day);
+        beginOfDay.setUTCHours(0,0,0,0);
+        endOfDay = new Date(beginOfDay.getTime() + (24 * 60 * 60 * 1000));
+    }
+    
+    const report = await reportService.createReport(req.params.cashbookId, beginOfDay, endOfDay);
+    return report;
 }));
 
-router.get('/api/v1/reports/daily', apiHandler(async (req: Request, res: Response) => {
-    // TODO
-    const cashbookId = req.query.cashbookId;
+/*router.get('/api/v1/cashbooks/:cashbookId/reports/daily', apiHandler(async (req: Request, res: Response) => {
+    var day = req.query.day
+    const cashbookId = req.params.cashbookId;
     return reportService.getGroupedTransactions(cashbookId, req.query.start, req.query.end);
-}));
+}));*/
 
-router.get('/api/v1/reports/weekly/current', apiHandler(async (req: Request, res: Response) => {
+router.get('/api/v1/cashbooks/:cashbookId/reports/weekly/current', apiHandler(async (req: Request, res: Response) => {
     var now = new Date();
     var firstDayOfWeek = getFirstDayOfWeek(now);
-    const report = reportService.createReport(req.query.cashbookId, firstDayOfWeek, now);
+    const report = reportService.createReport(req.params.cashbookId, firstDayOfWeek, now);
     return await report;
 }));
 
-router.get('/api/v1/reports/weekly', apiHandler(async (req: Request, res: Response) => {
-    // TODO
-}));
-
-router.post('/api/v1/reports/weekly', apiHandler(async (req: Request, res: Response) => {
-    return await reportService.createWeeklyReports(new Date("2022-12-24T17:16:15.514Z"), new Date());
+router.get('/api/v1/cashbooks/:cashbookId/reports/weekly', apiHandler(async (req: Request, res: Response) => {
+    return await ReportModel.find({"cashbookId": req.params.cashbookId});
 }));
 
 

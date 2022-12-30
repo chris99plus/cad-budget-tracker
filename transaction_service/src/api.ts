@@ -15,7 +15,13 @@ router.get('/api/v1/transactions/:transactionId', auth, apiHandler(async (req: R
     return transaction;
 }));
 
-router.post('/api/v1/transactions', auth, apiHandler(async (req: Request, res: Response) => {
+router.delete('/api/v1/transactions/:transactionId', auth, apiHandler(async (req: Request, res: Response) => {
+    await TransactionModel.findByIdAndDelete(req.params.transactionId);
+    return {};
+}));
+
+
+router.post('/api/v1/cashbooks/:cashbookId/transactions', auth, apiHandler(async (req: Request, res: Response) => {
     const transactionData = req.body;
 
     const newTransaction = new TransactionModel({
@@ -31,10 +37,6 @@ router.post('/api/v1/transactions', auth, apiHandler(async (req: Request, res: R
     return await newTransaction.save();
 }));
 
-router.delete('/api/v1/transactions/:transactionId', auth, apiHandler(async (req: Request, res: Response) => {
-    await TransactionModel.findByIdAndDelete(req.params.transactionId);
-    return {};
-}));
 
 router.get('/api/v1/cashbooks/:cashbookId/transactions', apiHandler(async (req: Request, res: Response) => {
     const cashbookId = req.params.cashbookId;

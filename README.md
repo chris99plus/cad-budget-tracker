@@ -11,8 +11,15 @@ Project for the Cloud Application Development course
 # API Specification
 
 ## Transaction service
+
+### Get transaction by id
+`GET /api/v1/transactions/{id}`
+
+### Delete transaction
+`DELETE /api/v1/transactions/{id}`
+
 ### Create transaction
-`POST /api/v1/transactions`
+`POST /api/v1/cashbooks/{cashbookId}/transactions`
 
 Body:
 ```json
@@ -29,6 +36,7 @@ Response:
 ```json
 {
     "id": string,
+	"cashbookId": string,
     "amount": numeric,
     "type": "income"|"expense",
     "description": string,
@@ -38,19 +46,24 @@ Response:
 }
 ```
 
-### Delete transaction
-`DELETE /api/v1/transactions/{id}`
+
 
 Response: siehe oben [[#Error Handling]]
 
 ### Get all transactions
-`GET /api/v1/transactions`
+`GET /api/v1/cashbooks/{cashbookId}/transactions`
+
+**Parameters (optional)**
+- start: datetime
+- end: datetime
+- type: "income" | "expense"
 
 Response:
 ```json
 [
 	{
 		"id": string,
+		"cashbookId": string,
 	    "amount": numeric,
         "type": "income"|"expense",
         "description": string,
@@ -61,27 +74,25 @@ Response:
 ]
 ```
 
-### Get transaction by id
-`GET /api/v1/transactions/{id}`
+### Get all cashbookIds
+`GET /api/v1/cashbooks/cashbookIds`
+Groups all transactions by cashbookId and returns a list of all cashbookIds that appear in any transaction
 
 Response:
 ```json
-{
-    "id": string,
-	"amount": numeric,
-    "type": "income"|"expense",
-    "description": string,
-    "comment": string,
-    "timestamp": datetime,
-    "category": TBD
-}
+[
+	string,
+	...
+]
 ```
 
 
 ### Get daily report
-Berechnet einen Report über die Transaktionen des heutigen Tages. Der Report wird "on the fly" berechnet und nicht vom periodischen Microservice.
+#### today
+Berechnet einen Report über die Transaktionen des heutigen Tages. Der Report wird "on the fly" berechnet und nicht vom periodischen Microservice. Der Daily Report wird nicht in der MongoDB gespeichert.
 
-`GET /api/v1/reports/daily/today`
+`GET /api/v1/cashbooks/{cashbookId}/reports/daily/{day}`
+for parameter **day** pass *today* to get the daily report of today or pass a timestamp to get the daily report of a specific day, e.g. 2022-12-24 
 
 Response:
 ```json
@@ -89,32 +100,34 @@ Response:
 	"total": numeric,
 	"expenses": {
 	    "total": numeric,
-	    "categories": {
-	        "food": {
-	            "value": numeric,
-	            "percent": numeric
-	        },
-	        ...
-	    }
+	    "categories": [
+			{
+				"name": string,
+				"value": numeric,
+				"value": numeric
+			},
+			...
+		]
 	},
 	"income": {
 	    "total": numeric,
-	    "categories": {
-	        "other": {
-	            "value": numeric,
-	            "percent": numeric
-	        },
-	        ...
-	    }
+	    "categories": [
+			{
+				"name": string,
+				"value": numeric,
+				"value": numeric
+			},
+			...
+		]
 	}
 }
 ```
+
 
 
 ### Get weekly report
-Berechnet einen Report über die Transaktionen der aktuellen Woche. Momentan würde es ausreichen, hartcodierte Daten zu liefern. Die Berechnung ist nach Kalenderwochen, also von Mo - So.
-
-`GET /api/v1/reports/weekly/current`
+`GET /api/v1/cashbooks/{cashbookId}/reports/weekly/current`
+Berechnet einen Report über die Transaktionen der aktuellen Woche. Momentan würde es ausreichen, hartcodierte Daten zu liefern. Die Berechnung ist nach Kalenderwochen, also von Mo - So. Der Report wird nicht in der MongoDB gespeichert.
 
 Response:
 ```json
@@ -122,26 +135,97 @@ Response:
 	"total": numeric,
 	"expenses": {
 	    "total": numeric,
-	    "categories": {
-	        "food": {
-	            "value": numeric,
-	            "percent": numeric
-	        },
-	        ...
-	    }
+	    "categories": [
+			{
+				"name": string,
+				"value": numeric,
+				"value": numeric
+			},
+			...
+		]
 	},
 	"income": {
 	    "total": numeric,
-	    "categories": {
-	        "other": {
-	            "value": numeric,
-	            "percent": numeric
-	        },
-	        ...
-	    }
+	    "categories": [
+			{
+				"name": string,
+				"value": numeric,
+				"value": numeric
+			},
+			...
+		]
 	}
 }
 ```
+
+`GET /api/v1/cashbooks/{cashbookId}/reports/weekly`
+Liefert alle in der MongoDB gespeicherten Weekly-Reports eines cashbooks
+Response:
+```json
+{
+	"_id": string,
+	"cashbookId": string,
+	"start": datetime,
+	"end": datetime,
+	"total": numeric,
+	"expenses": {
+	    "total": numeric,
+	    "categories": [
+			{
+				"name": string,
+				"value": numeric,
+				"value": numeric
+			},
+			...
+		]
+	},
+	"income": {
+	    "total": numeric,
+	    "categories": [
+			{
+				"name": string,
+				"value": numeric,
+				"value": numeric
+			},
+			...
+		]
+	}
+},
+...
+```
+
+
+### Create weekly report
+Zieht sich alle cashbookIds und erstellt die dazugehörigen Wochenberichte. Diese Funktion wird periodisch als Cron-Job ausgeführt. Die Reports werden in folgener Struktur in der MongoDB in der Collection reports gespeichert:
+```json
+{
+	"cashbookId": string,
+	"start": datetime,
+	"end": datetime,
+	"total": numeric,
+	"expenses": {
+	    "total": numeric,
+	    "categories": [
+			{
+				"name": string,
+				"value": numeric,
+				"value": numeric
+			},
+			...
+		]
+	},
+	"income": {
+	    "total": numeric,
+	    "categories": [
+			{
+				"name": string,
+				"value": numeric,
+				"value": numeric
+			},
+			...
+		]
+	}
+}
 
 
 
