@@ -1,6 +1,6 @@
 # Report Service
 
-This service manages the creation and deletion of transactions.
+This service manages the cyclic and on-the-fly creation of daily and weekly reports.
 
 
 ## Development setup
@@ -16,8 +16,11 @@ Create a `.env` file with the following variables:
 
 ```
 SERVER_PORT=4004
-MONGODB_CONNECTION_STRING="mongodb://localhost:27017/transaction"
+MONGODB_CONNECTION_STRING="mongodb://simba:theLionKing@cluster-fra.vm27r7k.mongodb.net/budget-tracker"
 JWT_SECRET_KEY="..."
+TRANSACTION_SERVICE_URL=http://localhost:4003
+EXECUTION_MODE="service" | "cron-job"
+
 ```
 
 ## Development
