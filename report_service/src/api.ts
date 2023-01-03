@@ -30,12 +30,6 @@ router.get('/api/v1/cashbooks/:cashbookId/reports/daily/:day', auth, apiHandler(
     return report;
 }));
 
-/*router.get('/api/v1/cashbooks/:cashbookId/reports/daily', apiHandler(async (req: Request, res: Response) => {
-    var day = req.query.day
-    const cashbookId = req.params.cashbookId;
-    return reportService.getGroupedTransactions(cashbookId, req.query.start, req.query.end);
-}));*/
-
 router.get('/api/v1/cashbooks/:cashbookId/reports/weekly/current', auth, apiHandler(async (req: Request, res: Response) => {
     var now = new Date();
     var firstDayOfWeek = getFirstDayOfWeek(now);

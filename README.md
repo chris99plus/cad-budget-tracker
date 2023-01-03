@@ -19,9 +19,23 @@ docker compose up
 
 ### Get transaction by id
 `GET /api/v1/transactions/{id}`
+Response:
+```json
+{
+    "id": string,
+	"cashbookId": string,
+    "amount": numeric,
+    "type": "income"|"expense",
+    "description": string,
+    "comment": string,
+    "timestamp": datetime,
+    "category": TBD
+}
+```
 
 ### Delete transaction
 `DELETE /api/v1/transactions/{id}`
+Response: siehe oben [[#Error Handling]]
 
 ### Create transaction
 `POST /api/v1/cashbooks/{cashbookId}/transactions`
@@ -53,15 +67,15 @@ Response:
 
 
 
-Response: siehe oben [[#Error Handling]]
-
 ### Get all transactions
 `GET /api/v1/cashbooks/{cashbookId}/transactions`
 
-**Parameters (optional)**
+**Parameters (optional, passed inside the URL)**
 - start: datetime
 - end: datetime
 - type: "income" | "expense"
+Example:
+`/api/v1/cashbooks/exampleCashbook/transactions?start=2023-01-01T02:12:24&end=2023-01-05T22:00:00&type=expense`
 
 Response:
 ```json
@@ -109,7 +123,7 @@ Response:
 			{
 				"name": string,
 				"value": numeric,
-				"value": numeric
+				"percent": numeric
 			},
 			...
 		]
@@ -120,7 +134,7 @@ Response:
 			{
 				"name": string,
 				"value": numeric,
-				"value": numeric
+				"percent": numeric
 			},
 			...
 		]
@@ -144,7 +158,7 @@ Response:
 			{
 				"name": string,
 				"value": numeric,
-				"value": numeric
+				"percent": numeric
 			},
 			...
 		]
@@ -155,7 +169,7 @@ Response:
 			{
 				"name": string,
 				"value": numeric,
-				"value": numeric
+				"percent": numeric
 			},
 			...
 		]
@@ -179,7 +193,7 @@ Response:
 			{
 				"name": string,
 				"value": numeric,
-				"value": numeric
+				"percent": numeric
 			},
 			...
 		]
@@ -190,7 +204,7 @@ Response:
 			{
 				"name": string,
 				"value": numeric,
-				"value": numeric
+				"percent": numeric
 			},
 			...
 		]
