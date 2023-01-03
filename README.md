@@ -29,7 +29,7 @@ Response:
     "description": string,
     "comment": string,
     "timestamp": datetime,
-    "category": TBD
+    "category": string
 }
 ```
 
@@ -49,7 +49,7 @@ Body:
     "description": string,
     "comment": string,
     "timestamp": datetime,
-    "category": TBD
+    "category": string
 }
 ```
 Response:
@@ -62,7 +62,7 @@ Response:
     "description": string,
     "comment": string,
     "timestamp": datetime,
-    "category": TBD
+    "category": string
 }
 ```
 
@@ -247,7 +247,7 @@ Zieht sich alle cashbookIds und erstellt die dazugehörigen Wochenberichte. Dies
         ]
     }
 }
-
+```
 
 
 ## Authentication service
