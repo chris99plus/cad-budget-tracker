@@ -1,10 +1,10 @@
-import axios from 'axios';
+import Axios from 'axios';
 
-export default axios.create({
-    baseURL: 'http://localhost:4000/api/v1',
+Axios.defaults.baseURL = '';
+
+export default Axios.create({
+    baseURL: '',
     headers: {
-        'Content-type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,PATCH,OPTIONS'
+        'Content-type': 'application/json'
     }
 });
