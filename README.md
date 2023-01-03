@@ -82,16 +82,16 @@ Example:
 Response:
 ```json
 [
-	{
-		"id": string,
-		"cashbookId": string,
-	    "amount": numeric,
+    {
+        "id": string,
+        "cashbookId": string,
+        "amount": numeric,
         "type": "income"|"expense",
         "description": string,
         "comment": string,
         "timestamp": datetime,
-        "category": TBD
-	}
+        "category": string
+    }
 ]
 ```
 
@@ -102,8 +102,8 @@ Groups all transactions by cashbookId and returns a list of all cashbookIds that
 Response:
 ```json
 [
-	string,
-	...
+    string,
+    ...
 ]
 ```
 
@@ -118,29 +118,29 @@ for parameter **day** pass *today* to get the daily report of today or pass a ti
 Response:
 ```json
 {
-	"total": numeric,
-	"expenses": {
-	    "total": numeric,
-	    "categories": [
-			{
-				"name": string,
-				"value": numeric,
-				"percent": numeric
-			},
-			...
-		]
-	},
-	"income": {
-	    "total": numeric,
-	    "categories": [
-			{
-				"name": string,
-				"value": numeric,
-				"percent": numeric
-			},
-			...
-		]
-	}
+    "total": numeric,
+    "expenses": {
+        "total": numeric,
+        "categories": [
+            {
+                "name": string,
+                "value": numeric,
+                "percent": numeric
+            },
+            ...
+        ]
+    },
+    "income": {
+        "total": numeric,
+        "categories": [
+            {
+                "name": string,
+                "value": numeric,
+                "percent": numeric
+            },
+            ...
+        ]
+    }
 }
 ```
 
@@ -153,29 +153,29 @@ Berechnet einen Report über die Transaktionen der aktuellen Woche. Momentan wü
 Response:
 ```json
 {
-	"total": numeric,
-	"expenses": {
-	    "total": numeric,
-	    "categories": [
-			{
-				"name": string,
-				"value": numeric,
-				"percent": numeric
-			},
-			...
-		]
-	},
-	"income": {
-	    "total": numeric,
-	    "categories": [
-			{
-				"name": string,
-				"value": numeric,
-				"percent": numeric
-			},
-			...
-		]
-	}
+    "total": numeric,
+    "expenses": {
+        "total": numeric,
+        "categories": [
+            {
+                "name": string,
+                "value": numeric,
+                "percent": numeric
+            },
+            ...
+        ]
+    },
+    "income": {
+        "total": numeric,
+        "categories": [
+            {
+                "name": string,
+                "value": numeric,
+                "percent": numeric
+            },
+            ...
+        ]
+    }
 }
 ```
 
@@ -184,33 +184,33 @@ Liefert alle in der MongoDB gespeicherten Weekly-Reports eines cashbooks
 Response:
 ```json
 {
-	"_id": string,
-	"cashbookId": string,
-	"start": datetime,
-	"end": datetime,
-	"total": numeric,
-	"expenses": {
-	    "total": numeric,
-	    "categories": [
-			{
-				"name": string,
-				"value": numeric,
-				"percent": numeric
-			},
-			...
-		]
-	},
-	"income": {
-	    "total": numeric,
-	    "categories": [
-			{
-				"name": string,
-				"value": numeric,
-				"percent": numeric
-			},
-			...
-		]
-	}
+    "_id": string,
+    "cashbookId": string,
+    "start": datetime,
+    "end": datetime,
+    "total": numeric,
+    "expenses": {
+        "total": numeric,
+        "categories": [
+            {
+                "name": string,
+                "value": numeric,
+                "percent": numeric
+            },
+            ...
+        ]
+    },
+    "income": {
+        "total": numeric,
+        "categories": [
+            {
+                "name": string,
+                "value": numeric,
+                "percent": numeric
+            },
+            ...
+        ]
+    }
 },
 ...
 ```
@@ -220,32 +220,32 @@ Response:
 Zieht sich alle cashbookIds und erstellt die dazugehörigen Wochenberichte. Diese Funktion wird periodisch als Cron-Job ausgeführt. Die Reports werden in folgener Struktur in der MongoDB in der Collection reports gespeichert:
 ```json
 {
-	"cashbookId": string,
-	"start": datetime,
-	"end": datetime,
-	"total": numeric,
-	"expenses": {
-	    "total": numeric,
-	    "categories": [
-			{
-				"name": string,
-				"value": numeric,
-				"value": numeric
-			},
-			...
-		]
-	},
-	"income": {
-	    "total": numeric,
-	    "categories": [
-			{
-				"name": string,
-				"value": numeric,
-				"value": numeric
-			},
-			...
-		]
-	}
+    "cashbookId": string,
+    "start": datetime,
+    "end": datetime,
+    "total": numeric,
+    "expenses": {
+        "total": numeric,
+        "categories": [
+            {
+                "name": string,
+                "value": numeric,
+                "percent": numeric
+            },
+            ...
+        ]
+    },
+    "income": {
+        "total": numeric,
+        "categories": [
+            {
+                "name": string,
+                "value": numeric,
+                "percent": numeric
+            },
+            ...
+        ]
+    }
 }
 
 
