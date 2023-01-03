@@ -35,6 +35,7 @@ Response:
 
 ### Delete transaction
 `DELETE /api/v1/transactions/{id}`
+
 Response: siehe oben [[#Error Handling]]
 
 ### Create transaction
@@ -55,7 +56,7 @@ Response:
 ```json
 {
     "id": string,
-	"cashbookId": string,
+    "cashbookId": string,
     "amount": numeric,
     "type": "income"|"expense",
     "description": string,
@@ -74,6 +75,7 @@ Response:
 - start: datetime
 - end: datetime
 - type: "income" | "expense"
+
 Example:
 `/api/v1/cashbooks/exampleCashbook/transactions?start=2023-01-01T02:12:24&end=2023-01-05T22:00:00&type=expense`
 
