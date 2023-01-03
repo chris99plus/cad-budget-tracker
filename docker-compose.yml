@@ -54,6 +54,23 @@ services:
     networks:
     - cad_backend_network
 
+  report_service:
+    build: 
+      context: .
+      dockerfile: ./report_service/Dockerfile
+    ports:
+      - "4004:4000"
+    depends_on:
+      - mongodb
+    environment:
+      - SERVER_PORT=4000
+      - MONGODB_CONNECTION_STRING=mongodb://simba:theLionKing@cluster-fra.vm27r7k.mongodb.net/budget-tracker
+      - JWT_SECRET_KEY="9p4LA9^9@n4@z6sVTE6r3#hNhseHB8AwnzQ"
+      - TRANSACTION_SERVICE_URL=http://transaction_service:4000
+      - EXECUTION_MODE="service"
+    networks:
+    - cad_backend_network
+
 
 networks:
   cad_backend_network:
