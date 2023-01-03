@@ -7,4 +7,4 @@ terraform.tfvars
 terraform.tfstate
 .terraform.tfstate.lock.info
 .terraform.lock.hcl
-db
+volumes

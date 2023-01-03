@@ -4,7 +4,7 @@ services:
   mongodb:
     image: mongo
     volumes:
-      - ./db:/data/db:rw
+      - ./volumes/mongodb:/data/db:rw
     networks:
     - cad_backend_network
 
@@ -54,6 +54,23 @@ services:
     networks:
     - cad_backend_network
 
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./infrastructure/prometheus:/etc/prometheus
+    networks:
+    - cad_backend_network
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./volumes/grafana:/var/lib/grafana
+    networks:
+    - cad_backend_network
 
 networks:
   cad_backend_network:
