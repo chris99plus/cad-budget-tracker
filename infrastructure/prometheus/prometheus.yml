@@ -29,3 +29,8 @@ scrape_configs:
     static_configs:
       - targets: ['transaction_service:4000']
     metrics_path: '/swagger-stats/metrics'
+
+  - job_name: 'report_service'
+    static_configs:
+      - targets: ['report_service:4000']
+    metrics_path: '/swagger-stats/metrics'

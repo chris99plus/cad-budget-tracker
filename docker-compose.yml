@@ -19,7 +19,7 @@ services:
     environment:
       - JWT_SECRET_KEY="9p4LA9^9@n4@z6sVTE6r3#hNhseHB8AwnzQ"
       - SERVER_PORT=4000
-      - MONGODB_CONNECTION_STRING=mongodb://mongodb:27017/authentication
+      - MONGODB_CONNECTION_STRING=mongodb+srv://simba:theLionKing@cluster-fra.vm27r7k.mongodb.net/authentication
       - TENANT_SERVICE_URL=http://tenant_service:4000
     networks:
     - cad_backend_network
@@ -35,7 +35,7 @@ services:
     environment:
       - JWT_SECRET_KEY="9p4LA9^9@n4@z6sVTE6r3#hNhseHB8AwnzQ"
       - SERVER_PORT=4000
-      - MONGODB_CONNECTION_STRING=mongodb://mongodb:27017/authentication
+      - MONGODB_CONNECTION_STRING=mongodb+srv://simba:theLionKing@cluster-fra.vm27r7k.mongodb.net/authentication
     networks:
     - cad_backend_network
 
@@ -49,7 +49,7 @@ services:
       - mongodb
     environment:
       - SERVER_PORT=4000
-      - MONGODB_CONNECTION_STRING=mongodb://mongodb:27017/transaction
+      - MONGODB_CONNECTION_STRING=mongodb+srv://simba:theLionKing@cluster-fra.vm27r7k.mongodb.net/budget-tracker
       - JWT_SECRET_KEY="9p4LA9^9@n4@z6sVTE6r3#hNhseHB8AwnzQ"
     networks:
     - cad_backend_network
@@ -64,10 +64,10 @@ services:
       - mongodb
     environment:
       - SERVER_PORT=4000
-      - MONGODB_CONNECTION_STRING=mongodb://simba:theLionKing@cluster-fra.vm27r7k.mongodb.net/budget-tracker
+      - MONGODB_CONNECTION_STRING=mongodb+srv://simba:theLionKing@cluster-fra.vm27r7k.mongodb.net/budget-tracker
       - JWT_SECRET_KEY="9p4LA9^9@n4@z6sVTE6r3#hNhseHB8AwnzQ"
       - TRANSACTION_SERVICE_URL=http://transaction_service:4000
-      - EXECUTION_MODE="service"
+      - EXECUTION_MODE=service
     networks:
     - cad_backend_network
 
