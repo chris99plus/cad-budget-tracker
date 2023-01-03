@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import AuthService from '../../../../services/auth';
 
 // material-ui
@@ -32,6 +33,7 @@ import useScriptRef from 'hooks/useScriptRef';
 import Google from 'assets/images/icons/social-google.svg';
 import AnimateButton from 'ui-component/extended/AnimateButton';
 import { strengthColor, strengthIndicator } from 'utils/password-strength';
+import { useAuth } from '../../../../authContext';
 
 // assets
 import Visibility from '@mui/icons-material/Visibility';
@@ -51,9 +53,11 @@ const Register = ({ ...others }) => {
     const [tenantID, setTenantID] = useState(false);
     const [tenantName, setTenantName] = useState(false);
     const [error, setError] = useState(false);
+    const navigate = useNavigate();
 
     const [strength, setStrength] = useState(0);
     const [level, setLevel] = useState();
+    const { signIn, tokenChange } = useAuth();
 
     const handleClickShowPassword = () => {
         setShowPassword(!showPassword);
@@ -84,19 +88,31 @@ const Register = ({ ...others }) => {
                 console.log(tenantName);
                 AuthService.createUser(data)
                     .then((response) => {
-                        console.log(response.data);
+                        signIn(response.data);
+                        navigate('/');
                     })
                     .catch((e) => {
-                        console.log(e);
+                        setError('This Username or Email is already in use!');
                     });
             }
             if (others.licencetype == 'enterprise' && createTenant && tenantID) {
                 AuthService.createUser(data)
                     .then((response) => {
-                        console.log(response.data);
+                        signIn(response.data);
+                        navigate('/');
                     })
                     .catch((e) => {
-                        console.log(e);
+                        setError('This Username or Email is already in use!');
+                    });
+            }
+            if (others.licencetype == 'free' || others.licencetype == 'standard') {
+                AuthService.createUser(data)
+                    .then((response) => {
+                        signIn(response.data);
+                        navigate('/');
+                    })
+                    .catch((e) => {
+                        setError('This Username or Email is already in use!');
                     });
             }
         } else {
@@ -286,7 +302,7 @@ const Register = ({ ...others }) => {
                                 disabled
                             />
                         )}
-                        {others.licencetype == 'premium' && (
+                        {others.licencetype == 'standard' && (
                             <TextField
                                 fullWidth
                                 label="Credit-Card Number"

@@ -2,7 +2,10 @@ import http from '../http-common';
 
 class AuthService {
     createUser(data) {
-        return http.post('/auth/users', data);
+        return http.post('/api/v1/auth/users', data);
+    }
+    login(data) {
+        return http.post('/api/v1/auth/login', data);
     }
 }
 

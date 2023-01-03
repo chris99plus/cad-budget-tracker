@@ -1,11 +1,17 @@
 import http from '../http-common';
 
 class TransactionsDataService {
-    getAll() {
-        return http.get('/api/v1/transactions');
+    getAll(tokenState) {
+        const config = {
+            headers: { Authorization: `Bearer ${tokenState}` }
+        };
+        return http.get('/api/v1/transactions', config);
     }
-    postTransaction(data) {
-        return http.post('/api/v1/transactions', data);
+    postTransaction(data, tokenState) {
+        const config = {
+            headers: { Authorization: `Bearer ${tokenState}` }
+        };
+        return http.post('/api/v1/transactions', data, config);
     }
 }
 

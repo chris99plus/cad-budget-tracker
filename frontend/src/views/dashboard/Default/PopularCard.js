@@ -22,6 +22,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import { useAuth } from '../../../authContext';
 
 // apis
 import TrasactionDataService from '../../../services/transactions';
@@ -40,6 +41,7 @@ const PopularCard = ({ isLoading }) => {
     const [transactionComment, setTransactionComment] = useState(null);
     const [transactionCurrency, setTransactionCurrency] = useState('EUR');
     const [error, setError] = useState(false);
+    const { tokenState } = useAuth();
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -73,7 +75,7 @@ const PopularCard = ({ isLoading }) => {
                 timestamp: '',
                 category: ''
             };
-            TrasactionDataService.postTransaction(data)
+            TrasactionDataService.postTransaction(data, tokenState)
                 .then((response) => {
                     //console.log(response.data);
                 })
@@ -107,13 +109,12 @@ const PopularCard = ({ isLoading }) => {
     ];
 
     useEffect(() => {
-        TrasactionDataService.getAll()
+        TrasactionDataService.getAll(tokenState)
             .then((response) => {
-                setTransaction(response.data);
-                //console.log(response.data);
+                setTransaction(response.data.data);
             })
             .catch((e) => {
-                //console.log(e);
+                console.log(e);
             });
     }, [open]);
 
