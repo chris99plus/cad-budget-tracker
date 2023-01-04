@@ -33,8 +33,6 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 import Transitions from 'ui-component/extended/Transitions';
-import UpgradePlanCard from './UpgradePlanCard';
-import User1 from 'assets/images/users/user-round.svg';
 import { useAuth } from '../../../../authContext';
 
 // assets
@@ -111,20 +109,7 @@ const ProfileSection = () => {
                         lineHeight: 0
                     }
                 }}
-                icon={
-                    <Avatar
-                        src={User1}
-                        sx={{
-                            ...theme.typography.mediumAvatar,
-                            margin: '8px 0 8px 8px !important',
-                            cursor: 'pointer'
-                        }}
-                        ref={anchorRef}
-                        aria-controls={open ? 'menu-list-grow' : undefined}
-                        aria-haspopup="true"
-                        color="inherit"
-                    />
-                }
+                icon={<></>}
                 label={<IconSettings stroke={1.5} size="1.5rem" color={theme.palette.primary.main} />}
                 variant="outlined"
                 ref={anchorRef}
@@ -170,7 +155,6 @@ const ProfileSection = () => {
                                     </Box>
                                     <PerfectScrollbar style={{ height: '100%', maxHeight: 'calc(100vh - 250px)', overflowX: 'hidden' }}>
                                         <Box sx={{ p: 2 }}>
-                                            <UpgradePlanCard />
                                             <List
                                                 component="nav"
                                                 sx={{
