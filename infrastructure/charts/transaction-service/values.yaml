@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  registry: localhost:32000
+  registry: ''
   repository: transaction_service
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
@@ -27,7 +27,7 @@ service:
   port: 80
 
 db:
-  enabled: false
+  internalEnabled: true
   # host: localhost
   port: 27017
   collection: transaction
@@ -50,3 +50,5 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+# tenantSecret: <your_secret>
