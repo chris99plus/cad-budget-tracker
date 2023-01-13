@@ -1,9 +1,41 @@
 import express, { Request, Response } from 'express';
-import { apiHandler, auth } from '../../microservice_helpers';
+import { apiHandler, auth, getUserInformation } from '../../microservice_helpers';
 import { TransactionModel } from './models/transactions';
-import { on } from 'stream';
 
 const router = express.Router();
+
+router.get('/api/v1/transactions', auth, apiHandler(async (req: Request, res: Response) => {
+    let userInformation = getUserInformation(req);
+
+    let cashbookId = userInformation?.cashbookId;
+
+    if(cashbookId != null) {
+        return await TransactionModel.find({'cashbookId':cashbookId});
+    }
+    else {
+        return [];
+    }
+}));
+
+router.post('/api/v1/transactions', auth, apiHandler(async (req: Request, res: Response) => {
+    let userInformation = getUserInformation(req);
+    let cashbookId = userInformation?.cashbookId;
+    if(cashbookId == null) return;
+
+    const transactionData = req.body;
+
+    const newTransaction = new TransactionModel({
+        amount: transactionData.amount,
+        cashbookId: cashbookId,
+        type: transactionData.type,
+        description: transactionData.description,
+        comment: transactionData.comment,
+        timestamp: transactionData.timestamp,
+        category: transactionData.category
+    });
+
+    return await newTransaction.save();
+}));
 
 router.get('/api/v1/transactions/:transactionId', auth, apiHandler(async (req: Request, res: Response) => {
     let transaction = await TransactionModel.findById(req.params.transactionId);
@@ -21,6 +53,7 @@ router.delete('/api/v1/transactions/:transactionId', auth, apiHandler(async (req
 }));
 
 
+// TODO: Restrict permission to use this endpoint only from microservices
 router.post('/api/v1/cashbooks/:cashbookId/transactions', auth, apiHandler(async (req: Request, res: Response) => {
     const transactionData = req.body;
 
@@ -38,6 +71,7 @@ router.post('/api/v1/cashbooks/:cashbookId/transactions', auth, apiHandler(async
 }));
 
 
+// TODO: Restrict permission to use this endpoint only from microservices
 router.get('/api/v1/cashbooks/:cashbookId/transactions', auth, apiHandler(async (req: Request, res: Response) => {
     const cashbookId = req.params.cashbookId;
     const start = req.query.start;
@@ -58,6 +92,8 @@ router.get('/api/v1/cashbooks/:cashbookId/transactions', auth, apiHandler(async 
     return await TransactionModel.find(query);
 }));
 
+
+// TODO: Restrict permission to use this endpoint only from microservices
 router.get('/api/v1/cashbooks/cashbookIds', auth,  apiHandler(async (req: Request, res: Response) => {
     var cashbooks = await TransactionModel.aggregate([
         {

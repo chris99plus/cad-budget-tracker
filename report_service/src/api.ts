@@ -7,7 +7,9 @@ import { TransactionServiceWrapperImpl } from './service/TransactionServiceWrapp
 
 const router = express.Router()
 
-const transactionServiceWrapper = new TransactionServiceWrapperImpl("http://localhost:4003")
+const transactionServiceUrl = process.env.TRANSACTION_SERVICE_URL ?? "";
+
+const transactionServiceWrapper = new TransactionServiceWrapperImpl(transactionServiceUrl)
 const reportService = new ReportService(transactionServiceWrapper);
 
 

@@ -64,7 +64,7 @@ services:
       - mongodb
     environment:
       - SERVER_PORT=4000
-      - MONGODB_CONNECTION_STRING=mongodb://simba:theLionKing@cluster-fra.vm27r7k.mongodb.net/budget-tracker
+      - MONGODB_CONNECTION_STRING=mongodb://mongodb:27017/report
       - JWT_SECRET_KEY="9p4LA9^9@n4@z6sVTE6r3#hNhseHB8AwnzQ"
       - TRANSACTION_SERVICE_URL=http://transaction_service:4000
       - EXECUTION_MODE="service"
