@@ -4,7 +4,7 @@ services:
   mongodb:
     image: mongo
     volumes:
-      - ./db:/data/db:rw
+      - db_volume:/data/db:rw
     networks:
     - cad_backend_network
 
@@ -83,3 +83,6 @@ services:
 networks:
   cad_backend_network:
     name: cad_backend_network
+
+volumes:
+  db_volume:
