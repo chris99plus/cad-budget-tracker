@@ -71,6 +71,14 @@ services:
     networks:
     - cad_backend_network
 
+  frontend:
+    build: 
+      context: .
+      dockerfile: ./frontend/Dockerfile
+    ports:
+      - "80:80"
+    networks:
+    - cad_backend_network
 
 networks:
   cad_backend_network:
