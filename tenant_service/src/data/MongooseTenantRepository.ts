@@ -36,6 +36,7 @@ export class MongooseTenantRepository implements TenantRepository {
             return await createdTenant.save();
         } catch(err: any) {
             if(!(err instanceof MongoServerError)) {
+                console.log(err);
                 throw err;
             }
             
@@ -43,6 +44,7 @@ export class MongooseTenantRepository implements TenantRepository {
                 throw "The given tenant name is already taken."
             }
             else {
+                console.log(err);
                 throw "Failed to create tenant"
             }
         }
