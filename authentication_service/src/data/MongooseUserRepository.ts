@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { MongoServerError} from 'mongodb';
+import { MongoServerError } from 'mongodb';
 import { User, UserRepository } from "./UserRepository";
 
 const DUPLICATE_KEY_ERROR = 11000;
@@ -36,22 +36,24 @@ export class MongooseUserRepository implements UserRepository {
 
         try {
             return await createdUser.save();
-        } catch(err: any) {
-            if(!(err instanceof MongoServerError)) {
+        } catch (err: any) {
+            if (!(err instanceof MongoServerError)) {
+                console.log(err);
                 throw err;
             }
-            
-            if(err.code == DUPLICATE_KEY_ERROR) {
+
+            if (err.code == DUPLICATE_KEY_ERROR) {
                 // TODO: Specific error message depending if the username or email is duplicate
                 throw "The given username or email is already taken."
             }
             else {
+                console.log(err);
                 throw "Failed to create user"
             }
         }
     }
 
-    async getUserByName(username: string): Promise<User|null> {
+    async getUserByName(username: string): Promise<User | null> {
         const user = await UserModel.findOne({
             username: username
         });
