@@ -5,6 +5,9 @@ on:
     paths:
       - report_service/**
       - microservice_helpers/**
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 run-name: Build report service
@@ -28,18 +31,8 @@ jobs:
 
       - name: Build docker image
         uses: docker/build-push-action@v3
-        if: ${{ github.ref != 'refs/heads/main' }}
         with:
           context: .
           file: report_service/Dockerfile
-          push: false
           tags: ghcr.io/chris99plus/report_service:latest
-      
-      - name: Build and push
-        uses: docker/build-push-action@v3
-        if: ${{ github.ref == 'refs/heads/main' }}
-        with:
-          context: .
-          file: report_service/Dockerfile
-          push: true
-          tags: ghcr.io/chris99plus/report_service:latest
+          push: ${{ github.ref == 'refs/heads/main' }}
