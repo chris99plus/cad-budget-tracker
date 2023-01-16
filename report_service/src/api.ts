@@ -30,7 +30,6 @@ router.get('/api/v1/reports/daily/:day', auth, apiHandler(async (req: Request, r
         beginOfDay.setUTCHours(0,0,0,0);
         endOfDay = new Date(beginOfDay.getTime() + (24 * 60 * 60 * 1000));
     }
-    
     const report = await reportService.createReport(cashbookId, beginOfDay, endOfDay);
     return report;
 }));

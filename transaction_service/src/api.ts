@@ -22,15 +22,15 @@ router.post('/api/v1/transactions', auth, apiHandler(async (req: Request, res: R
     let cashbookId = userInformation?.cashbookId;
     if(cashbookId == null) return;
 
-    const transactionData = req.body;
 
+    const transactionData = req.body;
     const newTransaction = new TransactionModel({
         amount: transactionData.amount,
         cashbookId: cashbookId,
         type: transactionData.type,
         description: transactionData.description,
         comment: transactionData.comment,
-        timestamp: transactionData.timestamp,
+        timestamp: new Date(),
         category: transactionData.category
     });
 

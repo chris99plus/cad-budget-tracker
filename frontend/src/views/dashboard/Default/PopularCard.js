@@ -108,6 +108,17 @@ const PopularCard = ({ isLoading }) => {
         }
     ];
 
+    const types = [
+        {
+            value: 'income',
+            label: 'Income'
+        },
+        {
+            value: 'expense',
+            label: 'Expense'
+        }
+    ];
+
     useEffect(() => {
         TrasactionDataService.getAll(tokenState)
             .then((response) => {
@@ -171,14 +182,20 @@ const PopularCard = ({ isLoading }) => {
                                             </TextField>
                                             <TextField
                                                 margin="dense"
-                                                id="name"
-                                                label="Content of your Transaction"
-                                                type="text"
+                                                id="outlined-select-currency"
                                                 fullWidth
-                                                variant="outlined"
-                                                autoComplete="off"
+                                                select
+                                                label="Select"
+                                                defaultValue=""
+                                                helperText="Please select the transaction type"
                                                 onChange={(newValue) => setTransactionContent(newValue.target.value)}
-                                            />
+                                            >
+                                                {types.map((option) => (
+                                                    <MenuItem key={option.value} value={option.value}>
+                                                        {option.label}
+                                                    </MenuItem>
+                                                ))}
+                                            </TextField>
                                             <TextField
                                                 margin="dense"
                                                 id="name"
