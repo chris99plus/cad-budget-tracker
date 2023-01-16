@@ -88,7 +88,7 @@ services:
     volumes:
     # defining our main config parameters for provisioning if we have datasource
     # commented it out as for now we do not need it
-    # - ./provisioning/datasources:/etc/grafana/provisioning/datasources/
+    - ./infrastructure/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources/
    # defining our main config parameters for provisioning for dashboards
     - ./infrastructure/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards/
     ports:

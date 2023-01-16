@@ -24,14 +24,13 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 1,
   "links": [],
   "liveNow": false,
   "panels": [
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "WWdol3p4k"
+        "uid": "PBFA97CFB590B2093"
       },
       "description": "",
       "fieldConfig": {
@@ -81,7 +80,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "WWdol3p4k"
+            "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "builder",
           "expr": "api_all_request_total",
@@ -97,7 +96,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "WWdol3p4k"
+        "uid": "PBFA97CFB590B2093"
       },
       "description": "",
       "fieldConfig": {
@@ -175,7 +174,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "WWdol3p4k"
+            "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "builder",
           "expr": "api_request_total{job=\"authentication_service\"}",
@@ -191,7 +190,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "WWdol3p4k"
+        "uid": "PBFA97CFB590B2093"
       },
       "description": "",
       "fieldConfig": {
@@ -269,7 +268,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "WWdol3p4k"
+            "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
           "expr": "api_all_request_total{job=\"tenant_service\"}",
@@ -285,7 +284,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "WWdol3p4k"
+        "uid": "PBFA97CFB590B2093"
       },
       "description": "",
       "fieldConfig": {
@@ -311,7 +310,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
+        "h": 9,
         "w": 12,
         "x": 0,
         "y": 8
@@ -331,12 +330,12 @@
         },
         "showUnfilled": true
       },
-      "pluginVersion": "9.3.2",
+      "pluginVersion": "9.1.0",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "WWdol3p4k"
+            "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
           "expr": "api_request_total{job=\"report_service\"}",
@@ -352,7 +351,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "WWdol3p4k"
+        "uid": "PBFA97CFB590B2093"
       },
       "description": "",
       "fieldConfig": {
@@ -378,7 +377,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
+        "h": 9,
         "w": 12,
         "x": 12,
         "y": 8
@@ -398,12 +397,12 @@
         },
         "showUnfilled": true
       },
-      "pluginVersion": "9.3.2",
+      "pluginVersion": "9.1.0",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "WWdol3p4k"
+            "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
           "expr": "api_request_total{job=\"transaction_service\"}",
@@ -415,6 +414,70 @@
       ],
       "title": "Transaction Service",
       "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 24,
+        "x": 0,
+        "y": 17
+      },
+      "id": 12,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "9.1.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "builder",
+          "expr": "api_all_errors_total",
+          "format": "time_series",
+          "legendFormat": "{{job}}",
+          "range": true,
+          "refId": "api_all_errors_total"
+        }
+      ],
+      "title": "Total Errors",
+      "type": "gauge"
     }
   ],
   "refresh": false,
