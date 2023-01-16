@@ -1,0 +1,12 @@
+dependencies:
+- name: authentication-service
+  repository: file://../authentication-service
+  version: 0.1.0
+- name: frontend
+  repository: file://../frontend
+  version: 0.1.0
+- name: mongodb
+  repository: https://charts.bitnami.com/bitnami
+  version: 13.6.3
+digest: sha256:45bd8ea86414dbf0ec04f781ce030abe2640f7023c88b88c6065944868e2266b
+generated: "2023-01-16T13:10:04.088594691+01:00"

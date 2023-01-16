@@ -41,11 +41,11 @@ spec:
               value: "80"
             - name: MONGODB_CONNECTION_STRING
               value: {{ include "authenticationService.connection_string" . }}
-            {{- if .Values.tenantSecret }}
+            {{- if .Values.appSecret }}
             - name: JWT_SECRET_KEY
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.tenantSecret }}
+                  name: {{ .Values.appSecret }}
                   key: jwtSecret
             {{- end }}
           # livenessProbe:

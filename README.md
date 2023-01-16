@@ -22,6 +22,8 @@ Use minikube docker environment as your local environment
 and build containers for the environment:
 ```
 eval $(minikube docker-env)
+docker build -t frontend:0.1.0 -f ./frontend/Dockerfile .
+docker build -t authentication_service:0.1.0 -f ./authentication_service/Dockerfile .
 docker build -t transaction_service:0.1.0 -f ./transaction_service/Dockerfile .
 ```
 

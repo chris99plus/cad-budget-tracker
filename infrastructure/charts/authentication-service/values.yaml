@@ -21,6 +21,8 @@ db:
   port: 27017
   collection: authentication
 
+# appSecret: ""
+
 mongodb:
   auth:
     enabled: false

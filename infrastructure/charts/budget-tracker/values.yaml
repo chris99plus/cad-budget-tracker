@@ -1,7 +1,8 @@
-# Default values for tenant.
+# Default values for budget-tracker.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
@@ -11,17 +12,28 @@ ingress:
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts: []
-    # - host: tenant.cad.local
+    # - host: cad.local
   tls: []
   #  - secretName: tenant-tls
   #    hosts:
-  #      - tenant.cad.local
+  #      - cad.local
+
+appSecret:
+  create: true
+  name: budget-tracker
+  jwtSecret: "changeme"
 
 mongodb:
   fullnameOverride: mongodb
+  auth:
+    enabled: false
 
-transaction-service:
-  fullnameOverride: transaction-service
+authentication-service:
+  fullnameOverride: authentication-service
   db:
     internalEnabled: false
     host: mongodb
+  appSecret: budget-tracker
+
+frontend:
+  fullnameOverride: frontend
