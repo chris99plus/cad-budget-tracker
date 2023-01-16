@@ -1,7 +1,6 @@
 import express, { Request, Response } from 'express';
-import { apiHandler, auth } from '../../microservice_helpers';
+import { apiHandler, auth, getUserInformation } from '../../microservice_helpers';
 import { ReportModel } from './models/reports';
-
 import { ReportService, getFirstDayOfWeek } from './service/ReportService';
 import { TransactionServiceWrapperImpl } from './service/TransactionServiceWrapper';
 
@@ -13,7 +12,11 @@ const transactionServiceWrapper = new TransactionServiceWrapperImpl(transactionS
 const reportService = new ReportService(transactionServiceWrapper);
 
 
-router.get('/api/v1/cashbooks/:cashbookId/reports/daily/:day', auth, apiHandler(async (req: Request, res: Response) => {
+router.get('/api/v1/reports/daily/:day', auth, apiHandler(async (req: Request, res: Response) => {
+    let userInformation = getUserInformation(req);
+    let cashbookId = userInformation?.cashbookId;
+    if(cashbookId == null) return;
+
     var day = req.params.day;
     var beginOfDay = new Date();
     var endOfDay = new Date();
@@ -28,7 +31,7 @@ router.get('/api/v1/cashbooks/:cashbookId/reports/daily/:day', auth, apiHandler(
         endOfDay = new Date(beginOfDay.getTime() + (24 * 60 * 60 * 1000));
     }
     
-    const report = await reportService.createReport(req.params.cashbookId, beginOfDay, endOfDay);
+    const report = await reportService.createReport(cashbookId, beginOfDay, endOfDay);
     return report;
 }));
 

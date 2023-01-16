@@ -67,15 +67,13 @@ const Login = () => {
                                     </Grid>
                                     <Grid item xs={12}>
                                         <Grid item container direction="column" alignItems="center" xs={12}>
-                                            <Typography
-                                                component={Link}
-                                                to="/signin?licenceType=free"
-                                                replace={true}
+                                            <a
+                                                href="http://localhost:3001"
                                                 variant="subtitle1"
-                                                sx={{ textDecoration: 'none' }}
+                                                style={{ textDecoration: 'none', color: 'black', fontWeight: '500' }}
                                             >
                                                 Don&apos;t have an account?
-                                            </Typography>
+                                            </a>
                                         </Grid>
                                     </Grid>
                                 </Grid>

@@ -23,7 +23,15 @@ export function AuthProvider({ children }) {
         setTokenState(false);
     }
 
+    cookies.addChangeListener(callback);
+
+    function callback(cookie_change) {
+        setTokenState(cookie_change.value);
+    }
+
     useEffect(() => {
+        cookies.addChangeListener(callback);
+
         if (token) {
             setTokenState(token);
         } else {

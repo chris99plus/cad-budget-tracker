@@ -67,7 +67,7 @@ services:
       - MONGODB_CONNECTION_STRING=mongodb://mongodb:27017/report
       - JWT_SECRET_KEY="9p4LA9^9@n4@z6sVTE6r3#hNhseHB8AwnzQ"
       - TRANSACTION_SERVICE_URL=http://transaction_service:4000
-      - EXECUTION_MODE="service"
+      - EXECUTION_MODE=service
     networks:
     - cad_backend_network
 
@@ -76,7 +76,16 @@ services:
       context: .
       dockerfile: ./frontend/Dockerfile
     ports:
-      - "80:80"
+      - "81:80"
+    networks:
+    - cad_backend_network
+
+  start_page:
+    build: 
+      context: .
+      dockerfile: ./start_page/Dockerfile
+    ports:
+      - "82:80"
     networks:
     - cad_backend_network
 
