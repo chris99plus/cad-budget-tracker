@@ -83,11 +83,9 @@ services:
   grafana:
     image: grafana/grafana-oss:9.1.0
     container_name: grafana
-    # if you are running as root then set it to 0 else find the right id with the id command
     user: "0"
     volumes:
-    # defining our main config parameters for provisioning if we have datasource
-    # commented it out as for now we do not need it
+    # defining our main config parameters for provisioning prometheus datasource
     - ./infrastructure/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources/
    # defining our main config parameters for provisioning for dashboards
     - ./infrastructure/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards/
@@ -96,33 +94,6 @@ services:
     restart: unless-stopped
     networks:
       - cad_backend_network
-
-#  grafana:
-#    image: grafana/grafana
-    #build:
-    #  context: ""
-    #  dockerfile: ./infrastructure/grafana/Dockerfile
-#    container_name: grafana
-#    ports:
-#      - "3000:3000"
-#    volumes:
-#      - ./infrsturcture/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
-#      - ./infrsturcture/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
-      #- ./infrsturcture/grafana/dashboards:/etc/grafana/dashboards
-#      - grafana-data:/var/lib/grafana
-#      - ./insfrastructure/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
-#      - ./insfrastructure/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources/
-#      - ./insfrastructure/grafana/dashboards:/etc/grafana/dashboards
-#      - grafana-data:/var/lib/grafana
-#      - ./insfrastructure/grafana/grafana.ini:/etc/grafana/grafana.ini
-#      - ./insfrastructure/grafana/provisioning/dashboards/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml
-#      - ./insfrastructure/grafana/provisioning/datasources/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
-#      - ./insfrastructure/grafana/dashboards:/var/lib/grafana/dashboards
-#      - ./volumes/grafana:/var/lib/grafana
-#      - ./volumes/grafana/dashboard.yaml:/etc/grafana/provisioning/dashboards/main.yaml
-#      - ./volumes/grafana/dashboards:/var/lib/grafana/dashboards
-#    networks:
-#      - cad_backend_network
 
   frontend:
     build: 
