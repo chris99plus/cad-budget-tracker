@@ -40,7 +40,8 @@ router.get('/api/v1/reports/weekly/current', auth, apiHandler(async (req: Reques
     if(cashbookId == null) return;
     
     var now = new Date();
-    var firstDayOfWeek = getFirstDayOfWeek(now);
+
+    var firstDayOfWeek = getFirstDayOfWeek(new Date());
     const report = reportService.createReport(cashbookId, firstDayOfWeek, now);
     return await report;
 }));
