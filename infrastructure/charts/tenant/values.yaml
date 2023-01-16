@@ -36,6 +36,8 @@ authenticationService: {}
 
 mongodb:
   fullnameOverride: mongodb
+  auth:
+    enabled: false
 
 transaction-service:
   fullnameOverride: transaction-service
