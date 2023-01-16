@@ -22,7 +22,6 @@ router.post('/api/v1/transactions', auth, apiHandler(async (req: Request, res: R
     let cashbookId = userInformation?.cashbookId;
     if(cashbookId == null) return;
 
-
     const transactionData = req.body;
     const newTransaction = new TransactionModel({
         amount: transactionData.amount,
@@ -47,6 +46,7 @@ router.get('/api/v1/transactions/:transactionId', auth, apiHandler(async (req: R
     return transaction;
 }));
 
+
 router.delete('/api/v1/transactions/:transactionId', auth, apiHandler(async (req: Request, res: Response) => {
     await TransactionModel.findByIdAndDelete(req.params.transactionId);
     return {};
@@ -54,12 +54,13 @@ router.delete('/api/v1/transactions/:transactionId', auth, apiHandler(async (req
 
 
 // TODO: Restrict permission to use this endpoint only from microservices
+// Note: This endpoint may be used by a microservice that create configured repeative transactions (e.g. monthly income)
 router.post('/api/v1/cashbooks/:cashbookId/transactions', auth, apiHandler(async (req: Request, res: Response) => {
     const transactionData = req.body;
 
     const newTransaction = new TransactionModel({
         amount: transactionData.amount,
-        cashbookId: transactionData.cashbookId,
+        cashbookId: req.params.cashbookId,
         type: transactionData.type,
         description: transactionData.description,
         comment: transactionData.comment,
@@ -107,6 +108,44 @@ router.get('/api/v1/cashbooks/cashbookIds', auth,  apiHandler(async (req: Reques
         cashbookIds.push(oneCashbook._id);
     }
     return cashbookIds;
+}));
+
+router.get('/api/v1/cashbook/balance', auth, apiHandler(async (req: Request, res: Response) => {
+    let userInformation = getUserInformation(req);
+
+    let cashbookId = userInformation?.cashbookId;
+    let income = 0;
+    let expense = 0;
+    let total = 0;
+    if(cashbookId != null) {
+        const pipeline = [{
+            $match: {
+                cashbookId: cashbookId
+            }
+        },
+        {
+            $group: {
+                _id: "$type",
+                value: {$sum: "$amount"}
+            }
+        }]
+        
+        const balance = await TransactionModel.aggregate(pipeline);
+        console.log(balance);
+        for(var transactionSum of balance) {
+            if(transactionSum._id == "income") {
+                income = transactionSum.value;
+            } else if(transactionSum._id == "expense") {
+                expense = transactionSum.value
+            }
+        }
+        total = income - expense;  
+    }
+    return {
+        total: total,
+        income: income,
+        expense: expense
+    }
 }));
 
 export { router as transaction_router }

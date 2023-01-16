@@ -34,15 +34,23 @@ router.get('/api/v1/reports/daily/:day', auth, apiHandler(async (req: Request, r
     return report;
 }));
 
-router.get('/api/v1/cashbooks/:cashbookId/reports/weekly/current', auth, apiHandler(async (req: Request, res: Response) => {
+router.get('/api/v1/reports/weekly/current', auth, apiHandler(async (req: Request, res: Response) => {
+    let userInformation = getUserInformation(req);
+    let cashbookId = userInformation?.cashbookId;
+    if(cashbookId == null) return;
+    
     var now = new Date();
     var firstDayOfWeek = getFirstDayOfWeek(now);
-    const report = reportService.createReport(req.params.cashbookId, firstDayOfWeek, now);
+    const report = reportService.createReport(cashbookId, firstDayOfWeek, now);
     return await report;
 }));
 
-router.get('/api/v1/cashbooks/:cashbookId/reports/weekly', auth, apiHandler(async (req: Request, res: Response) => {
-    return await ReportModel.find({"cashbookId": req.params.cashbookId});
+router.get('/api/v1/reports/weekly/all', auth, apiHandler(async (req: Request, res: Response) => {
+    let userInformation = getUserInformation(req);
+    let cashbookId = userInformation?.cashbookId;
+    if(cashbookId == null) return;
+
+    return await ReportModel.find({"cashbookId": cashbookId});
 }));
 
 
