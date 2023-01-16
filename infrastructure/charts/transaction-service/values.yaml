@@ -32,6 +32,8 @@ db:
   port: 27017
   collection: transaction
 
+# tenantSecret: <your_secret>
+
 mongodb:
   auth:
     enabled: false
@@ -50,5 +52,3 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
-
-# tenantSecret: <your_secret>

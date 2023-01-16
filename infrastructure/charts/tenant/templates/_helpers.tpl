@@ -60,3 +60,14 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Create the name of the tenant secret
+*/}}
+{{- define "tenant.secretName" -}}
+{{- if .Values.tenantSecret.create }}
+{{- default (include "tenant.fullname" .) .Values.tenantSecret.name }}
+{{- else }}
+{{- default "default" .Values.tenantSecret.name }}
+{{- end }}
+{{- end }}

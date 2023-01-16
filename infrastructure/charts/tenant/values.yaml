@@ -5,6 +5,10 @@
 nameOverride: ""
 fullnameOverride: ""
 
+service:
+  type: ExternalName
+  port: 80
+
 ingress:
   className: ""
   annotations: {}
@@ -17,6 +21,19 @@ ingress:
   #    hosts:
   #      - tenant.cad.local
 
+tenantSecret:
+  create: true
+  name: tenant
+  # jwtSecret: "changeme"
+
+frontendService: {}
+  # name: ""
+  # namespace: ""
+
+authenticationService: {}
+  # name: ""
+  # namespace: ""
+
 mongodb:
   fullnameOverride: mongodb
 
@@ -25,3 +42,4 @@ transaction-service:
   db:
     internalEnabled: false
     host: mongodb
+  tenantSecret: tenant
