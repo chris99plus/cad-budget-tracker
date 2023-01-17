@@ -8,7 +8,8 @@ const transactionSchema = new mongoose.Schema({
     description: String,
     comment: String,
     timestamp: Date,
-    category: String
+    category: String,
+    url: String
 }, {
     versionKey: false
 });

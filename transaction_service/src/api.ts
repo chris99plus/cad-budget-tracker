@@ -1,8 +1,23 @@
 import express, { Request, Response } from 'express';
 import { apiHandler, auth, getUserInformation } from '../../microservice_helpers';
 import { TransactionModel } from './models/transactions';
+import formidable, { Files } from 'formidable';
+import { AzureBlobStorageFileSystem } from './service/AzureBlobStorageFileSystem';
+import { isObjectIdOrHexString } from 'mongoose';
+import { resolve } from 'path';
 
 const router = express.Router();
+
+function fileSystemFactory() {
+    process.env.AZURE_BLOB_STORAGE_CONNECTION_STRING
+    const connectionString = process.env.AZURE_BLOB_STORAGE_CONNECTION_STRING;
+    const containerName = process.env.AZURE_BLOB_STORAGE_CONTAINER_NAME;
+    
+    return new AzureBlobStorageFileSystem(
+        connectionString,
+        containerName
+    );
+}
 
 router.get('/api/v1/transactions', auth, apiHandler(async (req: Request, res: Response) => {
     let userInformation = getUserInformation(req);
@@ -22,19 +37,41 @@ router.post('/api/v1/transactions', auth, apiHandler(async (req: Request, res: R
     let cashbookId = userInformation?.cashbookId;
     if(cashbookId == null) return;
 
-    const transactionData = req.body;
-    const newTransaction = new TransactionModel({
-        amount: transactionData.amount,
-        cashbookId: cashbookId,
-        type: transactionData.type,
-        description: transactionData.description,
-        comment: transactionData.comment,
-        timestamp: new Date(),
-        category: transactionData.category
+    const form = formidable({ multiples: true });
+    var result = await new Promise(function (resolve, reject) {
+        form.parse(req, async function (err, fields, files) {
+            const transactionData = fields;
+            const newTransaction = new TransactionModel({
+                amount: transactionData.amount,
+                cashbookId: cashbookId,
+                type: transactionData.type,
+                description: transactionData.description,
+                comment: transactionData.comment,
+                timestamp: new Date(),
+                category: transactionData.category
+            });
+            var result = await newTransaction.save();
+    
+            if(files.bill != null) {
+                const fileSystem = fileSystemFactory();
+                let content = files.bill as formidable.File;
+                await fileSystem.storeUploadedFile(
+                    content.filepath,
+                    result._id.toString()
+                )
+                let url = await fileSystem.getBlobUrl(result._id.toString());
+                const update = { url: url }
+                const finalTransaction = await TransactionModel.findByIdAndUpdate(result._id, update, {
+                    returnOriginal: false
+                });
+                resolve(finalTransaction);
+                return;
+            }
+            resolve(result);
+        });
     });
-
-    return await newTransaction.save();
-}));
+    return result;
+}));   
 
 router.get('/api/v1/transactions/:transactionId', auth, apiHandler(async (req: Request, res: Response) => {
     let transaction = await TransactionModel.findById(req.params.transactionId);
