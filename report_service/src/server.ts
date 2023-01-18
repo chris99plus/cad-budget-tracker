@@ -6,11 +6,15 @@ import { connectDatabase } from './db';
 import { TransactionServiceWrapperImpl } from './service/TransactionServiceWrapper';
 import { ReportService, getFirstDayOfWeek } from './service/ReportService';
 import { exit } from 'process';
+import * as swStats from "swagger-stats";
 
 dotenv.config();
 
 const app = express();
 app.use(json());
+app.use(swStats.getMiddleware({
+    uriPath: '/swagger-stats'
+}));
 app.use(report_router);
 
 const port = process.env.SERVER_PORT;
