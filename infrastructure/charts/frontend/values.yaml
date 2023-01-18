@@ -5,13 +5,15 @@
 replicaCount: 1
 
 image:
-  registry: ''
+  registry: ghcr.io/chris99plus
   repository: frontend
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+  tag: latest
 
-imagePullSecrets: []
+imagePullSecrets:
+  - name: regcred
+
 nameOverride: ""
 fullnameOverride: ""
 
