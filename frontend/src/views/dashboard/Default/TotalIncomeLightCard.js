@@ -86,7 +86,7 @@ const TotalIncomeLightCard = ({ isLoading }) => {
                                         mb: 0.45
                                     }}
                                     primary={<Typography variant="h4">
-                                             {reportForCurrentWeek? reportForCurrentWeek.income.total:""} €
+                                             {reportForCurrentWeek? reportForCurrentWeek.income.total:"0"} €
                                             </Typography>
                                     }
                                     secondary={
