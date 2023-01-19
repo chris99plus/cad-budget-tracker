@@ -57,7 +57,6 @@ const TotalIncomeLightCard = ({ isLoading }) => {
             });
     }, []);
 
-    console.log(reportForCurrentWeek);
     return (
         <>
             {isLoading ? (
