@@ -44,11 +44,11 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
 
 const TotalIncomeLightCard = ({ isLoading }) => {
     const theme = useTheme();
-    const [reportForCurrentWeek, setReportForCurrentWeek] = useState([]);
+    const [reportForCurrentWeek, setReportForCurrentWeek] = useState();
     const { tokenState } = useAuth();
 
     useEffect(() => {
-        ReportDataService.getReportForOneDay(tokenState)
+        ReportDataService.getReportForCurrentWeek(tokenState)
             .then((response) => {
                 setReportForCurrentWeek(response.data.data);
             })
@@ -85,7 +85,10 @@ const TotalIncomeLightCard = ({ isLoading }) => {
                                         mt: 0.45,
                                         mb: 0.45
                                     }}
-                                    primary={<Typography variant="h4">$203k</Typography>}
+                                    primary={<Typography variant="h4">
+                                             {reportForCurrentWeek? reportForCurrentWeek.income.total:""} €
+                                            </Typography>
+                                    }
                                     secondary={
                                         <Typography
                                             variant="subtitle2"

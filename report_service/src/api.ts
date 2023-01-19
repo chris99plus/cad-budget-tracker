@@ -51,8 +51,8 @@ router.get('/api/v1/reports/monthly/current', auth, apiHandler(async (req: Reque
     
     var now = new Date();
 
-    var firstDayOfWeek = getFirstDayOfMonth(new Date());
-    const report = reportService.createReport(cashbookId, firstDayOfWeek, now);
+    var firstDayOfMonth = getFirstDayOfMonth(new Date());
+    const report = reportService.createReport(cashbookId, firstDayOfMonth, now);
     return await report;
 }));
 
