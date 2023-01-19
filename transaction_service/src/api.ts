@@ -1,16 +1,29 @@
 import express, { Request, Response } from 'express';
 import { apiHandler, auth, getUserInformation } from '../../microservice_helpers';
 import { TransactionModel } from './models/transactions';
+import formidable from 'formidable';
+import { AzureBlobStorageFileSystem } from './service/AzureBlobStorageFileSystem';
+import mongoose from 'mongoose';
 
 const router = express.Router();
+
+function fileSystemFactory() {
+    return new AzureBlobStorageFileSystem(
+        process.env.AZURE_BLOB_STORAGE_CONNECTION_STRING,
+        process.env.AZURE_BLOB_STORAGE_CONTAINER_NAME
+    );
+}
+
+const fileSystem = fileSystemFactory();
+
 
 router.get('/api/v1/transactions', auth, apiHandler(async (req: Request, res: Response) => {
     let userInformation = getUserInformation(req);
 
     let cashbookId = userInformation?.cashbookId;
 
-    if(cashbookId != null) {
-        return await TransactionModel.find({'cashbookId':cashbookId});
+    if (cashbookId != null) {
+        return await TransactionModel.find({ 'cashbookId': cashbookId });
     }
     else {
         return [];
@@ -20,21 +33,47 @@ router.get('/api/v1/transactions', auth, apiHandler(async (req: Request, res: Re
 router.post('/api/v1/transactions', auth, apiHandler(async (req: Request, res: Response) => {
     let userInformation = getUserInformation(req);
     let cashbookId = userInformation?.cashbookId;
-    if(cashbookId == null) return;
+    if (cashbookId == null) return;
 
-    const transactionData = req.body;
+    const form = formidable({ multiples: true });
 
-    const newTransaction = new TransactionModel({
-        amount: transactionData.amount,
-        cashbookId: cashbookId,
-        type: transactionData.type,
-        description: transactionData.description,
-        comment: transactionData.comment,
-        timestamp: transactionData.timestamp,
-        category: transactionData.category
+    var result = await new Promise(function (resolve, reject) {
+        form.parse(req, async function (err: any, fields: any, files: any) {
+            let newTransactionId = new mongoose.Types.ObjectId();
+            var billImageUrl: string | null = null;
+
+            if (files.bill != null) {
+                let billImageFile = files.bill as formidable.File;
+
+                await fileSystem.storeUploadedFile(
+                    billImageFile.filepath,
+                    newTransactionId.toString()
+                );
+
+                billImageUrl = await fileSystem.getBlobUrl(
+                    newTransactionId.toString()
+                );
+            }
+
+            const transactionData = fields;
+            const newTransaction = new TransactionModel({
+                _id: newTransactionId,
+                amount: transactionData.amount,
+                cashbookId: cashbookId,
+                type: transactionData.type,
+                description: transactionData.description,
+                comment: transactionData.comment,
+                timestamp: transactionData.timestamp,
+                category: transactionData.category,
+                billImageUrl: billImageUrl
+            });
+            var result = await newTransaction.save();
+
+            resolve(result);
+        });
     });
 
-    return await newTransaction.save();
+    return result;
 }));
 
 router.get('/api/v1/transactions/:transactionId', auth, apiHandler(async (req: Request, res: Response) => {
@@ -47,6 +86,7 @@ router.get('/api/v1/transactions/:transactionId', auth, apiHandler(async (req: R
     return transaction;
 }));
 
+
 router.delete('/api/v1/transactions/:transactionId', auth, apiHandler(async (req: Request, res: Response) => {
     await TransactionModel.findByIdAndDelete(req.params.transactionId);
     return {};
@@ -54,12 +94,13 @@ router.delete('/api/v1/transactions/:transactionId', auth, apiHandler(async (req
 
 
 // TODO: Restrict permission to use this endpoint only from microservices
+// Note: This endpoint may be used by a microservice that create configured repeative transactions (e.g. monthly income)
 router.post('/api/v1/cashbooks/:cashbookId/transactions', auth, apiHandler(async (req: Request, res: Response) => {
     const transactionData = req.body;
 
     const newTransaction = new TransactionModel({
         amount: transactionData.amount,
-        cashbookId: transactionData.cashbookId,
+        cashbookId: req.params.cashbookId,
         type: transactionData.type,
         description: transactionData.description,
         comment: transactionData.comment,
@@ -78,23 +119,23 @@ router.get('/api/v1/cashbooks/:cashbookId/transactions', auth, apiHandler(async 
     const end = req.query.end;
     const type = req.query.type;
     var query = {};
-    if(start == null || end == null) {
-        if(type == null) {
-            query = {'cashbookId':cashbookId };
+    if (start == null || end == null) {
+        if (type == null) {
+            query = { 'cashbookId': cashbookId };
         } else {
-            query = {'cashbookId':cashbookId, 'type': type }
-        }  
-    } else if(type == null) {
-        query = {'cashbookId':cashbookId, timestamp: {$gte: start, $lte: end}};
+            query = { 'cashbookId': cashbookId, 'type': type }
+        }
+    } else if (type == null) {
+        query = { 'cashbookId': cashbookId, timestamp: { $gte: start, $lte: end } };
     } else {
-        query = {'cashbookId':cashbookId, timestamp: {$gte: start, $lte: end}, 'type': type}
+        query = { 'cashbookId': cashbookId, timestamp: { $gte: start, $lte: end }, 'type': type }
     }
     return await TransactionModel.find(query);
 }));
 
 
 // TODO: Restrict permission to use this endpoint only from microservices
-router.get('/api/v1/cashbooks/cashbookIds', auth,  apiHandler(async (req: Request, res: Response) => {
+router.get('/api/v1/cashbooks/cashbookIds', auth, apiHandler(async (req: Request, res: Response) => {
     var cashbooks = await TransactionModel.aggregate([
         {
             $group: {
@@ -102,11 +143,52 @@ router.get('/api/v1/cashbooks/cashbookIds', auth,  apiHandler(async (req: Reques
             }
         }
     ]);
-    var cashbookIds:string[] = [];
-    for(var oneCashbook of cashbooks) {
+    var cashbookIds: string[] = [];
+    for (var oneCashbook of cashbooks) {
         cashbookIds.push(oneCashbook._id);
     }
     return cashbookIds;
+}));
+
+router.get('/api/v1/cashbook/balance', auth, apiHandler(async (req: Request, res: Response) => {
+    let userInformation = getUserInformation(req);
+
+    let cashbookId = userInformation?.cashbookId;
+
+    if (cashbookId == null) {
+        return [];
+    }
+
+    const pipeline = [{
+        $match: {
+            cashbookId: cashbookId
+        }
+    },
+    {
+        $group: {
+            _id: "$type",
+            value: { $sum: "$amount" }
+        }
+    }]
+
+    const balance = await TransactionModel.aggregate(pipeline);
+
+    let income = 0;
+    let expense = 0;
+
+    for (var transactionSum of balance) {
+        if (transactionSum._id == "income") {
+            income = transactionSum.value;
+        } else if (transactionSum._id == "expense") {
+            expense = transactionSum.value
+        }
+    }
+
+    return {
+        total: income - expense,
+        income: income,
+        expense: expense
+    }
 }));
 
 export { router as transaction_router }

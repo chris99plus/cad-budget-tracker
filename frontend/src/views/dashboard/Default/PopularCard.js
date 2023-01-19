@@ -16,6 +16,7 @@ import { gridSpacing } from 'store/constant';
 import ChevronRightOutlinedIcon from '@mui/icons-material/ChevronRightOutlined';
 import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
 import KeyboardArrowUpOutlinedIcon from '@mui/icons-material/KeyboardArrowUpOutlined';
+import KeyboardArrowDownOutlinedIcon from '@mui/icons-material/KeyboardArrowDownOutlined';
 import Dialog from '@mui/material/Dialog';
 import TextField from '@mui/material/TextField';
 import DialogActions from '@mui/material/DialogActions';
@@ -23,6 +24,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useAuth } from '../../../authContext';
+import ReportDataService from '../../../services/report';
 
 // apis
 import TrasactionDataService from '../../../services/transactions';
@@ -31,10 +33,10 @@ import TrasactionDataService from '../../../services/transactions';
 
 const PopularCard = ({ isLoading }) => {
     const theme = useTheme();
-
     const [anchorEl, setAnchorEl] = useState(null);
     const [transaction, setTransaction] = useState([]);
     const [open, setOpen] = React.useState(false);
+    const [transactionPeriod, setTransactionPeriod] = useState('day');
     const [transactionName, setTransactionName] = useState(null);
     const [transactionValue, setTransactionValue] = useState(null);
     const [transactionContent, setTransactionContent] = useState(null);
@@ -42,6 +44,7 @@ const PopularCard = ({ isLoading }) => {
     const [transactionCurrency, setTransactionCurrency] = useState('EUR');
     const [error, setError] = useState(false);
     const { tokenState } = useAuth();
+    const [reportForCurrentDay, setReportForCurrentDay] = useState([]);
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -88,7 +91,7 @@ const PopularCard = ({ isLoading }) => {
             setError('Please Select all Fields');
         }
     };
-
+    const currentDate = new Date();
     const currencies = [
         {
             value: 'USD',
@@ -108,6 +111,32 @@ const PopularCard = ({ isLoading }) => {
         }
     ];
 
+    const types = [
+        {
+            value: 'income',
+            label: 'Income'
+        },
+        {
+            value: 'expense',
+            label: 'Expense'
+        }
+    ];
+
+    const transactionPeriods = [
+        {
+            value: 'day',
+            label: 'Today'
+        },
+        {
+            value: 'month',
+            label: 'This Month'
+        },
+        {
+            value: 'total',
+            label: 'View All'
+        }
+    ];
+
     useEffect(() => {
         TrasactionDataService.getAll(tokenState)
             .then((response) => {
@@ -116,7 +145,16 @@ const PopularCard = ({ isLoading }) => {
             .catch((e) => {
                 console.log(e);
             });
+        ReportDataService.getReportForOneDay(tokenState)
+        .then((response) => {
+            setReportForCurrentDay(response.data.data);
+        })
+        .catch((e) => {
+            console.log(e);
+        });
+        console.log("awd");
     }, [open]);
+
 
     return (
         <>
@@ -171,14 +209,20 @@ const PopularCard = ({ isLoading }) => {
                                             </TextField>
                                             <TextField
                                                 margin="dense"
-                                                id="name"
-                                                label="Content of your Transaction"
-                                                type="text"
+                                                id="outlined-select-currency"
                                                 fullWidth
-                                                variant="outlined"
-                                                autoComplete="off"
+                                                select
+                                                label="Select"
+                                                defaultValue=""
+                                                helperText="Please select the transaction type"
                                                 onChange={(newValue) => setTransactionContent(newValue.target.value)}
-                                            />
+                                            >
+                                                {types.map((option) => (
+                                                    <MenuItem key={option.value} value={option.value}>
+                                                        {option.label}
+                                                    </MenuItem>
+                                                ))}
+                                            </TextField>
                                             <TextField
                                                 margin="dense"
                                                 id="name"
@@ -243,9 +287,15 @@ const PopularCard = ({ isLoading }) => {
                                                 horizontal: 'right'
                                             }}
                                         >
-                                            <MenuItem onClick={handleClose}> Today</MenuItem>
-                                            <MenuItem onClick={handleClose}> This Month</MenuItem>
-                                            <MenuItem onClick={handleClose}> This Year </MenuItem>
+                                            {transactionPeriods.map((option) => (
+                                                <MenuItem
+                                                    key={option.value}
+                                                    value={option.value}
+                                                    onClick={() => (setTransactionPeriod(option.value), handleClose())}
+                                                >
+                                                    {option.label}
+                                                </MenuItem>
+                                            ))}
                                         </Menu>
                                     </Grid>
                                 </Grid>
@@ -253,58 +303,95 @@ const PopularCard = ({ isLoading }) => {
                             <Grid item xs={12} sx={{ pt: '16px !important' }}>
                                 {transaction[0] && (
                                     <BajajAreaChartCard
-                                        value={transaction[0].amount}
-                                        description={transaction[0].description}
-                                        comment={transaction[0].comment}
+                                        value={reportForCurrentDay.total}
+                                        description={"Balance  " + transactionPeriod }
                                     />
                                 )}
                             </Grid>
                             <Grid item xs={12}>
-                                {transaction.map((child) => (
-                                    <div key={child._id}>
-                                        <Grid container direction="column">
-                                            <Grid item>
-                                                <Grid container alignItems="center" justifyContent="space-between">
-                                                    <Grid item>
-                                                        <Typography variant="subtitle1" color="inherit">
-                                                            {child.description}
-                                                        </Typography>
-                                                    </Grid>
+                                {transaction.map((child) => {
+                                    var comparisonTime = Date.parse(child.timestamp);
+                                    var dateObject = new Date(comparisonTime);
+                                    return (
+                                        ((transactionPeriod == 'day' && dateObject.getDate() == currentDate.getDate()) ||
+                                        (transactionPeriod == 'month' && dateObject.getMonth() == currentDate.getMonth()) ||
+                                        (transactionPeriod == 'total')) && (
+                                            <div key={child._id}>
+                                                <Grid container direction="column">
                                                     <Grid item>
                                                         <Grid container alignItems="center" justifyContent="space-between">
                                                             <Grid item>
                                                                 <Typography variant="subtitle1" color="inherit">
-                                                                    {child.amount}€
+                                                                    {child.description}
                                                                 </Typography>
                                                             </Grid>
                                                             <Grid item>
-                                                                <Avatar
-                                                                    variant="rounded"
-                                                                    sx={{
-                                                                        width: 16,
-                                                                        height: 16,
-                                                                        borderRadius: '5px',
-                                                                        backgroundColor: theme.palette.success.light,
-                                                                        color: theme.palette.success.dark,
-                                                                        ml: 2
-                                                                    }}
-                                                                >
-                                                                    <KeyboardArrowUpOutlinedIcon fontSize="small" color="inherit" />
-                                                                </Avatar>
+                                                                <Grid container alignItems="center" justifyContent="space-between">
+                                                                    <Grid item>
+                                                                        <Typography variant="subtitle1" color="inherit">
+                                                                            {child.amount}€
+                                                                        </Typography>
+                                                                    </Grid>
+                                                                    <Grid item>
+                                                                        {child.type == 'expense' && (
+                                                                            <Avatar
+                                                                                variant="rounded"
+                                                                                sx={{
+                                                                                    width: 16,
+                                                                                    height: 16,
+                                                                                    borderRadius: '5px',
+                                                                                    color: '#E68296',
+                                                                                    ml: 2,
+                                                                                    backgroundColor: '#df380f'
+                                                                                }}
+                                                                            >
+                                                                                <KeyboardArrowDownOutlinedIcon
+                                                                                    fontSize="small"
+                                                                                    color="inherit"
+                                                                                />
+                                                                            </Avatar>
+                                                                        )}
+                                                                        {child.type == 'income' && (
+                                                                            <Avatar
+                                                                                variant="rounded"
+                                                                                sx={{
+                                                                                    width: 16,
+                                                                                    height: 16,
+                                                                                    borderRadius: '5px',
+                                                                                    color: theme.palette.success.dark,
+                                                                                    ml: 2,
+                                                                                    backgroundColor: theme.palette.success.light
+                                                                                }}
+                                                                            >
+                                                                                <KeyboardArrowUpOutlinedIcon
+                                                                                    fontSize="small"
+                                                                                    color="inherit"
+                                                                                />
+                                                                            </Avatar>
+                                                                        )}
+                                                                    </Grid>
+                                                                </Grid>
                                                             </Grid>
                                                         </Grid>
                                                     </Grid>
+                                                    <Grid item>
+                                                        {child.type == 'expense' && (
+                                                            <Typography variant="subtitle2" sx={{ color: '#D80B0B' }}>
+                                                                {child.comment}
+                                                            </Typography>
+                                                        )}
+                                                        {child.type == 'income' && (
+                                                            <Typography variant="subtitle2" sx={{ color: 'success.dark' }}>
+                                                                {child.comment}
+                                                            </Typography>
+                                                        )}
+                                                    </Grid>
                                                 </Grid>
-                                            </Grid>
-                                            <Grid item>
-                                                <Typography variant="subtitle2" sx={{ color: 'success.dark' }}>
-                                                    {child.comment}
-                                                </Typography>
-                                            </Grid>
-                                        </Grid>
-                                        <Divider sx={{ my: 1.5 }} />
-                                    </div>
-                                ))}
+                                                <Divider sx={{ my: 1.5 }} />
+                                            </div>
+                                        )
+                                    );
+                                })}
                             </Grid>
                         </Grid>
                     </CardContent>

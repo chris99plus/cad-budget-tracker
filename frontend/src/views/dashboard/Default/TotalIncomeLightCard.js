@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { useState, useEffect } from 'react';
 
 // material-ui
 import { useTheme, styled } from '@mui/material/styles';
@@ -7,6 +8,8 @@ import { Avatar, Box, List, ListItem, ListItemAvatar, ListItemText, Typography }
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 import TotalIncomeCard from 'ui-component/cards/Skeleton/TotalIncomeCard';
+import ReportDataService from '../../../services/report';
+import { useAuth } from '../../../authContext';
 
 // assets
 import StorefrontTwoToneIcon from '@mui/icons-material/StorefrontTwoTone';
@@ -41,6 +44,18 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
 
 const TotalIncomeLightCard = ({ isLoading }) => {
     const theme = useTheme();
+    const [reportForCurrentWeek, setReportForCurrentWeek] = useState([]);
+    const { tokenState } = useAuth();
+
+    useEffect(() => {
+        ReportDataService.getReportForOneDay(tokenState)
+            .then((response) => {
+                setReportForCurrentWeek(response.data.data);
+            })
+            .catch((e) => {
+                console.log(e);
+            });
+    }, []);
 
     return (
         <>
@@ -79,7 +94,7 @@ const TotalIncomeLightCard = ({ isLoading }) => {
                                                 mt: 0.5
                                             }}
                                         >
-                                            Total Income
+                                            Weekly Income
                                         </Typography>
                                     }
                                 />
