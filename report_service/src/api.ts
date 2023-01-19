@@ -44,6 +44,18 @@ router.get('/api/v1/reports/weekly/current', auth, apiHandler(async (req: Reques
     return await report;
 }));
 
+router.get('/api/v1/reports/monthly/current', auth, apiHandler(async (req: Request, res: Response) => {
+    let userInformation = getUserInformation(req);
+    let cashbookId = userInformation?.cashbookId;
+    if(cashbookId == null) return;
+    
+    var now = new Date();
+
+    var firstDayOfWeek = getFirstDayOfWeek(new Date());
+    const report = reportService.createReport(cashbookId, firstDayOfWeek, now);
+    return await report;
+}));
+
 router.get('/api/v1/reports/weekly/all', auth, apiHandler(async (req: Request, res: Response) => {
     let userInformation = getUserInformation(req);
     let cashbookId = userInformation?.cashbookId;

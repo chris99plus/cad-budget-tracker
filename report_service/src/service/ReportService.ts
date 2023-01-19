@@ -81,8 +81,14 @@ export class ReportService {
 
 export function getFirstDayOfWeek(d: Date) {
     d.setUTCHours(0, 0, 0, 0);
-  d = new Date(d);
-  var day = d.getDay(),
-      diff = d.getDate() - day + (day == 0 ? -6:1);
-  return new Date(d.setDate(diff))
+    d = new Date(d);
+    var day = d.getDay(),
+    diff = d.getDate() - day + (day == 0 ? -6:1);
+    return new Date(d.setDate(diff));
+}
+
+export function getFirstDayOfMonth(d: Date) {
+    d.setUTCHours(0, 0, 0, 0);
+    d = new Date(d.setDate(1));
+    return d;
 }
