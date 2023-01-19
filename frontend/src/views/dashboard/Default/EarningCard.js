@@ -17,7 +17,7 @@ import FileCopyTwoToneIcon from '@mui/icons-material/FileCopyOutlined';
 import PictureAsPdfTwoToneIcon from '@mui/icons-material/PictureAsPdfOutlined';
 import ArchiveTwoToneIcon from '@mui/icons-material/ArchiveOutlined';
 import { useState, useEffect } from 'react';
-import TransactionsDataService from '../../../services/report';
+import TransaktionsDataService from '../../../services/report';
 import { useAuth } from '../../../authContext';
     
 
@@ -60,8 +60,6 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
 // ===========================|| DASHBOARD DEFAULT - EARNING CARD ||=========================== //
 
 const EarningCard = ({ isLoading }) => {
-
-    const { tokenState } = useAuth();
     
     const theme = useTheme();
 

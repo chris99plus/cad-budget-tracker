@@ -14,10 +14,16 @@ import { gridSpacing } from 'store/constant';
 
 // assets
 import ChevronRightOutlinedIcon from '@mui/icons-material/ChevronRightOutlined';
+import dayjs, { Dayjs } from 'dayjs';
 import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
 import KeyboardArrowUpOutlinedIcon from '@mui/icons-material/KeyboardArrowUpOutlined';
 import KeyboardArrowDownOutlinedIcon from '@mui/icons-material/KeyboardArrowDownOutlined';
 import Dialog from '@mui/material/Dialog';
+import Fab from '@mui/material/Fab';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import AddIcon from '@mui/icons-material/Add';
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import TextField from '@mui/material/TextField';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -27,8 +33,9 @@ import { useAuth } from '../../../authContext';
 import { filterProps } from 'framer-motion';
 
 // apis
-import TrasactionDataService from '../../../services/transactions';
+import TransactionDataService from '../../../services/transactions';
 import ReportDataService from '../../../services/report';
+import { convertLength } from '@mui/material/styles/cssUtils';
 
 // ==============================|| DASHBOARD DEFAULT - POPULAR CARD ||============================== //
 
@@ -36,13 +43,12 @@ const PopularCard = ({ isLoading }) => {
     const theme = useTheme();
     const [anchorEl, setAnchorEl] = useState(null);
     const [transaction, setTransaction] = useState([]);
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
     const [transactionPeriod, setTransactionPeriod] = useState('day');
     const [transactionName, setTransactionName] = useState(null);
     const [transactionValue, setTransactionValue] = useState(null);
     const [transactionContent, setTransactionContent] = useState(null);
     const [transactionComment, setTransactionComment] = useState(null);
-    const [transactionCurrency, setTransactionCurrency] = useState('EUR');
     const [transactionBillImage, setTransactionBillImage] = useState(null);
     const [error, setError] = useState(false);
     const { tokenState } = useAuth();
@@ -50,6 +56,8 @@ const PopularCard = ({ isLoading }) => {
     const [reportForCurrentMonth, setReportForCurrentMonth] = useState([]);
     const [totalBalance, setTotalBalance] = useState([]);
     const [showAllTransactions, setShowAllTransactions] = useState(false);
+    const currentDate = new Date();
+    const [dateValue, setDateValue] = useState(dayjs(currentDate));
     var indexTransaction = 0; 
     const numerOfMaximalTransaktions = 5;
 
@@ -69,56 +77,39 @@ const PopularCard = ({ isLoading }) => {
         setOpen(false);
     };
 
+    const handleChange = (newValue) => {
+        setDateValue(newValue);
+    };
+
     const handleClickAdd = () => {
         if (
             transactionName != null &&
             transactionValue != null &&
             transactionContent != null &&
-            transactionComment != null &&
-            transactionCurrency != null
+            transactionComment != null 
         ) {
             var data = {
                 amount: transactionValue,
                 type: transactionContent,
                 description: transactionName,
                 comment: transactionComment,
-                timestamp: new Date(),
+                timestamp: dateValue, // Datum über den Nutzer eingeben lassen
                 category: '',
                 billImage: transactionBillImage
             };
             
             TransactionDataService.postTransaction(data, tokenState)
                 .then((response) => {
-                    console.log(response);
+                    setOpen(false);
+                    setError(false);
                 })
                 .catch((e) => {
                     console.log(e);
                 });
-            setOpen(false);
-            setError(false);
         } else {
             setError('Please Select all Fields');
         }
     };
-    const currentDate = new Date();
-    const currencies = [
-        {
-            value: 'USD',
-            label: '$'
-        },
-        {
-            value: 'EUR',
-            label: '€'
-        },
-        {
-            value: 'BTC',
-            label: '฿'
-        },
-        {
-            value: 'JPY',
-            label: '¥'
-        }
-    ];
 
     const types = [
         {
@@ -149,12 +140,12 @@ const PopularCard = ({ isLoading }) => {
     useEffect(() => {
         TransactionDataService.getAll(tokenState)
             .then((response) => {
-                setTransaction(response.data.data);
+                setTransaction(response.data.data.reverse());
             })
             .catch((e) => {
                 console.log(e);
             });
-        TrasactionDataService.getTotalBalance(tokenState)
+        TransactionDataService.getTotalBalance(tokenState)
             .then((response) => {
                 setTotalBalance(response.data.data);
             })
@@ -177,7 +168,6 @@ const PopularCard = ({ isLoading }) => {
             });;
     }, [open]);
 
-
     return (
         <>
             {isLoading ? (
@@ -187,19 +177,53 @@ const PopularCard = ({ isLoading }) => {
                     <CardContent>
                         <Grid container spacing={gridSpacing}>
                             <Grid item xs={12}>
-                                <Grid container alignContent="center" justifyContent="space-between">
-                                    <Grid item flex="true" alignContent="center">
-                                        <Typography variant="h4">Transaktionen</Typography>
+                            <Grid container alignContent="center" justifyContent="space-between" marginBottom={2}>
+                                <Fab size="small" color="primary" aria-label="add" onClick={handleClickOpen}>
+                                    <AddIcon />
+                                </Fab>
+                                <Grid item marginTop={1}>
+                                        <MoreHorizOutlinedIcon
+                                            fontSize="medium"
+                                            sx={{
+                                                color: theme.palette.primary[200],
+                                                cursor: 'pointer'
+                                            }}
+                                            aria-controls="menu-popular-card"
+                                            aria-haspopup="true"
+                                            onClick={handleClick}
+                                        />
+                                        <Menu
+                                            id="menu-popular-card"
+                                            anchorEl={anchorEl}
+                                            keepMounted
+                                            open={Boolean(anchorEl)}
+                                            onClose={handleClose}
+                                            variant="selectedMenu"
+                                            anchorOrigin={{
+                                                vertical: 'bottom',
+                                                horizontal: 'right'
+                                            }}
+                                            transformOrigin={{
+                                                vertical: 'top',
+                                                horizontal: 'right'
+                                            }}
+                                        >
+                                            {transactionPeriods.map((option) => (
+                                                <MenuItem
+                                                    key={option.value}
+                                                    value={option.value}
+                                                    onClick={() => (setTransactionPeriod(option.value), handleClose())}
+                                                >
+                                                    {option.label}
+                                                </MenuItem>
+                                            ))}
+                                        </Menu>
                                     </Grid>
-                                    <Button
-                                        disableElevation
-                                        variant={'outlined'}
-                                        size="small"
-                                        sx={{ color: 'inherit' }}
-                                        onClick={handleClickOpen}
-                                    >
-                                        Add Transaktion
-                                    </Button>
+                            </Grid>
+                                <Grid container alignContent="center" justifyContent="space-between" marginBottom={-1}>
+                                    <Grid item flex="true" alignContent="center">
+                                        <Typography variant="h4" marginLeft={1}>Transaktionen</Typography>
+                                    </Grid>
                                     <Dialog
                                         open={open}
                                         onClose={handleClose}
@@ -213,22 +237,6 @@ const PopularCard = ({ isLoading }) => {
                                             </DialogContentText>
                                         )}
                                         <DialogContent autoComplete="off">
-                                            <TextField
-                                                margin="dense"
-                                                id="outlined-select-currency"
-                                                fullWidth
-                                                select
-                                                label="Select"
-                                                defaultValue="EUR"
-                                                helperText="Please select your currency"
-                                                onChange={(newValue) => setTransactionCurrency(newValue.target.value)}
-                                            >
-                                                {currencies.map((option) => (
-                                                    <MenuItem key={option.value} value={option.value}>
-                                                        {option.label}
-                                                    </MenuItem>
-                                                ))}
-                                            </TextField>
                                             <TextField
                                                 margin="dense"
                                                 id="outlined-select-currency"
@@ -276,56 +284,50 @@ const PopularCard = ({ isLoading }) => {
                                                 maxRows={10}
                                                 onChange={(newValue) => setTransactionValue(newValue.target.value)}
                                             />
-
-<form>
-                                            <input type="file"
-                                                accept="image/png, image/jpeg"
-                                                onChange={(e) => setTransactionBillImage(e.target.files[0])} />
-</form>
+                                            <DialogActions></DialogActions>
+                                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                <DesktopDatePicker
+                                                    label="Date Transaction"
+                                                    inputFormat="MM/DD/YYYY"
+                                                    value={dateValue}
+                                                    onChange={handleChange}
+                                                    renderInput={(params) => <TextField {...params} />}
+                                                />
+                                            </LocalizationProvider>
+                                            <DialogActions></DialogActions>
+                                            <Button
+                                                variant="contained"
+                                                component="label"
+                                                fullWidth
+                                                
+                                            >
+                                                Upload File
+                                                <input
+                                                    type="file"
+                                                    hidden
+                                                    accept="image/png, image/jpeg"
+                                                    onChange={(e) => setTransactionBillImage(e.target.files[0])} 
+                                                   
+                                                />
+                                            </Button>
+                                            {transactionBillImage? <div
+                                                style={{
+                                                    marginTop:"10px",
+                                                backgroundImage:"url("+'"'+URL.createObjectURL(transactionBillImage)+'"'+")",
+                                                objectFit: "cover",
+                                                height:"300px",
+                                                width:"100%",
+                                                backgroundSize:"cover"
+                                                }}
+                                            
+                                            />:""}
                                         </DialogContent>
                                         <DialogActions>
                                             <Button onClick={handleClickClose}>Close</Button>
                                             <Button onClick={handleClickAdd}>Add</Button>
                                         </DialogActions>
                                     </Dialog>
-                                    <Grid item>
-                                        <MoreHorizOutlinedIcon
-                                            fontSize="small"
-                                            sx={{
-                                                color: theme.palette.primary[200],
-                                                cursor: 'pointer'
-                                            }}
-                                            aria-controls="menu-popular-card"
-                                            aria-haspopup="true"
-                                            onClick={handleClick}
-                                        />
-                                        <Menu
-                                            id="menu-popular-card"
-                                            anchorEl={anchorEl}
-                                            keepMounted
-                                            open={Boolean(anchorEl)}
-                                            onClose={handleClose}
-                                            variant="selectedMenu"
-                                            anchorOrigin={{
-                                                vertical: 'bottom',
-                                                horizontal: 'right'
-                                            }}
-                                            transformOrigin={{
-                                                vertical: 'top',
-                                                horizontal: 'right'
-                                            }}
-                                        >
-                                            {transactionPeriods.map((option) => (
-                                                <MenuItem
-                                                    key={option.value}
-                                                    value={option.value}
-                                                    onClick={() => (setTransactionPeriod(option.value), handleClose())}
-                                                >
-                                                    {option.label}
-                                                </MenuItem>
-                                            ))}
-                                        </Menu>
-                                    </Grid>
+                                    
                                 </Grid>
                             </Grid>
                             <Grid item xs={12} sx={{ pt: '16px !important' }}>
@@ -354,12 +356,12 @@ const PopularCard = ({ isLoading }) => {
                                         (transactionPeriod == 'total')) {
                                         indexTransaction ++;
                                     }
-
+                                    //child.billImageUrl für Bildaufruf 
                                     return (
                                         ((((transactionPeriod == 'day' && dateObject.getDate() == currentDate.getDate()) ||
                                         (transactionPeriod == 'month' && dateObject.getMonth() == currentDate.getMonth()) ||
                                         (transactionPeriod == 'total')) && 
-                                        ((indexTransaction > numerOfMaximalTransaktions) || showAllTransactions))) && (
+                                        ((indexTransaction < numerOfMaximalTransaktions) || showAllTransactions))) && (
                                             <div key={child._id}>
                                                 <Grid container direction="column">
                                                     <Grid item>
@@ -440,13 +442,23 @@ const PopularCard = ({ isLoading }) => {
                         </Grid>
                     </CardContent>
                     <CardActions sx={{ p: 1.25, pt: 0, justifyContent: 'center' }}>
-                        <Button 
+                        {showAllTransactions?
+                            <Button 
                             size="small" 
                             disableElevation 
-                            onClick={() => setShowAllTransactions(true)}>
-                                View All
+                            onClick={() => setShowAllTransactions(false)}>
+                                View Less
                                 <ChevronRightOutlinedIcon />
-                        </Button>
+                            </Button>
+                            :
+                            <Button 
+                                size="small" 
+                                disableElevation 
+                                onClick={() => setShowAllTransactions(true)}>
+                                    View All
+                                    <ChevronRightOutlinedIcon />
+                            </Button>
+                        }
                     </CardActions>
                 </MainCard>
             )}

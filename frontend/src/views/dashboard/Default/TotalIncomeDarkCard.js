@@ -89,7 +89,7 @@ const TotalIncomeDarkCard = ({ isLoading }) => {
                                     }}
                                     primary={
                                         <Typography variant="h4" sx={{ color: '#fff' }}>
-                                            {reportForCurrentWeek? reportForCurrentWeek.income.total:"0"} €
+                                            {reportForCurrentWeek? reportForCurrentWeek.expenses.total:"0"} €
                                         </Typography>
                                     }
                                     secondary={
