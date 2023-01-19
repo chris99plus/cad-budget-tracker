@@ -9,7 +9,7 @@ const transactionSchema = new mongoose.Schema({
     comment: String,
     timestamp: Date,
     category: String,
-    url: String
+    billImageUrl: String
 }, {
     versionKey: false
 });
