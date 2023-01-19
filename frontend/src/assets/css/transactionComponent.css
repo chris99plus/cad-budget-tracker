@@ -1,0 +1,7 @@
+.transactionComponent{
+    border-radius: 5px;
+    padding: 4px;
+}
+.transactionComponent:hover{
+    background-color: rgba(153, 98, 160, 0.055);
+}

@@ -40,6 +40,8 @@ import { convertLength } from '@mui/material/styles/cssUtils';
 // ==============================|| DASHBOARD DEFAULT - POPULAR CARD ||============================== //
 
 const PopularCard = ({ isLoading }) => {
+
+    //React-States
     const theme = useTheme();
     const [anchorEl, setAnchorEl] = useState(null);
     const [transaction, setTransaction] = useState([]);
@@ -58,15 +60,49 @@ const PopularCard = ({ isLoading }) => {
     const [showAllTransactions, setShowAllTransactions] = useState(false);
     const currentDate = new Date();
     const [dateValue, setDateValue] = useState(dayjs(currentDate));
+    const [transactionView, setShowTransactionView] = useState(false);
+    const [activeTransaction, setActiveTransaction] = useState(false);
+
+    //Variables
     var indexTransaction = 0; 
     const numerOfMaximalTransaktions = 5;
 
+    //Types
+    const types = [
+        {
+            value: 'income',
+            label: 'Income'
+        },
+        {
+            value: 'expense',
+            label: 'Expense'
+        }
+    ];
+
+    const transactionPeriods = [
+        {
+            value: 'day',
+            label: 'Today'
+        },
+        {
+            value: 'month',
+            label: 'This Month'
+        },
+        {
+            value: 'total',
+            label: 'View All'
+        }
+    ];
+
+    //Action-Listeners
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
 
     const handleClose = () => {
         setAnchorEl(null);
+        setShowTransactionView(false);
+        setError(false);
     };
 
     const handleClickOpen = () => {
@@ -75,6 +111,8 @@ const PopularCard = ({ isLoading }) => {
 
     const handleClickClose = () => {
         setOpen(false);
+        setShowTransactionView(false);
+        setError(false);
     };
 
     const handleChange = (newValue) => {
@@ -111,32 +149,19 @@ const PopularCard = ({ isLoading }) => {
         }
     };
 
-    const types = [
-        {
-            value: 'income',
-            label: 'Income'
-        },
-        {
-            value: 'expense',
-            label: 'Expense'
-        }
-    ];
+    //Functions
+    function openTransactionView (childTransactionId) {
+        TransactionDataService.getSingleTransaction(tokenState, childTransactionId)
+            .then((response) => {
+                setActiveTransaction(response.data.data);
+                setShowTransactionView(true);
+            })
+            .catch((e) => {
+                console.log(e);
+            });
+    }
 
-    const transactionPeriods = [
-        {
-            value: 'day',
-            label: 'Today'
-        },
-        {
-            value: 'month',
-            label: 'This Month'
-        },
-        {
-            value: 'total',
-            label: 'View All'
-        }
-    ];
-
+    //Side-Effects
     useEffect(() => {
         TransactionDataService.getAll(tokenState)
             .then((response) => {
@@ -224,6 +249,101 @@ const PopularCard = ({ isLoading }) => {
                                     <Grid item flex="true" alignContent="center">
                                         <Typography variant="h4" marginLeft={1}>Transaktionen</Typography>
                                     </Grid>
+
+                                    {/*start of change/show single transaction dialog*/}
+
+                                    <Dialog
+                                        open={transactionView}
+                                        onClose={handleClose}
+                                        aria-labelledby="alert-dialog-title"
+                                        aria-describedby="alert-dialog-description"
+                                    >
+                                        <DialogTitle id="alert-dialog-title">{'Change Your Transaction'}</DialogTitle>
+                                        {error && (
+                                            <DialogContentText id="alert-dialog-description" marginLeft="25px" color="red">
+                                                {error}
+                                            </DialogContentText>
+                                        )}
+                                        <DialogContent autoComplete="off">
+                                            <TextField
+                                                margin="dense"
+                                                id="outlined-select-currency"
+                                                variant="outlined"
+                                                fullWidth
+                                                label="Type"
+                                                defaultValue={activeTransaction.type}
+                                                disabled
+                                            >
+
+                                            </TextField>
+                                            <TextField
+                                                margin="dense"
+                                                id="name"
+                                                label="Description"
+                                                defaultValue={activeTransaction.description}
+                                                type="text"
+                                                fullWidth
+                                                variant="outlined"
+                                                autoComplete="off"
+                                                disabled
+                                            />
+                                            <TextField
+                                                margin="dense"
+                                                id="name"
+                                                label="Comment"
+                                                defaultValue={activeTransaction.comment}
+                                                type="text"
+                                                fullWidth
+                                                disabled
+                                                variant="outlined"
+                                                autoComplete="off"
+                                            />
+                                            <TextField
+                                                margin="dense"
+                                                id="name"
+                                                defaultValue={activeTransaction.amount}
+                                                type="number"
+                                                fullWidth
+                                                label="Value"
+                                                variant="outlined"
+                                                autoComplete="off"
+                                                maxRows={10}
+                                                disabled
+                                            />
+                                            <DialogActions></DialogActions>
+                                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                <DesktopDatePicker
+                                                    label="Date Transaction"
+                                                    disabled
+                                                    inputFormat="MM/DD/YYYY"
+                                                    value={dayjs(activeTransaction.timestamp)}
+                                                    onChange={handleChange}
+                                                    renderInput={(params) => <TextField {...params} />}
+                                                />
+                                            </LocalizationProvider>
+                                            <DialogActions></DialogActions>
+                                 
+                                            {activeTransaction? <div
+                                                style={{
+                                                    marginTop:"10px",
+                                                backgroundImage:"url("+'"'+(activeTransaction.billImageUrl)+'"'+")",
+                                                objectFit: "cover",
+                                                height:"300px",
+                                                width:"100%",
+                                                backgroundSize:"cover"
+                                                }}
+                                            
+                                            />:""}
+                                        </DialogContent>
+                                        <DialogActions>
+                                            <Button onClick={handleClickClose}>Close</Button>
+                                        </DialogActions>
+                                    </Dialog>
+
+                                    {/*end of change/show single transaction dialog*/}
+
+                                    {/*start of upload transaction dialog*/}
+
                                     <Dialog
                                         open={open}
                                         onClose={handleClose}
@@ -242,9 +362,8 @@ const PopularCard = ({ isLoading }) => {
                                                 id="outlined-select-currency"
                                                 fullWidth
                                                 select
-                                                label="Select"
+                                                label="Type"
                                                 defaultValue=""
-                                                helperText="Please select the transaction type"
                                                 onChange={(newValue) => setTransactionContent(newValue.target.value)}
                                             >
                                                 {types.map((option) => (
@@ -327,9 +446,14 @@ const PopularCard = ({ isLoading }) => {
                                             <Button onClick={handleClickAdd}>Add</Button>
                                         </DialogActions>
                                     </Dialog>
+
+                                    {/*end of upload transaction dialog*/}
                                     
                                 </Grid>
                             </Grid>
+
+                            {/*start of dropdownmenue for change the time Intervall of the transactions*/}
+
                             <Grid item xs={12} sx={{ pt: '16px !important' }}>
                                 {transactionPeriod == 'day' &&
                                 <BajajAreaChartCard
@@ -347,6 +471,10 @@ const PopularCard = ({ isLoading }) => {
                                     description={"Balance  " + transactionPeriod }
                                 />}
                             </Grid>
+
+                            {/*start of dropdownmenue for change the time Intervall of the transactions*/}
+
+                            {/*start of main map-function of all transactions*/}
                             <Grid item xs={12}>
                                 {transaction.map((child) => {
                                     var comparisonTime = Date.parse(child.timestamp);
@@ -356,14 +484,13 @@ const PopularCard = ({ isLoading }) => {
                                         (transactionPeriod == 'total')) {
                                         indexTransaction ++;
                                     }
-                                    //child.billImageUrl für Bildaufruf 
                                     return (
                                         ((((transactionPeriod == 'day' && dateObject.getDate() == currentDate.getDate()) ||
                                         (transactionPeriod == 'month' && dateObject.getMonth() == currentDate.getMonth()) ||
                                         (transactionPeriod == 'total')) && 
                                         ((indexTransaction < numerOfMaximalTransaktions) || showAllTransactions))) && (
                                             <div key={child._id}>
-                                                <Grid container direction="column">
+                                                <Grid className="transactionComponent" container sx={{cursor:"pointer"}} direction="column" onClick={()=>openTransactionView(child._id)}>
                                                     <Grid item>
                                                         <Grid container alignItems="center" justifyContent="space-between">
                                                             <Grid item>
@@ -437,11 +564,14 @@ const PopularCard = ({ isLoading }) => {
                                             </div>
                                         )
                                     );
+
+                                    {/*end of main map-function of all transactions*/}
+
                                 })}
                             </Grid>
                         </Grid>
                     </CardContent>
-                    <CardActions sx={{ p: 1.25, pt: 0, justifyContent: 'center' }}>
+                    <CardActions sx={{ p: 1.25, mt: -4, justifyContent: 'center' }}>
                         {showAllTransactions?
                             <Button 
                             size="small" 
