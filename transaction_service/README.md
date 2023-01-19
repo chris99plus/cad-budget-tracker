@@ -18,14 +18,14 @@ Create a `.env` file with the following variables:
 SERVER_PORT=4000
 MONGODB_CONNECTION_STRING="mongodb://localhost:27017/transaction"
 JWT_SECRET_KEY="..."
-AZURE_BLOB_STORAGE_CONNECTION_STRING="<copy connection string from portal.azure.com -> Storage accounts -> budgettrackerobjects -> Access keys>"
+AZURE_BLOB_STORAGE_CONNECTION_STRING="..."
 AZURE_BLOB_STORAGE_CONTAINER_NAME="budgettrackerobjects-container"
 ```
 
-Starting the transaction_service with ```docker-compose``` you must remove the ```"``` for:
-- ```MONGODB_CONNECTION_STRING```
-- ```AZURE_BLOB_STORAGE_CONNECTION_STRING```
-- ```AZURE_BLOB_STORAGE_CONTAINER_NAME```
+Starting the transaction_service with `docker-compose` you must remove the `"` for:
+- `MONGODB_CONNECTION_STRING`
+- `AZURE_BLOB_STORAGE_CONNECTION_STRING`
+- `AZURE_BLOB_STORAGE_CONTAINER_NAME`
 
 ## Development
 Run the microservice in development mode:

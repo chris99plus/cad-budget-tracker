@@ -51,7 +51,7 @@ services:
       - SERVER_PORT=4000
       - MONGODB_CONNECTION_STRING=mongodb://mongodb:27017/transaction
       - JWT_SECRET_KEY="9p4LA9^9@n4@z6sVTE6r3#hNhseHB8AwnzQ"
-      - AZURE_BLOB_STORAGE_CONNECTION_STRING=<copy connection string from portal.azure.com -> Storage accounts -> budgettrackerobjects -> Access keys>
+      - AZURE_BLOB_STORAGE_CONNECTION_STRING=<Bucket connection string>
       - AZURE_BLOB_STORAGE_CONTAINER_NAME=budgettrackerobjects-container
     networks:
     - cad_backend_network
