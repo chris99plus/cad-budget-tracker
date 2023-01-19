@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import { apiHandler, auth, getUserInformation } from '../../microservice_helpers';
 import { ReportModel } from './models/reports';
-import { ReportService, getFirstDayOfWeek } from './service/ReportService';
+import { ReportService, getFirstDayOfWeek, getFirstDayOfMonth } from './service/ReportService';
 import { TransactionServiceWrapperImpl } from './service/TransactionServiceWrapper';
 
 const router = express.Router()
@@ -51,7 +51,7 @@ router.get('/api/v1/reports/monthly/current', auth, apiHandler(async (req: Reque
     
     var now = new Date();
 
-    var firstDayOfWeek = getFirstDayOfWeek(new Date());
+    var firstDayOfWeek = getFirstDayOfMonth(new Date());
     const report = reportService.createReport(cashbookId, firstDayOfWeek, now);
     return await report;
 }));
