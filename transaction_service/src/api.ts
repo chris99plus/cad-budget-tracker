@@ -42,8 +42,8 @@ router.post('/api/v1/transactions', auth, apiHandler(async (req: Request, res: R
             let newTransactionId = new mongoose.Types.ObjectId();
             var billImageUrl: string | null = null;
 
-            if (files.bill != null) {
-                let billImageFile = files.bill as formidable.File;
+            if (files.billImage != null) {
+                let billImageFile = files.billImage as formidable.File;
 
                 await fileSystem.storeUploadedFile(
                     billImageFile.filepath,

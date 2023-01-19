@@ -27,7 +27,7 @@ import { useAuth } from '../../../authContext';
 import ReportDataService from '../../../services/report';
 
 // apis
-import TrasactionDataService from '../../../services/transactions';
+import TransactionDataService from '../../../services/transactions';
 
 // ==============================|| DASHBOARD DEFAULT - POPULAR CARD ||============================== //
 
@@ -42,6 +42,7 @@ const PopularCard = ({ isLoading }) => {
     const [transactionContent, setTransactionContent] = useState(null);
     const [transactionComment, setTransactionComment] = useState(null);
     const [transactionCurrency, setTransactionCurrency] = useState('EUR');
+    const [transactionBillImage, setTransactionBillImage] = useState(null);
     const [error, setError] = useState(false);
     const { tokenState } = useAuth();
     const [reportForCurrentDay, setReportForCurrentDay] = useState([]);
@@ -75,15 +76,17 @@ const PopularCard = ({ isLoading }) => {
                 type: transactionContent,
                 description: transactionName,
                 comment: transactionComment,
-                timestamp: '',
-                category: ''
+                timestamp: new Date(),
+                category: '',
+                billImage: transactionBillImage
             };
-            TrasactionDataService.postTransaction(data, tokenState)
+            
+            TransactionDataService.postTransaction(data, tokenState)
                 .then((response) => {
-                    //console.log(response.data);
+                    console.log(response);
                 })
                 .catch((e) => {
-                    //console.log(e);
+                    console.log(e);
                 });
             setOpen(false);
             setError(false);
@@ -138,7 +141,7 @@ const PopularCard = ({ isLoading }) => {
     ];
 
     useEffect(() => {
-        TrasactionDataService.getAll(tokenState)
+        TransactionDataService.getAll(tokenState)
             .then((response) => {
                 setTransaction(response.data.data);
             })
@@ -146,13 +149,13 @@ const PopularCard = ({ isLoading }) => {
                 console.log(e);
             });
         ReportDataService.getReportForOneDay(tokenState)
-        .then((response) => {
-            setReportForCurrentDay(response.data.data);
-        })
-        .catch((e) => {
-            console.log(e);
-        });
-        console.log("awd");
+            .then((response) => {
+                setReportForCurrentDay(response.data.data);
+            })
+            .catch((e) => {
+                console.log(e);
+            });
+
     }, [open]);
 
 
@@ -254,6 +257,12 @@ const PopularCard = ({ isLoading }) => {
                                                 maxRows={10}
                                                 onChange={(newValue) => setTransactionValue(newValue.target.value)}
                                             />
+
+<form>
+                                            <input type="file"
+                                                accept="image/png, image/jpeg"
+                                                onChange={(e) => setTransactionBillImage(e.target.files[0])} />
+</form>
                                         </DialogContent>
                                         <DialogActions>
                                             <Button onClick={handleClickClose}>Close</Button>
@@ -304,7 +313,7 @@ const PopularCard = ({ isLoading }) => {
                                 {transaction[0] && (
                                     <BajajAreaChartCard
                                         value={reportForCurrentDay.total}
-                                        description={"Balance  " + transactionPeriod }
+                                        description={"Balance  " + transactionPeriod}
                                     />
                                 )}
                             </Grid>
@@ -314,8 +323,8 @@ const PopularCard = ({ isLoading }) => {
                                     var dateObject = new Date(comparisonTime);
                                     return (
                                         ((transactionPeriod == 'day' && dateObject.getDate() == currentDate.getDate()) ||
-                                        (transactionPeriod == 'month' && dateObject.getMonth() == currentDate.getMonth()) ||
-                                        (transactionPeriod == 'total')) && (
+                                            (transactionPeriod == 'month' && dateObject.getMonth() == currentDate.getMonth()) ||
+                                            (transactionPeriod == 'total')) && (
                                             <div key={child._id}>
                                                 <Grid container direction="column">
                                                     <Grid item>
