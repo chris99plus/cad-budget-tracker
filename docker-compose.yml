@@ -4,7 +4,7 @@ services:
   mongodb:
     image: mongo
     volumes:
-      - ./db:/data/db:rw
+      - ./volumes/mongodb:/data/db:rw
     networks:
     - cad_backend_network
 
@@ -72,6 +72,30 @@ services:
       - EXECUTION_MODE=service
     networks:
     - cad_backend_network
+
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./infrastructure/prometheus:/etc/prometheus
+    networks:
+    - cad_backend_network
+
+  grafana:
+    image: grafana/grafana-oss:9.1.0
+    container_name: grafana
+    user: "0"
+    volumes:
+    # defining our main config parameters for provisioning prometheus datasource
+    - ./infrastructure/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources/
+   # defining our main config parameters for provisioning for dashboards
+    - ./infrastructure/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards/
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    networks:
+      - cad_backend_network
 
   frontend:
     build: 
