@@ -28,6 +28,7 @@ import ReportDataService from '../../../services/report';
 
 // apis
 import TrasactionDataService from '../../../services/transactions';
+import { filterProps } from 'framer-motion';
 
 // ==============================|| DASHBOARD DEFAULT - POPULAR CARD ||============================== //
 
@@ -45,6 +46,11 @@ const PopularCard = ({ isLoading }) => {
     const [error, setError] = useState(false);
     const { tokenState } = useAuth();
     const [reportForCurrentDay, setReportForCurrentDay] = useState([]);
+    const [reportForCurrentMonth, setReportForCurrentMonth] = useState([]);
+    const [totalBalance, setTotalBalance] = useState([]);
+    const [showAllTransactions, setShowAllTransactions] = useState(false);
+    var indexTransaction = 0; 
+    const numerOfMaximalTransaktions = 5;
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -145,14 +151,27 @@ const PopularCard = ({ isLoading }) => {
             .catch((e) => {
                 console.log(e);
             });
+        TrasactionDataService.getTotalBalance(tokenState)
+            .then((response) => {
+                setTotalBalance(response.data.data);
+            })
+            .catch((e) => {
+                console.log(e);
+            });
         ReportDataService.getReportForOneDay(tokenState)
-        .then((response) => {
-            setReportForCurrentDay(response.data.data);
-        })
-        .catch((e) => {
-            console.log(e);
-        });
-        console.log("awd");
+            .then((response) => {
+                setReportForCurrentDay(response.data.data);
+            })
+            .catch((e) => {
+                console.log(e);
+            });;
+        ReportDataService.getReportForCurrentMonth(tokenState)
+            .then((response) => {
+                setReportForCurrentMonth(response.data.data);
+            })
+            .catch((e) => {
+                console.log(e);
+            });;
     }, [open]);
 
 
@@ -301,21 +320,37 @@ const PopularCard = ({ isLoading }) => {
                                 </Grid>
                             </Grid>
                             <Grid item xs={12} sx={{ pt: '16px !important' }}>
-                                {transaction[0] && (
-                                    <BajajAreaChartCard
-                                        value={reportForCurrentDay.total}
-                                        description={"Balance  " + transactionPeriod }
-                                    />
-                                )}
+                                {transactionPeriod == 'day' &&
+                                <BajajAreaChartCard
+                                    value={reportForCurrentDay.total}
+                                    description={"Balance  " + transactionPeriod }
+                                />}
+                                {transactionPeriod == 'month' &&
+                                <BajajAreaChartCard
+                                    value={reportForCurrentMonth.total}
+                                    description={"Balance  " + transactionPeriod }
+                                />}
+                                {transactionPeriod == 'total' &&
+                                <BajajAreaChartCard
+                                    value={totalBalance.total}
+                                    description={"Balance  " + transactionPeriod }
+                                />}
                             </Grid>
                             <Grid item xs={12}>
                                 {transaction.map((child) => {
                                     var comparisonTime = Date.parse(child.timestamp);
                                     var dateObject = new Date(comparisonTime);
-                                    return (
-                                        ((transactionPeriod == 'day' && dateObject.getDate() == currentDate.getDate()) ||
+                                    if((transactionPeriod == 'day' && dateObject.getDate() == currentDate.getDate()) ||
                                         (transactionPeriod == 'month' && dateObject.getMonth() == currentDate.getMonth()) ||
-                                        (transactionPeriod == 'total')) && (
+                                        (transactionPeriod == 'total')) {
+                                        indexTransaction ++;
+                                    }
+
+                                    return (
+                                        ((((transactionPeriod == 'day' && dateObject.getDate() == currentDate.getDate()) ||
+                                        (transactionPeriod == 'month' && dateObject.getMonth() == currentDate.getMonth()) ||
+                                        (transactionPeriod == 'total')) && 
+                                        ((indexTransaction > numerOfMaximalTransaktions) || showAllTransactions))) && (
                                             <div key={child._id}>
                                                 <Grid container direction="column">
                                                     <Grid item>
@@ -396,9 +431,12 @@ const PopularCard = ({ isLoading }) => {
                         </Grid>
                     </CardContent>
                     <CardActions sx={{ p: 1.25, pt: 0, justifyContent: 'center' }}>
-                        <Button size="small" disableElevation>
-                            View All
-                            <ChevronRightOutlinedIcon />
+                        <Button 
+                            size="small" 
+                            disableElevation 
+                            onClick={() => setShowAllTransactions(true)}>
+                                View All
+                                <ChevronRightOutlinedIcon />
                         </Button>
                     </CardActions>
                 </MainCard>
