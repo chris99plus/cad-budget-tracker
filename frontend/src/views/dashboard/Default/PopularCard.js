@@ -24,11 +24,11 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useAuth } from '../../../authContext';
-import ReportDataService from '../../../services/report';
+import { filterProps } from 'framer-motion';
 
 // apis
 import TrasactionDataService from '../../../services/transactions';
-import { filterProps } from 'framer-motion';
+import ReportDataService from '../../../services/report';
 
 // ==============================|| DASHBOARD DEFAULT - POPULAR CARD ||============================== //
 
@@ -43,6 +43,7 @@ const PopularCard = ({ isLoading }) => {
     const [transactionContent, setTransactionContent] = useState(null);
     const [transactionComment, setTransactionComment] = useState(null);
     const [transactionCurrency, setTransactionCurrency] = useState('EUR');
+    const [transactionBillImage, setTransactionBillImage] = useState(null);
     const [error, setError] = useState(false);
     const { tokenState } = useAuth();
     const [reportForCurrentDay, setReportForCurrentDay] = useState([]);
@@ -81,15 +82,17 @@ const PopularCard = ({ isLoading }) => {
                 type: transactionContent,
                 description: transactionName,
                 comment: transactionComment,
-                timestamp: '',
-                category: ''
+                timestamp: new Date(),
+                category: '',
+                billImage: transactionBillImage
             };
-            TrasactionDataService.postTransaction(data, tokenState)
+            
+            TransactionDataService.postTransaction(data, tokenState)
                 .then((response) => {
-                    //console.log(response.data);
+                    console.log(response);
                 })
                 .catch((e) => {
-                    //console.log(e);
+                    console.log(e);
                 });
             setOpen(false);
             setError(false);
@@ -144,7 +147,7 @@ const PopularCard = ({ isLoading }) => {
     ];
 
     useEffect(() => {
-        TrasactionDataService.getAll(tokenState)
+        TransactionDataService.getAll(tokenState)
             .then((response) => {
                 setTransaction(response.data.data);
             })
@@ -273,6 +276,12 @@ const PopularCard = ({ isLoading }) => {
                                                 maxRows={10}
                                                 onChange={(newValue) => setTransactionValue(newValue.target.value)}
                                             />
+
+<form>
+                                            <input type="file"
+                                                accept="image/png, image/jpeg"
+                                                onChange={(e) => setTransactionBillImage(e.target.files[0])} />
+</form>
                                         </DialogContent>
                                         <DialogActions>
                                             <Button onClick={handleClickClose}>Close</Button>
