@@ -26,6 +26,18 @@ class TransactionsDataService {
 
         return http.post('/api/v1/transactions', bodyFormData, config);
     }
+    getTotalBalance(tokenState) {
+        const config = {
+            headers: { Authorization: `Bearer ${tokenState}` }
+        };
+        return http.get('/api/v1/cashbook/balance', config);
+    }
+    getSingleTransaction(tokenState,id) {
+        const config = {
+            headers: { Authorization: `Bearer ${tokenState}` }
+        };
+        return http.get('/api/v1/transactions/' + id, config);
+    }
 }
 
 export default new TransactionsDataService();

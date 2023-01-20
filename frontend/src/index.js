@@ -12,6 +12,7 @@ import { store } from 'store';
 // style + assets
 import 'assets/scss/style.scss';
 import 'assets/css/icon.css';
+import 'assets/css/transactionComponent.css';
 import config from './config';
 
 // ==============================|| REACT DOM RENDER  ||============================== //
