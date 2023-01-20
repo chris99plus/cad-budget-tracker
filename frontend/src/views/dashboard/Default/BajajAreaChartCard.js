@@ -3,23 +3,61 @@ import { useSelector } from 'react-redux';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
-import { Card, Grid, Typography } from '@mui/material';
+import { Card, Grid, Typography, DialogActions} from '@mui/material';
 
 // third-party
 import ApexCharts from 'apexcharts';
 import Chart from 'react-apexcharts';
 
-// project imports
-import chartData from './chart-data/bajaj-area-chart';
 
 // ===========================|| DASHBOARD DEFAULT - BAJAJ AREA CHART CARD ||=========================== //
 
-const BajajAreaChartCard = ({ value, description, comment }) => {
+const BajajAreaChartCard = ({ value, description, comment, array }) => {
     const theme = useTheme();
     const customization = useSelector((state) => state.customization);
     const { navType } = customization;
 
     const orangeDark = theme.palette.secondary[800];
+
+    const chartData = {
+        type: 'area',
+        height: 95,
+        options: {
+            chart: {
+                id: 'support-chart',
+                sparkline: {
+                    enabled: true
+                }
+            },
+            dataLabels: {
+                enabled: false
+            },
+            stroke: {
+                curve: 'smooth',
+                width: 1
+            },
+            tooltip: {
+                fixed: {
+                    enabled: false
+                },
+                x: {
+                    show: false
+                },
+                y: {
+                    title: 'Ticket '
+                },
+                marker: {
+                    show: false
+                }
+            }
+        },
+        series: [
+            {
+                data: array
+                
+            }
+        ]
+    };
 
     useEffect(() => {
         const newSupportChart = {
@@ -31,6 +69,11 @@ const BajajAreaChartCard = ({ value, description, comment }) => {
         };
         ApexCharts.exec(`support-chart`, 'updateOptions', newSupportChart);
     }, [navType, orangeDark]);
+
+
+
+
+
 
     return (
         <Card sx={{ bgcolor: 'secondary.light' }}>
@@ -55,7 +98,9 @@ const BajajAreaChartCard = ({ value, description, comment }) => {
                     </Typography>
                 </Grid>
             </Grid>
-            <Chart {...chartData} />
+            <DialogActions></DialogActions>
+                <Chart {...chartData} />
+            <DialogActions></DialogActions>
         </Card>
     );
 };

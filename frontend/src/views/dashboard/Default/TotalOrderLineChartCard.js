@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 // material-ui
 import { useTheme, styled } from '@mui/material/styles';
@@ -11,6 +11,10 @@ import Chart from 'react-apexcharts';
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 import SkeletonTotalOrderCard from 'ui-component/cards/Skeleton/EarningCard';
+import TransactionDataService from '../../../services/transactions';
+import ReportDataService from '../../../services/report';
+
+import { useAuth } from '../../../authContext';
 
 import ChartDataMonth from './chart-data/total-order-month-line-chart';
 import ChartDataYear from './chart-data/total-order-year-line-chart';
@@ -63,13 +67,34 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
 
 // ==============================|| DASHBOARD - TOTAL ORDER LINE CHART CARD ||============================== //
 
-const TotalOrderLineChartCard = ({ isLoading }) => {
+const TotalOrderLineChartCard = ({ isLoading, rerenderTransaktions }) => {
     const theme = useTheme();
 
+    const [totalBalance, setTotalBalance] = useState(false);
+    const [reportForCurrentMonth, setReportForCurrentMonth] = useState([]);
     const [timeValue, setTimeValue] = useState(false);
+
+    const { tokenState } = useAuth();
     const handleChangeTime = (event, newValue) => {
         setTimeValue(newValue);
     };
+
+    useEffect(() => {
+        ReportDataService.getReportForCurrentMonth(tokenState)
+            .then((response) => {
+                setReportForCurrentMonth(response.data.data);
+            })
+            .catch((e) => {
+                console.log(e);
+            });;
+        TransactionDataService.getTotalBalance(tokenState)
+            .then((response) => {
+                setTotalBalance(response.data.data);
+            })
+            .catch((e) => {
+                console.log(e);
+            });
+    }, [rerenderTransaktions]);
 
     return (
         <>
@@ -112,7 +137,7 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
                                             sx={{ color: 'inherit' }}
                                             onClick={(e) => handleChangeTime(e, false)}
                                         >
-                                            Year
+                                            Total
                                         </Button>
                                     </Grid>
                                 </Grid>
@@ -124,11 +149,11 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
                                             <Grid item>
                                                 {timeValue ? (
                                                     <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>
-                                                        $108
+                                                        {Math.round(reportForCurrentMonth.expenses.total) || 0}€
                                                     </Typography>
                                                 ) : (
                                                     <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>
-                                                        $961
+                                                        {Math.round((totalBalance)? totalBalance.expense:0)}€
                                                     </Typography>
                                                 )}
                                             </Grid>
@@ -152,7 +177,7 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
                                                         color: theme.palette.primary[200]
                                                     }}
                                                 >
-                                                    Total Order
+                                                    Total Expenses
                                                 </Typography>
                                             </Grid>
                                         </Grid>

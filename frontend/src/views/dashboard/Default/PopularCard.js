@@ -1,5 +1,4 @@
-import PropTypes from 'prop-types';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import * as React from 'react';
 
 // material-ui
@@ -14,7 +13,7 @@ import { gridSpacing } from 'store/constant';
 
 // assets
 import ChevronRightOutlinedIcon from '@mui/icons-material/ChevronRightOutlined';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
 import KeyboardArrowUpOutlinedIcon from '@mui/icons-material/KeyboardArrowUpOutlined';
 import KeyboardArrowDownOutlinedIcon from '@mui/icons-material/KeyboardArrowDownOutlined';
@@ -30,16 +29,14 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useAuth } from '../../../authContext';
-import { filterProps } from 'framer-motion';
 
 // apis
 import TransactionDataService from '../../../services/transactions';
 import ReportDataService from '../../../services/report';
-import { convertLength } from '@mui/material/styles/cssUtils';
 
 // ==============================|| DASHBOARD DEFAULT - POPULAR CARD ||============================== //
 
-const PopularCard = ({ isLoading }) => {
+function PopularCard({ isLoading, rerenderTransaktions, setRerenderTransaktions}) {
 
     //React-States
     const theme = useTheme();
@@ -47,13 +44,10 @@ const PopularCard = ({ isLoading }) => {
     const [transaction, setTransaction] = useState([]);
     const [open, setOpen] = useState(false);
     const [transactionPeriod, setTransactionPeriod] = useState('day');
-    const [transactionName, setTransactionName] = useState(null);
-    const [transactionValue, setTransactionValue] = useState(null);
-    const [transactionContent, setTransactionContent] = useState(null);
-    const [transactionComment, setTransactionComment] = useState(null);
     const [transactionBillImage, setTransactionBillImage] = useState(null);
     const [error, setError] = useState(false);
     const { tokenState } = useAuth();
+    const [type, setType] = useState(false);
     const [reportForCurrentDay, setReportForCurrentDay] = useState([]);
     const [reportForCurrentMonth, setReportForCurrentMonth] = useState([]);
     const [totalBalance, setTotalBalance] = useState([]);
@@ -62,6 +56,17 @@ const PopularCard = ({ isLoading }) => {
     const [dateValue, setDateValue] = useState(dayjs(currentDate));
     const [transactionView, setShowTransactionView] = useState(false);
     const [activeTransaction, setActiveTransaction] = useState(false);
+    const [transactionFromToday, setTransactionFromToday] = useState([]);
+    const [transactionFromThisMonth, setTransactionFromThisMonth] = useState([]);
+    const [transactionValues, setTransactionValues] = useState([]);
+
+
+    //References
+    const textFieldCommentRef = useRef();
+    const textFieldTypeRef = useRef();
+    const textFieldValueRef = useRef();
+    const textFieldDescriptionRef = useRef();
+    const textFieldCategoryRef = useRef();
 
     //Variables
     var indexTransaction = 0; 
@@ -93,6 +98,47 @@ const PopularCard = ({ isLoading }) => {
             label: 'View All'
         }
     ];
+    const incomeCategorys= [
+        {
+            value: 'Salary',
+            label: 'Salary'
+        },
+        {
+            value: 'Promotions',
+            label: 'Promotions'
+        },
+        {
+            value: 'Investments',
+            label: 'Investments'
+        },
+        {
+            value: 'Other Revenue',
+            label: 'Other Revenue'
+        }
+    ];
+
+    const expenseCategorys= [
+        {
+            value: 'Food',
+            label: 'Food'
+        },
+        {
+            value: 'Shopping',
+            label: 'Shopping'
+        },
+        {
+            value: 'Clothing',
+            label: 'Clothing'
+        },
+        {
+            value: 'Apartment',
+            label: 'Apartment'
+        },
+        {
+            value: 'Mobility',
+            label: 'Mobility'
+        }
+    ];
 
     //Action-Listeners
     const handleClick = (event) => {
@@ -121,24 +167,25 @@ const PopularCard = ({ isLoading }) => {
 
     const handleClickAdd = () => {
         if (
-            transactionName != null &&
-            transactionValue != null &&
-            transactionContent != null &&
-            transactionComment != null 
+            textFieldDescriptionRef.current.value != '' &&
+            textFieldValueRef.current.value != '' &&
+            textFieldCategoryRef.current.value != '' &&
+            textFieldTypeRef.current.value != ''  
         ) {
             var data = {
-                amount: transactionValue,
-                type: transactionContent,
-                description: transactionName,
-                comment: transactionComment,
-                timestamp: dateValue, // Datum über den Nutzer eingeben lassen
-                category: '',
+                amount: textFieldValueRef.current.value,
+                type: textFieldTypeRef.current.value,
+                description: textFieldDescriptionRef.current.value,
+                comment: textFieldCommentRef.current.value,
+                timestamp: dateValue, 
+                category: textFieldCategoryRef.current.value,
                 billImage: transactionBillImage
             };
             
             TransactionDataService.postTransaction(data, tokenState)
                 .then((response) => {
                     setOpen(false);
+                    setRerenderTransaktions(true);
                     setError(false);
                 })
                 .catch((e) => {
@@ -161,12 +208,49 @@ const PopularCard = ({ isLoading }) => {
             });
     }
 
+    function deleteTransaction (childTransactionId) {
+        TransactionDataService.deleteSingleTransaction(tokenState, childTransactionId)
+            .then((response) => {
+                setShowTransactionView(false);
+                setRerenderTransaktions(true);
+            })
+            .catch((e) => {
+                console.log(e);
+            });
+    }
     //Side-Effects
     useEffect(() => {
         TransactionDataService.getAll(tokenState)
             .then((response) => {
                 setTransaction(response.data.data.reverse());
-            })
+                setTransactionFromToday([]);
+                setTransactionFromThisMonth([]);
+                setTransactionValues([]);
+                response.data.data.forEach(transactionChild => {
+                    if (transactionChild.type == 'expense') {
+                        setTransactionValues(transactionFromToday =>[...transactionFromToday,-transactionChild.amount])
+                    }else{
+                        setTransactionValues(transactionFromToday =>[...transactionFromToday,transactionChild.amount])
+                    }
+                    var comparisonTime = Date.parse(transactionChild.timestamp);
+                    var dateObject = new Date(comparisonTime);
+                    if(dateObject.getDate() == currentDate.getDate()){
+                        if (transactionChild.type == 'expense') {
+                            setTransactionFromToday(transactionFromToday =>[...transactionFromToday,-transactionChild.amount])
+                        }else{
+                            setTransactionFromToday(transactionFromToday =>[...transactionFromToday,transactionChild.amount])
+                        }
+                    }
+                    if(dateObject.getMonth() == currentDate.getMonth()){
+                        if (transactionChild.type == 'expense') {
+                            setTransactionFromThisMonth(transactionFromThisMonth =>[...transactionFromThisMonth,-transactionChild.amount])
+                        }
+                        else{
+                            setTransactionFromThisMonth(transactionFromThisMonth =>[...transactionFromThisMonth,transactionChild.amount])
+                        }
+                    }
+                }
+            )})
             .catch((e) => {
                 console.log(e);
             });
@@ -191,7 +275,7 @@ const PopularCard = ({ isLoading }) => {
             .catch((e) => {
                 console.log(e);
             });;
-    }, [open]);
+    }, [rerenderTransaktions]);
 
     return (
         <>
@@ -278,6 +362,17 @@ const PopularCard = ({ isLoading }) => {
                                             </TextField>
                                             <TextField
                                                 margin="dense"
+                                                id="outlined-select-currency"
+                                                variant="outlined"
+                                                fullWidth
+                                                label="Category"
+                                                defaultValue={activeTransaction.category}
+                                                disabled
+                                            >
+                                  
+                                            </TextField>
+                                            <TextField
+                                                margin="dense"
                                                 id="name"
                                                 label="Description"
                                                 defaultValue={activeTransaction.description}
@@ -336,6 +431,7 @@ const PopularCard = ({ isLoading }) => {
                                             />:""}
                                         </DialogContent>
                                         <DialogActions>
+                                            <Button onClick={() => deleteTransaction(activeTransaction._id)}>Delete</Button>
                                             <Button onClick={handleClickClose}>Close</Button>
                                         </DialogActions>
                                     </Dialog>
@@ -363,8 +459,9 @@ const PopularCard = ({ isLoading }) => {
                                                 fullWidth
                                                 select
                                                 label="Type"
-                                                defaultValue=""
-                                                onChange={(newValue) => setTransactionContent(newValue.target.value)}
+                                                defaultValue="income"
+                                                inputRef={textFieldTypeRef}
+                                                onChange={(e) => ((textFieldCategoryRef.current.value=''),setType(e.target.value))} 
                                             >
                                                 {types.map((option) => (
                                                     <MenuItem key={option.value} value={option.value}>
@@ -374,13 +471,35 @@ const PopularCard = ({ isLoading }) => {
                                             </TextField>
                                             <TextField
                                                 margin="dense"
+                                                id="outlined-select-currency"
+                                                fullWidth
+                                                select
+                                                label="Category"
+                                                defaultValue=""
+                                                inputRef={textFieldCategoryRef}
+                                            >
+                                                {(type&&(type == 'expense')?
+                                                (expenseCategorys.map((option) => (
+                                                    <MenuItem key={option.value} value={option.value}>
+                                                        {option.label}
+                                                    </MenuItem>
+                                                )))
+                                                :
+                                                (incomeCategorys.map((option) => (
+                                                    <MenuItem key={option.value} value={option.value}>
+                                                        {option.label}
+                                                    </MenuItem>
+                                                ))))}
+                                            </TextField>
+                                            <TextField
+                                                margin="dense"
                                                 id="name"
                                                 label="Name of your Transaction"
                                                 type="text"
                                                 fullWidth
                                                 variant="outlined"
                                                 autoComplete="off"
-                                                onChange={(newValue) => setTransactionName(newValue.target.value)}
+                                                inputRef={textFieldDescriptionRef}
                                             />
                                             <TextField
                                                 margin="dense"
@@ -390,7 +509,7 @@ const PopularCard = ({ isLoading }) => {
                                                 fullWidth
                                                 variant="outlined"
                                                 autoComplete="off"
-                                                onChange={(newValue) => setTransactionComment(newValue.target.value)}
+                                                inputRef={textFieldCommentRef}
                                             />
                                             <TextField
                                                 margin="dense"
@@ -401,7 +520,7 @@ const PopularCard = ({ isLoading }) => {
                                                 variant="outlined"
                                                 autoComplete="off"
                                                 maxRows={10}
-                                                onChange={(newValue) => setTransactionValue(newValue.target.value)}
+                                                inputRef={textFieldValueRef}
                                             />
                                             <DialogActions></DialogActions>
                                             <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -457,18 +576,21 @@ const PopularCard = ({ isLoading }) => {
                             <Grid item xs={12} sx={{ pt: '16px !important' }}>
                                 {transactionPeriod == 'day' &&
                                 <BajajAreaChartCard
-                                    value={reportForCurrentDay.total}
-                                    description={"Balance  " + transactionPeriod }
+                                    value={Math.round(reportForCurrentDay.total) || 0}
+                                    description={"Balance  " + transactionPeriod}
+                                    array={transactionFromToday}
                                 />}
                                 {transactionPeriod == 'month' &&
                                 <BajajAreaChartCard
-                                    value={reportForCurrentMonth.total}
+                                    value={Math.round(reportForCurrentMonth.total) || 0}
                                     description={"Balance  " + transactionPeriod }
+                                    array={transactionFromThisMonth}
                                 />}
                                 {transactionPeriod == 'total' &&
                                 <BajajAreaChartCard
-                                    value={totalBalance.total}
+                                    value={totalBalance.total || 0}
                                     description={"Balance  " + transactionPeriod }
+                                    array={transactionValues}
                                 />}
                             </Grid>
 
@@ -596,8 +718,5 @@ const PopularCard = ({ isLoading }) => {
     );
 };
 
-PopularCard.propTypes = {
-    isLoading: PropTypes.bool
-};
 
 export default PopularCard;

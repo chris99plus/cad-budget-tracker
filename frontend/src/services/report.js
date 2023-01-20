@@ -28,6 +28,12 @@ class ReportDataService {
         };
         return http.get('/api/v1/reports/weekly', config);
     }
+    getReportOneWeek(tokenState) {
+        const config = {
+            headers: { Authorization: `Bearer ${tokenState}` }
+        };
+        return http.get('/api/v1/reports/weekly/all', config);
+    }
 }
 
 export default new ReportDataService();

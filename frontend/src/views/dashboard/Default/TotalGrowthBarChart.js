@@ -14,28 +14,17 @@ import Chart from 'react-apexcharts';
 import SkeletonTotalGrowthBarChart from 'ui-component/cards/Skeleton/TotalGrowthBarChart';
 import MainCard from 'ui-component/cards/MainCard';
 import { gridSpacing } from 'store/constant';
+import ReportDataService from '../../../services/report';
+import { useAuth } from '../../../authContext';
 
 // chart data
 import chartData from './chart-data/total-growth-bar-chart';
 
-const status = [
-    {
-        value: 'today',
-        label: 'Today'
-    },
-    {
-        value: 'month',
-        label: 'This Month'
-    },
-    {
-        value: 'year',
-        label: 'This Year'
-    }
-];
+
 
 // ==============================|| DASHBOARD DEFAULT - TOTAL GROWTH BAR CHART ||============================== //
 
-const TotalGrowthBarChart = ({ isLoading }) => {
+const TotalGrowthBarChart = ({ isLoading, rerenderTransaktions }) => {
     const [value, setValue] = useState('today');
     const theme = useTheme();
     const customization = useSelector((state) => state.customization);
@@ -50,6 +39,34 @@ const TotalGrowthBarChart = ({ isLoading }) => {
     const primaryDark = theme.palette.primary.dark;
     const secondaryMain = theme.palette.secondary.main;
     const secondaryLight = theme.palette.secondary.light;
+
+
+    const [expenseArray, setExpenseArray] = useState([2]);
+    const [incomeArray, setIncomeeArray] = useState([2]);//change this in production
+    const [weekNumberArray, setWeekNumberArray] = useState([]);
+    const { tokenState } = useAuth();
+
+    useEffect(() => {
+        ReportDataService.getReportOneWeek(tokenState)
+            .then((response) => {
+                    setExpenseArray([]);
+                    setIncomeeArray([]);
+                    response.data.data.forEach(oneWeek => {
+                        setExpenseArray(expenseArray =>[...expenseArray,oneWeek.expense.total])
+                        setIncomeeArray(incomeArray =>[...incomeArray,oneWeek.income.total])
+                        var comparisonTime = Date.parse(oneWeek.end);
+                        var dateObject = new Date(comparisonTime);
+                        var oneJan = new Date(dateObject.getFullYear(),0,1);
+                        var numberOfDays = Math.floor((currentdate - oneJan) / (24 * 60 * 60 * 1000));
+                        var result = Math.ceil(( currentdate.getDay() + 1 + numberOfDays) / 7);
+                        setWeekNumberArray(weekNumberArray =>[...weekNumberArray, result])
+                 });
+            })
+            .catch((e) => {
+                console.log(e);
+            });
+    }, [rerenderTransaktions]);
+
 
     useEffect(() => {
         const newChartData = {
@@ -79,7 +96,21 @@ const TotalGrowthBarChart = ({ isLoading }) => {
                 labels: {
                     colors: grey500
                 }
-            }
+            },
+            series: [
+                {
+                    name: 'Income',
+                    data: incomeArray.slice(11)
+                },
+                {
+                    name: 'Expenses',
+                    data: expenseArray.slice(11)
+                }
+            ],
+            xaxis: {
+                type: 'category',
+                categories: weekNumberArray.slice(11)
+            },
         };
 
         // do not load chart when loading
@@ -100,26 +131,12 @@ const TotalGrowthBarChart = ({ isLoading }) => {
                                 <Grid item>
                                     <Grid container direction="column" spacing={1}>
                                         <Grid item>
-                                            <Typography variant="subtitle2">Total Growth</Typography>
+                                            <Typography variant="subtitle2">Weekly Growth</Typography>
                                         </Grid>
                                         <Grid item>
                                             <Typography variant="h3">$2,324.00</Typography>
                                         </Grid>
                                     </Grid>
-                                </Grid>
-                                <Grid item>
-                                    <TextField
-                                        id="standard-select-currency"
-                                        select
-                                        value={value}
-                                        onChange={(e) => setValue(e.target.value)}
-                                    >
-                                        {status.map((option) => (
-                                            <MenuItem key={option.value} value={option.value}>
-                                                {option.label}
-                                            </MenuItem>
-                                        ))}
-                                    </TextField>
                                 </Grid>
                             </Grid>
                         </Grid>
