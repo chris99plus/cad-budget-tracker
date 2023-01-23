@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: transactions-service-envs
+data:
+  mongodbConnectionString: mongodb+srv://simba:theLionKing@cluster-fra.vm27r7k.mongodb.net/budget-tracker
+  serverPort: "4000"

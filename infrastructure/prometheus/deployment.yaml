@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: prometheus-deployment
-  namespace: default
+  namespace: monitoring
   labels:
     app: prometheus-server
 spec:
@@ -15,6 +15,7 @@ spec:
       labels:
         app: prometheus-server
     spec:
+      serviceAccountName: prometheus-sa
       containers:
         - name: prometheus
           image: prom/prometheus
