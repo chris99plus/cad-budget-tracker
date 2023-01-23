@@ -38,6 +38,12 @@ class TransactionsDataService {
         };
         return http.get('/api/v1/transactions/' + id, config);
     }
+    deleteSingleTransaction(tokenState,id) {
+        const config = {
+            headers: { Authorization: `Bearer ${tokenState}` }
+        };
+        return http.delete('/api/v1/transactions/' + id, config);
+    }
 }
 
 export default new TransactionsDataService();

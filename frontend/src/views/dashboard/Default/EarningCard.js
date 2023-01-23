@@ -17,9 +17,9 @@ import FileCopyTwoToneIcon from '@mui/icons-material/FileCopyOutlined';
 import PictureAsPdfTwoToneIcon from '@mui/icons-material/PictureAsPdfOutlined';
 import ArchiveTwoToneIcon from '@mui/icons-material/ArchiveOutlined';
 import { useState, useEffect } from 'react';
-import TransaktionsDataService from '../../../services/report';
+import TransactionDataService from '../../../services/transactions';
 import { useAuth } from '../../../authContext';
-    
+
 
 const CardWrapper = styled(MainCard)(({ theme }) => ({
     backgroundColor: theme.palette.secondary.dark,
@@ -59,11 +59,13 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
 
 // ===========================|| DASHBOARD DEFAULT - EARNING CARD ||=========================== //
 
-const EarningCard = ({ isLoading }) => {
+const EarningCard = ({ isLoading, rerenderTransaktions }) => {
     
     const theme = useTheme();
 
     const [anchorEl, setAnchorEl] = useState(null);
+    const [totalEarning, setTotalEarning] = useState(false);
+    const { tokenState } = useAuth();
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -72,6 +74,16 @@ const EarningCard = ({ isLoading }) => {
     const handleClose = () => {
         setAnchorEl(null);
     };
+
+    useEffect(() => {
+        TransactionDataService.getTotalBalance(tokenState)
+            .then((response) => {
+                setTotalEarning(response.data.data);
+            })
+            .catch((e) => {
+                console.log(e);
+            });
+    }, [rerenderTransaktions]);
 
     return (
         <>
@@ -148,7 +160,7 @@ const EarningCard = ({ isLoading }) => {
                                 <Grid container alignItems="center">
                                     <Grid item>
                                         <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>
-                                            $500.00
+                                            {totalEarning?totalEarning.income:0} €
                                         </Typography>
                                     </Grid>
                                     <Grid item>
