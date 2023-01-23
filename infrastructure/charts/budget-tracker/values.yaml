@@ -1,8 +1,3 @@
-# Default values for budget-tracker.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-
-imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
@@ -31,7 +26,6 @@ mongodb:
 authentication-service:
   fullnameOverride: authentication-service
   db:
-    internalEnabled: false
     host: mongodb
     collection: authentication
   appSecret: budget-tracker
@@ -40,13 +34,9 @@ authentication-service:
 tenant-service:
   fullnameOverride: tenant-service
   db:
-    internalEnabled: false
     host: mongodb
     collection: tenants
   appSecret: budget-tracker
-  kubernetes:
-    client_certificate: ""
-    kubernetes_config: ""
 
 frontend:
   fullnameOverride: frontend

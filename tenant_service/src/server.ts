@@ -42,7 +42,7 @@ async function main() {
         let cacertPath = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt";
 
         await controller.configureKubectl(token, cacertPath);
-        await controller.createTenantInfrastructure("free");
+        await controller.createTenantInfrastructure("free", namespace);
     });
 }
 

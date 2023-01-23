@@ -40,22 +40,16 @@ spec:
               protocol: TCP
           env:
             - name: SERVER_PORT
-              value: "80"
+              value: {{ .Values.service.port | quote }}
             - name: MONGODB_CONNECTION_STRING
               value: {{ include "tenantService.connection_string" . }}
-#            - name: KUBERNETES_CLIENT_CERTIFICATE
-#              value: {{ .Values.kubernetes.client_certificate }}
-#            - name: KUBERNETES_CONFIG
-#              value: {{ .Values.kubernetes.kubernetes_config }}
-
-          #livenessProbe:
-          #  httpGet:
-          #    path: /
-          #    port: http
-          #readinessProbe:
-          #  httpGet:
-          #    path: /
-          #    port: http
+            {{- if .Values.appSecret }}
+            - name: JWT_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.appSecret }}
+                  key: jwtSecret
+            {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

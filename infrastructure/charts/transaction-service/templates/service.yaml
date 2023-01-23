@@ -4,6 +4,7 @@ metadata:
   name: {{ include "transactionService.fullname" . }}
   labels:
     {{- include "transactionService.labels" . | nindent 4 }}
+
 spec:
   type: {{ .Values.service.type }}
   ports:

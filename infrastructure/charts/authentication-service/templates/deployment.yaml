@@ -38,7 +38,7 @@ spec:
               protocol: TCP
           env:
             - name: SERVER_PORT
-              value: "80"
+              value: {{ .Values.service.port | quote }}
             - name: MONGODB_CONNECTION_STRING
               value: {{ include "authenticationService.connection_string" . }}
             - name: TENANT_SERVICE_URL
@@ -50,14 +50,6 @@ spec:
                   name: {{ .Values.appSecret }}
                   key: jwtSecret
             {{- end }}
-          # livenessProbe:
-          #   httpGet:
-          #     path: /
-          #     port: http
-          # readinessProbe:
-          #   httpGet:
-          #     path: /
-          #     port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

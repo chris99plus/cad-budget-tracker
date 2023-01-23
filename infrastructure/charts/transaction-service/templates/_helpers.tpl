@@ -65,9 +65,5 @@ Image definition
 MongoDB connection string
 */}}
 {{- define "transactionService.connection_string" -}}
-{{- if .Values.db.internalEnabled -}}
-mongodb://{{ .Release.Name }}-mongodb:27017/{{ .Values.db.collection }}
-{{- else -}}
 mongodb://{{ .Values.db.host }}:{{ .Values.db.port }}/{{ .Values.db.collection }}
-{{- end }}
 {{- end }}

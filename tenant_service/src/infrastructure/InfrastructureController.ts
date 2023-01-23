@@ -9,21 +9,21 @@ export class InfrastructureController {
         this.tenantRepository = tenantRepository;
     }
 
-    async syncInfrastructure() {
+    async syncInfrastructure(rootNamespace: string) {
         let tenants = await this.tenantRepository.getAllTenants();
 
         for (let tenant of tenants) {
-            this.createTenantInfrastructure(tenant.name);
+            this.createTenantInfrastructure(tenant.name, rootNamespace);
         }
 
         // TODO: Delete deployed infrastructure if no tenant is in the database
     }
 
-    async createTenantInfrastructure(tenantName: string) {
+    async createTenantInfrastructure(tenantName: string, rootNamespace: string) {
         // FIXME: Sanitize tenantName input
         let namespace = tenantName;
         await this.executeShellCommand(`kubectl create namespace ${namespace}`);
-        await this.executeShellCommand(`kubectl get secret regcred -n cad -o yaml | sed s/"namespace: cad"/"namespace: ${namespace}"/| kubectl apply -n ${namespace} -f -`);
+        await this.executeShellCommand(`kubectl get secret regcred -n ${rootNamespace} -o yaml | sed s/"namespace: ${rootNamespace}"/"namespace: ${namespace}"/| kubectl apply -n ${namespace} -f -`);
         await this.executeShellCommand(`helm install ${tenantName} ./../infrastructure/charts/tenant -f ./../infrastructure/tenantVars.yaml -n ${namespace}`);
     }
 
