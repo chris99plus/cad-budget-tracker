@@ -44,7 +44,7 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
 
 // ==============================|| DASHBOARD - TOTAL INCOME DARK CARD ||============================== //
 
-const TotalIncomeDarkCard = ({ isLoading }) => {
+const TotalIncomeDarkCard = ({ isLoading, rerenderTransaktions }) => {
     const theme = useTheme();
     const [reportForCurrentWeek, setReportForCurrentWeek] = useState();
     const { tokenState } = useAuth();
@@ -57,7 +57,7 @@ const TotalIncomeDarkCard = ({ isLoading }) => {
             .catch((e) => {
                 console.log(e);
             });
-    }, []);
+    }, [rerenderTransaktions]);
 
     return (
         <>
