@@ -28,7 +28,7 @@ class ReportDataService {
         };
         return http.get('/api/v1/reports/weekly', config);
     }
-    getReportOneWeek(tokenState) {
+    getReportAllWeekly(tokenState) {
         const config = {
             headers: { Authorization: `Bearer ${tokenState}` }
         };

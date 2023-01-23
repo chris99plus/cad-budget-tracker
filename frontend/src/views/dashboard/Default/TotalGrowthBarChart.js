@@ -47,7 +47,7 @@ const TotalGrowthBarChart = ({ isLoading, rerenderTransaktions }) => {
     const { tokenState } = useAuth();
 
     useEffect(() => {
-        ReportDataService.getReportOneWeek(tokenState)
+        ReportDataService.getReportAllWeekly(tokenState)
             .then((response) => {
                     setExpenseArray([]);
                     setIncomeeArray([]);
@@ -132,9 +132,6 @@ const TotalGrowthBarChart = ({ isLoading, rerenderTransaktions }) => {
                                     <Grid container direction="column" spacing={1}>
                                         <Grid item>
                                             <Typography variant="subtitle2">Weekly Growth</Typography>
-                                        </Grid>
-                                        <Grid item>
-                                            <Typography variant="h3">$2,324.00</Typography>
                                         </Grid>
                                     </Grid>
                                 </Grid>
