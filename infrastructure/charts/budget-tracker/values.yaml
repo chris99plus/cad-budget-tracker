@@ -33,7 +33,20 @@ authentication-service:
   db:
     internalEnabled: false
     host: mongodb
+    collection: authentication
   appSecret: budget-tracker
+  tenantServiceUrl: tenant-service
+
+tenant-service:
+  fullnameOverride: tenant-service
+  db:
+    internalEnabled: false
+    host: mongodb
+    collection: tenants
+  appSecret: budget-tracker
+  kubernetes:
+    client_certificate: ""
+    kubernetes_config: ""
 
 frontend:
   fullnameOverride: frontend

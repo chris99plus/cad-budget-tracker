@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "authenticationService.fullname" . }}
+  name: {{ include "tenantService.fullname" . }}
   labels:
-    {{- include "authenticationService.labels" . | nindent 4 }}
+    {{- include "tenantService.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "authenticationService.selectorLabels" . | nindent 6 }}
+      {{- include "tenantService.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -18,46 +18,44 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "authenticationService.selectorLabels" . | nindent 8 }}
+        {{- include "tenantService.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      serviceAccountName: cluster-control
+      automountServiceAccountToken: true
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: {{ include "authenticationService.image" . | quote }}
+          image: {{ include "tenantService.image" . | quote }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: 80
+              containerPort: {{ .Values.service.port }}
               protocol: TCP
           env:
             - name: SERVER_PORT
               value: "80"
             - name: MONGODB_CONNECTION_STRING
-              value: {{ include "authenticationService.connection_string" . }}
-            - name: TENANT_SERVICE_URL
-              value: {{ .Values.tenantServiceUrl }}
-            {{- if .Values.appSecret }}
-            - name: JWT_SECRET_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.appSecret }}
-                  key: jwtSecret
-            {{- end }}
-          # livenessProbe:
-          #   httpGet:
-          #     path: /
-          #     port: http
-          # readinessProbe:
-          #   httpGet:
-          #     path: /
-          #     port: http
+              value: {{ include "tenantService.connection_string" . }}
+#            - name: KUBERNETES_CLIENT_CERTIFICATE
+#              value: {{ .Values.kubernetes.client_certificate }}
+#            - name: KUBERNETES_CONFIG
+#              value: {{ .Values.kubernetes.kubernetes_config }}
+
+          #livenessProbe:
+          #  httpGet:
+          #    path: /
+          #    port: http
+          #readinessProbe:
+          #  httpGet:
+          #    path: /
+          #    port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

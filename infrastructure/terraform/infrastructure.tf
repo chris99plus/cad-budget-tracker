@@ -14,7 +14,6 @@ variable "REGISTRY_SERVER" {
   type = string
 }
 
-
 variable "REGISTRY_EMAIL" {
   type = string
 }

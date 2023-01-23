@@ -7,6 +7,8 @@ services:
       - db_volume:/data/db:rw
     networks:
     - cad_backend_network
+    ports:
+      - "27017:27017"
 
   authentication_service:
     build: 

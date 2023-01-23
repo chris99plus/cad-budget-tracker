@@ -6,8 +6,8 @@ replicaCount: 1
 
 image:
   registry: ghcr.io/chris99plus
-  repository: authentication_service
-  pullPolicy: IfNotPresent
+  repository: tenant_service
+  pullPolicy: Never
   # Overrides the image tag whose default is the chart appVersion.
   tag: latest
 
@@ -17,13 +17,15 @@ imagePullSecrets:
 nameOverride: ""
 fullnameOverride: ""
 
-tenantServiceUrl: ""
+kubernetes:
+  client_certificate: ""
+  kubernetes_config: ""
 
 db:
   internalEnabled: true
   # host: localhost
   port: 27017
-  collection: authentication
+  collection: tenants
 
 # appSecret: ""
 
@@ -72,5 +74,3 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
-
-# tenantSecret: <your_secret>

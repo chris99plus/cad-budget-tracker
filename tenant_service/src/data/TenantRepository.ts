@@ -19,4 +19,5 @@ export class Tenant {
 export interface TenantRepository {
     createTenant(tenant: Tenant): Promise<Tenant>;
     getTenantBySecret(tenant_secret: string): Promise<Tenant|null>;
+    getAllTenants(): Promise<Tenant[]>;
 }
