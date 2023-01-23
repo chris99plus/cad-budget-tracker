@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: deployment-transaction-service
-  namespace: free
+  #namespace: free
   annotations:
     prometheus.io/port: "4000"
     prometheus.io/scrape: "true"
