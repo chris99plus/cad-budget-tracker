@@ -20,24 +20,21 @@ const tiers = [
     price: '0',
     buttonLink: '/signin?licenceType=free',
     description: [
-      '10 users included',
-      '2 GB of storage',
-      'Help center access',
-      'Email support',
+      '1 User',
+      'Shared infrastructure'
     ],
     buttonText: 'Sign up for free',
     buttonVariant: 'outlined',
   },
   {
-    title: 'Standart',
+    title: 'Standard',
     subheader: 'Most popular',
     price: '15',
     buttonLink: '/signin?licenceType=standard',
     description: [
-      '20 users included',
-      '10 GB of storage',
-      'Help center access',
-      'Priority email support',
+      '1 User',
+      'Shared infrastructure',
+      'Scaling infrastructure based on current site load'
     ],
     buttonText: 'Get started',
     buttonVariant: 'contained',
@@ -47,10 +44,9 @@ const tiers = [
     price: '30',
     buttonLink: '/signin?licenceType=enterprise',
     description: [
-      '50 users included',
-      '30 GB of storage',
-      'Help center access',
-      'Phone & email support',
+      'Unlimited users',
+      'Isolated infrastructure',
+      'Scaling infrastructure based on current site load'
     ],
     buttonText: 'SIGN UP',
     buttonVariant: 'outlined',

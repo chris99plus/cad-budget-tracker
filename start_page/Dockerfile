@@ -1,5 +1,7 @@
 FROM node:18.10 as builder
 
+ARG PUBLIC_URL="/start"
+
 # Copy and build the start_page code
 COPY ./start_page /usr/start_page
 WORKDIR /usr/start_page
