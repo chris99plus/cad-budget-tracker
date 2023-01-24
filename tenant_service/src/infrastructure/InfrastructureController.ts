@@ -19,6 +19,9 @@ export class InfrastructureController {
         // TODO: Delete deployed infrastructure if no tenant is in the database
     }
 
+    async createPremiumTierInfrastructure(rootNamespace: string) {
+        
+    }
     async createTenantInfrastructure(tenantName: string, rootNamespace: string) {
         // FIXME: Sanitize tenantName input
         let namespace = tenantName;
