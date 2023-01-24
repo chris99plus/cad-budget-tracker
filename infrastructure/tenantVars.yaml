@@ -1,0 +1,16 @@
+# tenant free chart test vars
+# file: freeTestVars.yaml
+tenantSecret:
+  jwtSecret: fdhfjkr3rhuvdw
+
+ingress:
+  hosts:
+    - host: free.cad.christians-software-schmiede.de
+
+frontendService:
+  name: frontend
+  namespace: cad
+
+authenticationService:
+  name: authentication-service
+  namespace: cad

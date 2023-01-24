@@ -1,0 +1,23 @@
+apiVersion: v2
+name: budget-tracker
+description: This helm chart orchestrates the base infrastructure including the authentication-service, tenant-service and frontend
+
+type: application
+
+version: 0.1.0
+
+appVersion: "0.1.0"
+
+dependencies:
+- name: authentication-service
+  version: "0.1.0"
+  repository: "file://../authentication-service"
+- name: tenant-service
+  version: "0.1.0"
+  repository: "file://../tenant-service"
+- name: frontend
+  version: "0.1.0"
+  repository: "file://../frontend"
+- name: mongodb
+  version: 13.6.*
+  repository: "https://charts.bitnami.com/bitnami"

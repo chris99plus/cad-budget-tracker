@@ -2,6 +2,8 @@ import express from 'express';
 import { MongooseTenantRepository } from './data/MongooseTenantRepository';
 import { TenantService } from './service/TenantService';
 import { apiHandler, auth } from '../../microservice_helpers';
+import * as fs from 'fs'
+import { InfrastructureController } from './infrastructure/InfrastructureController';
 import * as dotenv from 'dotenv';
 import * as swStats from "swagger-stats";
 
@@ -34,8 +36,17 @@ app.get('/api/v1/tenants/:tenant_secret', auth, apiHandler(async (req, res) => {
 async function main() {
     await repository.connect();
 
-    app.listen(port, () => {
+    app.listen(port, async () => {
         console.log(`The tenant service is listening on port ${port}!`);
+
+        let controller = new InfrastructureController(repository);
+
+        let token = fs.readFileSync("/var/run/secrets/kubernetes.io/serviceaccount/token", "utf8");
+        let namespace = fs.readFileSync("/var/run/secrets/kubernetes.io/serviceaccount/namespace", "utf8");
+        let cacertPath = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt";
+
+        await controller.configureKubectl(token, cacertPath);
+        await controller.createTenantInfrastructure("free", namespace);
     });
 }
 

@@ -12,6 +12,31 @@ To start the microservices for local development run:
 docker compose up
 ```
 
+## Local kubernetes development with Minikube:
+Start minikube cluster:
+```
+minikube start
+```
+
+Use minikube docker environment as your local environment
+and build containers for the environment:
+```
+eval $(minikube docker-env)
+docker build -t frontend:0.1.0 -f ./frontend/Dockerfile .
+docker build -t authentication_service:0.1.0 -f ./authentication_service/Dockerfile .
+docker build -t transaction_service:0.1.0 -f ./transaction_service/Dockerfile .
+```
+
+Build helm dependencies:
+```
+helm dependency build ./infrastructure/charts/tenant
+```
+
+Install helm chart:
+```
+helm install <deployment_name> ./infrastructure/charts/tenant -n <k8s_namespace>
+```
+
 
 # API Specification
 
