@@ -1,0 +1,6 @@
+ingress:
+  hosts:
+  - host: cad.local
+
+appSecret:
+  jwtSecret: "lakwokecmnjazugeuaetfzfvd"

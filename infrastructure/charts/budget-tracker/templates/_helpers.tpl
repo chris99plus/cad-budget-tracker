@@ -60,3 +60,24 @@ Create the name of the budget tracker secret
 {{- default "default" .Values.appSecret.name }}
 {{- end }}
 {{- end }}
+
+
+{{/*
+Common labels
+*/}}
+{{- define "budgetTracker.labelsMonitoring" -}}
+helm.sh/chart: {{ include "budgetTracker.chart" . }}
+{{ include "budgetTracker.selectorLabelsMonitoring" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+
+{{/*
+Selector labels monitoring
+*/}}
+{{- define "budgetTracker.selectorLabelsMonitoring" -}}
+app.kubernetes.io/name: {{ include "budgetTracker.name" . }}-monitoring
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
