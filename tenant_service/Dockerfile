@@ -31,7 +31,6 @@ RUN curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | b
 
 
 COPY ./infrastructure/charts/ /usr/infrastructure/charts
-COPY ./infrastructure/tenantVars.yaml /usr/infrastructure/tenantVars.yaml
 
 WORKDIR /usr/infrastructure/charts
 

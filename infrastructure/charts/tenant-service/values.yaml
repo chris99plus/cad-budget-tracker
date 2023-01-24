@@ -9,6 +9,8 @@ image:
 imagePullSecrets:
   - name: regcred
 
+host: ""
+
 nameOverride: ""
 fullnameOverride: ""
 

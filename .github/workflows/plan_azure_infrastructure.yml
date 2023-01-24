@@ -24,6 +24,7 @@ jobs:
 
       - name: Helm build
         run: |
+          helm repo add bitnami https://charts.bitnami.com/bitnami
           helm dependency build
           
         working-directory: ./infrastructure/charts/budget-tracker
