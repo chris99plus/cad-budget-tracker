@@ -19,10 +19,6 @@ db:
   port: 27017
   collection: authentication
 
-mongodb:
-  auth:
-    enabled: false
-
 podAnnotations: {}
 
 podSecurityContext: {}

@@ -1,0 +1,8 @@
+# budget-tracker chart test vars
+# file: budgetTrackerTestVars.yaml
+appSecret:
+  jwtSecret: fdhfjkr3rhuvdw
+
+ingress:
+  hosts:
+    - host: cad.christians-software-schmiede.de

@@ -22,17 +22,12 @@ ingress:
   #      - tenant.cad.local
 
 tenantSecret:
-  create: true
+  create: false
   name: tenant
-  # jwtSecret: "changeme"
 
 frontendService: {}
-  # name: ""
-  # namespace: ""
 
 authenticationService: {}
-  # name: ""
-  # namespace: ""
 
 mongodb:
   fullnameOverride: mongodb
@@ -42,6 +37,5 @@ mongodb:
 transaction-service:
   fullnameOverride: transaction-service
   db:
-    internalEnabled: false
     host: mongodb
   tenantSecret: tenant

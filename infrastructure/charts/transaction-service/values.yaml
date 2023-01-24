@@ -17,10 +17,6 @@ db:
   port: 27017
   collection: transaction
 
-mongodb:
-  auth:
-    enabled: false
-
 podAnnotations: {}
 
 podSecurityContext: {}
