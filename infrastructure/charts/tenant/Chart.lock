@@ -2,8 +2,11 @@ dependencies:
 - name: transaction-service
   repository: file://../transaction-service
   version: 0.1.0
+- name: report-service
+  repository: file://../report-service
+  version: 0.1.0
 - name: mongodb
   repository: https://charts.bitnami.com/bitnami
-  version: 13.6.2
-digest: sha256:4a327495544b6d01bcf446c346c9382b25a00936e5a861458d0442f391393dd0
-generated: "2023-01-11T09:23:14.642549168+01:00"
+  version: 13.6.4
+digest: sha256:f8e5e633a9423e3546320bd5ebdd25d944e024b6568765fc080103de8c59f4e0
+generated: "2023-01-24T08:33:26.0773611+01:00"

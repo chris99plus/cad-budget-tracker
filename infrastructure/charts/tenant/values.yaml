@@ -39,3 +39,9 @@ transaction-service:
   db:
     host: mongodb
   tenantSecret: tenant
+
+report-service:
+  fullnameOverride: report-service
+  db:
+    host: mongodb
+  tenantSecret: tenant

@@ -12,6 +12,9 @@ dependencies:
 - name: transaction-service
   version: "0.1.0"
   repository: "file://../transaction-service"
+- name: report-service
+  version: "0.1.0"
+  repository: "file://../report-service"
 - name: mongodb
   version: 13.6.*
   repository: "https://charts.bitnami.com/bitnami"
