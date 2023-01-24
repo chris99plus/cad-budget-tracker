@@ -184,3 +184,4 @@ resource "hetznerdns_record" "hetzner_subdomain" {
   value   = data.kubernetes_ingress_v1.ingress.status.0.load_balancer.0.ingress.0.ip
   type    = "A"
 }
+
