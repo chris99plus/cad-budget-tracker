@@ -2,9 +2,10 @@ import express from 'express';
 import { MongooseTenantRepository } from './data/MongooseTenantRepository';
 import { TenantService } from './service/TenantService';
 import { apiHandler, auth } from '../../microservice_helpers';
-import * as dotenv from 'dotenv'
 import * as fs from 'fs'
 import { InfrastructureController } from './infrastructure/InfrastructureController';
+import * as dotenv from 'dotenv';
+import * as swStats from "swagger-stats";
 
 dotenv.config();
 
@@ -15,7 +16,10 @@ const repository = new MongooseTenantRepository(mongoDbConnectionString);
 const tenantService = new TenantService(repository);
 
 const app = express();
-app.use(express.json())
+app.use(express.json());
+app.use(swStats.getMiddleware({
+    uriPath: '/swagger-stats'
+}));
 
 app.post('/api/v1/tenants', auth, apiHandler(async (req, res) => {
     return await tenantService.createTenant(req.body);

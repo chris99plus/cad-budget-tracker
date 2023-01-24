@@ -53,6 +53,8 @@ services:
       - SERVER_PORT=4000
       - MONGODB_CONNECTION_STRING=mongodb://mongodb:27017/transaction
       - JWT_SECRET_KEY="9p4LA9^9@n4@z6sVTE6r3#hNhseHB8AwnzQ"
+      - AZURE_BLOB_STORAGE_CONNECTION_STRING=<Bucket connection string>
+      - AZURE_BLOB_STORAGE_CONTAINER_NAME=budgettrackerobjects-container
     networks:
     - cad_backend_network
 
@@ -69,16 +71,49 @@ services:
       - MONGODB_CONNECTION_STRING=mongodb://mongodb:27017/report
       - JWT_SECRET_KEY="9p4LA9^9@n4@z6sVTE6r3#hNhseHB8AwnzQ"
       - TRANSACTION_SERVICE_URL=http://transaction_service:4000
-      - EXECUTION_MODE="service"
+      - EXECUTION_MODE=service
     networks:
     - cad_backend_network
+
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./infrastructure/prometheus:/etc/prometheus
+    networks:
+    - cad_backend_network
+
+  grafana:
+    image: grafana/grafana-oss:9.1.0
+    container_name: grafana
+    user: "0"
+    volumes:
+    # defining our main config parameters for provisioning prometheus datasource
+    - ./infrastructure/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources/
+   # defining our main config parameters for provisioning for dashboards
+    - ./infrastructure/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards/
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    networks:
+      - cad_backend_network
 
   frontend:
     build: 
       context: .
       dockerfile: ./frontend/Dockerfile
     ports:
-      - "80:80"
+      - "81:80"
+    networks:
+    - cad_backend_network
+
+  start_page:
+    build: 
+      context: .
+      dockerfile: ./start_page/Dockerfile
+    ports:
+      - "82:80"
     networks:
     - cad_backend_network
 
@@ -88,3 +123,4 @@ networks:
 
 volumes:
   db_volume:
+    name: cad_backend_network

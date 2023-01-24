@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { useState, useEffect } from 'react';
 
 // material-ui
 import { useTheme, styled } from '@mui/material/styles';
@@ -7,6 +8,8 @@ import { Avatar, Box, List, ListItem, ListItemAvatar, ListItemText, Typography }
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 import TotalIncomeCard from 'ui-component/cards/Skeleton/TotalIncomeCard';
+import ReportDataService from '../../../services/report';
+import { useAuth } from '../../../authContext';
 
 // assets
 import StorefrontTwoToneIcon from '@mui/icons-material/StorefrontTwoTone';
@@ -39,8 +42,20 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
 
 // ==============================|| DASHBOARD - TOTAL INCOME LIGHT CARD ||============================== //
 
-const TotalIncomeLightCard = ({ isLoading }) => {
+const TotalIncomeLightCard = ({ isLoading, rerenderTransaktions }) => {
     const theme = useTheme();
+    const [reportForCurrentWeek, setReportForCurrentWeek] = useState();
+    const { tokenState } = useAuth();
+
+    useEffect(() => {
+        ReportDataService.getReportForCurrentWeek(tokenState)
+            .then((response) => {
+                setReportForCurrentWeek(response.data.data);
+            })
+            .catch((e) => {
+                console.log(e);
+            });
+    }, [rerenderTransaktions]);
 
     return (
         <>
@@ -70,7 +85,10 @@ const TotalIncomeLightCard = ({ isLoading }) => {
                                         mt: 0.45,
                                         mb: 0.45
                                     }}
-                                    primary={<Typography variant="h4">$203k</Typography>}
+                                    primary={<Typography variant="h4">
+                                             {reportForCurrentWeek? reportForCurrentWeek.income.total:"0"} €
+                                            </Typography>
+                                    }
                                     secondary={
                                         <Typography
                                             variant="subtitle2"
@@ -79,7 +97,7 @@ const TotalIncomeLightCard = ({ isLoading }) => {
                                                 mt: 0.5
                                             }}
                                         >
-                                            Total Income
+                                            Weekly Income
                                         </Typography>
                                     }
                                 />

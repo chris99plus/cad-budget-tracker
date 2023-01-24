@@ -4,6 +4,8 @@ import { AuthenticationService } from './service/AuthenticationService';
 import { apiHandler, auth, getUserInformation } from '../../microservice_helpers';
 import { TenantServiceWrapperImpl } from './service/TenantServiceWrapper';
 import * as dotenv from 'dotenv';
+import * as swStats from "swagger-stats";
+
 
 dotenv.config();
 
@@ -17,6 +19,10 @@ const authenticationService = new AuthenticationService(repository, tenantServic
 
 const app = express();
 app.use(express.json())
+app.use(swStats.getMiddleware({
+    uriPath: '/swagger-stats'
+}));
+
 
 app.post('/api/v1/auth/users', apiHandler(async (req, res) => {
     return await authenticationService.createUser(req.body);

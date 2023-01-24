@@ -94,7 +94,8 @@ Response:
 
 
 ### Get all transactions
-`GET /api/v1/cashbooks/{cashbookId}/transactions`
+- Endpoint for Users: `GET /api/v1/transactions`
+- Endpoint for Services: `GET /api/v1/cashbooks/{cashbookId}/transactions`
 
 **Parameters (optional, passed inside the URL)**
 - start: datetime
@@ -102,7 +103,8 @@ Response:
 - type: "income" | "expense"
 
 Example:
-`/api/v1/cashbooks/exampleCashbook/transactions?start=2023-01-01T02:12:24&end=2023-01-05T22:00:00&type=expense`
+- `/api/v1//transactions?start=2023-01-01T02:12:24&end=2023-01-05T22:00:00&type=expense`
+- `/api/v1/cashbooks/exampleCashbook/transactions?start=2023-01-01T02:12:24&end=2023-01-05T22:00:00&type=expense`
 
 Response:
 ```json
@@ -132,12 +134,25 @@ Response:
 ]
 ```
 
+### Get Cashbook Balance
+`GET /api/v1/cashbook/balance`
+Calculates the overall balance of the cashbook
+
+Response:
+```json
+{
+    "total": numeric,
+    "income": numeric,
+    "expense": numeric
+}
+```
+
 
 ### Get daily report
 #### today
 Berechnet einen Report über die Transaktionen des heutigen Tages. Der Report wird "on the fly" berechnet und nicht vom periodischen Microservice. Der Daily Report wird nicht in der MongoDB gespeichert.
 
-`GET /api/v1/cashbooks/{cashbookId}/reports/daily/{day}`
+`GET /api/v1/reports/daily/{day}`
 for parameter **day** pass *today* to get the daily report of today or pass a timestamp to get the daily report of a specific day, e.g. 2022-12-24 
 
 Response:
@@ -172,7 +187,7 @@ Response:
 
 
 ### Get weekly report
-`GET /api/v1/cashbooks/{cashbookId}/reports/weekly/current`
+`GET /api/v1/reports/weekly/current`
 Berechnet einen Report über die Transaktionen der aktuellen Woche. Momentan würde es ausreichen, hartcodierte Daten zu liefern. Die Berechnung ist nach Kalenderwochen, also von Mo - So. Der Report wird nicht in der MongoDB gespeichert.
 
 Response:
@@ -204,7 +219,7 @@ Response:
 }
 ```
 
-`GET /api/v1/cashbooks/{cashbookId}/reports/weekly`
+`GET /api/v1/reports/weekly/all`
 Liefert alle in der MongoDB gespeicherten Weekly-Reports eines cashbooks
 Response:
 ```json

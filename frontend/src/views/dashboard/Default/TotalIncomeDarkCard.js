@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { useState, useEffect } from 'react';
 
 // material-ui
 import { styled, useTheme } from '@mui/material/styles';
@@ -7,6 +8,8 @@ import { Avatar, Box, List, ListItem, ListItemAvatar, ListItemText, Typography }
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 import TotalIncomeCard from 'ui-component/cards/Skeleton/TotalIncomeCard';
+import ReportDataService from '../../../services/report';
+import { useAuth } from '../../../authContext';
 
 // assets
 import TableChartOutlinedIcon from '@mui/icons-material/TableChartOutlined';
@@ -41,8 +44,20 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
 
 // ==============================|| DASHBOARD - TOTAL INCOME DARK CARD ||============================== //
 
-const TotalIncomeDarkCard = ({ isLoading }) => {
+const TotalIncomeDarkCard = ({ isLoading, rerenderTransaktions }) => {
     const theme = useTheme();
+    const [reportForCurrentWeek, setReportForCurrentWeek] = useState();
+    const { tokenState } = useAuth();
+
+    useEffect(() => {
+        ReportDataService.getReportForCurrentWeek(tokenState)
+            .then((response) => {
+                setReportForCurrentWeek(response.data.data);
+            })
+            .catch((e) => {
+                console.log(e);
+            });
+    }, [rerenderTransaktions]);
 
     return (
         <>
@@ -74,12 +89,12 @@ const TotalIncomeDarkCard = ({ isLoading }) => {
                                     }}
                                     primary={
                                         <Typography variant="h4" sx={{ color: '#fff' }}>
-                                            $203k
+                                            {reportForCurrentWeek? reportForCurrentWeek.expenses.total:"0"} €
                                         </Typography>
                                     }
                                     secondary={
                                         <Typography variant="subtitle2" sx={{ color: 'primary.light', mt: 0.25 }}>
-                                            Total Income
+                                            Weekly Expense
                                         </Typography>
                                     }
                                 />

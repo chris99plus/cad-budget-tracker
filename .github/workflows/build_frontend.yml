@@ -4,6 +4,9 @@ on:
   pull_request:
     paths:
       - frontend/**
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 run-name: Build frontend
@@ -24,21 +27,11 @@ jobs:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build docker image
-        uses: docker/build-push-action@v3
-        if: ${{ github.ref != 'refs/heads/main' }}
-        with:
-          context: .
-          file: frontend/Dockerfile
-          push: false
-          tags: ghcr.io/chris99plus/frontend:latest
       
       - name: Build and push
         uses: docker/build-push-action@v3
-        if: ${{ github.ref == 'refs/heads/main' }}
         with:
           context: .
           file: frontend/Dockerfile
-          push: true
           tags: ghcr.io/chris99plus/frontend:latest
+          push: ${{ github.ref == 'refs/heads/main' }}
