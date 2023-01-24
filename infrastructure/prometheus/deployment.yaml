@@ -15,7 +15,7 @@ spec:
       labels:
         app: prometheus-server
     spec:
-      #serviceAccountName: prometheus-sa
+      serviceAccountName: prometheus-sa
       containers:
         - name: prometheus
           image: prom/prometheus

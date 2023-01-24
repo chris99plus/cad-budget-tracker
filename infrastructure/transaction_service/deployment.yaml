@@ -16,6 +16,10 @@ spec:
     metadata:
       labels:
         app: transaction-service
+      annotations:
+        prometheus.io/port: "4000"
+        prometheus.io/scrape: "true"
+        prometheus.io/path: "/swagger-stats/metrics"
     spec:
       containers:
         - name: transaction-service
