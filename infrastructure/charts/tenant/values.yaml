@@ -1,0 +1,47 @@
+# Default values for tenant.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ExternalName
+  port: 80
+
+ingress:
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts: []
+    # - host: tenant.cad.local
+  tls: []
+  #  - secretName: tenant-tls
+  #    hosts:
+  #      - tenant.cad.local
+
+tenantSecret:
+  create: false
+  name: tenant
+
+frontendService: {}
+
+authenticationService: {}
+
+mongodb:
+  fullnameOverride: mongodb
+  auth:
+    enabled: false
+
+transaction-service:
+  fullnameOverride: transaction-service
+  db:
+    host: mongodb
+  tenantSecret: tenant
+
+report-service:
+  fullnameOverride: report-service
+  db:
+    host: mongodb
+  tenantSecret: tenant

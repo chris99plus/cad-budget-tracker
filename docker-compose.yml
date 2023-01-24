@@ -4,9 +4,11 @@ services:
   mongodb:
     image: mongo
     volumes:
-      - ./volumes/mongodb:/data/db:rw
+      - db_volume:/data/db:rw
     networks:
     - cad_backend_network
+    ports:
+      - "27017:27017"
 
   authentication_service:
     build: 
@@ -117,4 +119,8 @@ services:
 
 networks:
   cad_backend_network:
+    name: cad_backend_network
+
+volumes:
+  db_volume:
     name: cad_backend_network

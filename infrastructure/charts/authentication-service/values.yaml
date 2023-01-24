@@ -1,0 +1,44 @@
+replicaCount: 1
+
+image:
+  registry: ghcr.io/chris99plus
+  repository: authentication_service
+  pullPolicy: IfNotPresent
+  tag: latest
+
+imagePullSecrets:
+  - name: regcred
+
+nameOverride: ""
+fullnameOverride: ""
+
+tenantServiceUrl: ""
+
+db:
+  host: ""
+  port: 27017
+  collection: authentication
+
+podAnnotations: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+service:
+  type: ClusterIP
+  port: 80
+
+resources: {}
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
