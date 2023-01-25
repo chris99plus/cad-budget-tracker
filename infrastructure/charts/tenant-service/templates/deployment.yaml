@@ -4,6 +4,10 @@ metadata:
   name: {{ include "tenantService.fullname" . }}
   labels:
     {{- include "tenantService.labels" . | nindent 4 }}
+  {{- with .Values.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
@@ -13,7 +17,7 @@ spec:
       {{- include "tenantService.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
+      {{- with .Values.annotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
       {{- end }}

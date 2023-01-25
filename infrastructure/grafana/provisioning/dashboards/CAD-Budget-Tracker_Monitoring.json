@@ -108,7 +108,7 @@
             "uid": "P1809F7CD0C75ACF3"
           },
           "editorMode": "builder",
-          "expr": "sum by(kubernetes_name) (api_all_request_total)",
+          "expr": "sum by(app_kubernetes_io_name) (api_all_request_total)",
           "legendFormat": "{{kubernetes_name}}",
           "range": true,
           "refId": "A"
@@ -295,7 +295,7 @@
             "uid": "P1809F7CD0C75ACF3"
           },
           "editorMode": "builder",
-          "expr": "api_all_request_total{kubernetes_name=\"tenant-service\"}",
+          "expr": "api_all_request_total{app_kubernetes_io_name=\"tenant-service\"}",
           "legendFormat": "{{method}} {{path}}",
           "range": true,
           "refId": "A"
@@ -490,7 +490,7 @@
             "uid": "P1809F7CD0C75ACF3"
           },
           "editorMode": "builder",
-          "expr": "sum by(kubernetes_name) (api_all_errors_total)",
+          "expr": "sum by(app_kubernetes_io_name) (api_all_errors_total)",
           "interval": "",
           "legendFormat": "{{kubernetes_name}}",
           "range": true,
