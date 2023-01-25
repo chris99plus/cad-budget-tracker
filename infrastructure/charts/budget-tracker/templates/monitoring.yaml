@@ -236,17 +236,40 @@ metadata:
   labels:
     {{- include "budgetTracker.labels" . | nindent 4 }}
   annotations:
-      prometheus.io/scrape: 'true'
-      prometheus.io/port:   '9090'
+      prometheus.io/scrape: "true"
+      prometheus.io/port:   "9090"
   
 spec:
   selector: 
     {{- include "budgetTracker.labelsMonitoring" . | nindent 4 }}
-  type: NodePort  
+  type: ClusterIP 
   ports:
-    - port: 8080
+    - port: 80
       targetPort: 9090
-      nodePort: 30000
+      protocol: TCP
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-datasources
+  labels:
+    {{- include "budgetTracker.labelsMonitoring" . | nindent 4 }}
+data:
+  prometheus.yaml: |-
+    {
+        "apiVersion": 1,
+        "datasources": [
+            {
+               "access":"proxy",
+                "editable": true,
+                "name": "prometheus",
+                "orgId": 1,
+                "type": "prometheus",
+                "url": "http://prometheus-service",
+                "version": 1
+            }
+        ]
+    }
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -267,12 +290,11 @@ spec:
     spec:
       containers:
       - name: grafana
-        #image: grafana/grafana:latest
         image: cad-grafana
         ports:
         - name: grafana
           containerPort: 3000
-        imagePullPolicy: Never # Image should not be pulled
+        imagePullPolicy: IfNotPresent # Image should not be pulled
         resources:
           limits:
             memory: "1Gi"
@@ -293,3 +315,18 @@ spec:
           configMap:
               defaultMode: 420
               name: grafana-datasources
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana
+  annotations:
+      prometheus.io/scrape: 'true'
+      prometheus.io/port:   '3000'
+spec:
+  selector: 
+    app: grafana
+  type: ClusterIP  
+  ports:
+    - port: 3000
+      targetPort: 3000
