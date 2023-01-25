@@ -6,6 +6,10 @@ image:
   pullPolicy: Always
   tag: "latest"
 
+storage:
+  connectionString: ""
+  containerName: ""
+
 imagePullSecrets:
   - name: regcred
 

@@ -91,6 +91,22 @@ resource "azurerm_kubernetes_cluster" "kubernetes_cluster" {
   }
 }
 
+
+resource "azurerm_storage_account" "cad-storage-account" {
+  name                     = "budgettrackerstorage"
+  resource_group_name      = azurerm_resource_group.rg.name
+  location                 = azurerm_resource_group.rg.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+}
+
+resource "azurerm_storage_container" "cad-storage-container" {
+  name                  = "cad-storage-container"
+  storage_account_name  = azurerm_storage_account.cad-storage-account.name
+  container_access_type = "private"
+}
+
+
 # -------------------- Kubernetes setup --------------------
 provider "kubernetes" {
   host                   = azurerm_kubernetes_cluster.kubernetes_cluster.kube_config.0.host
@@ -149,6 +165,15 @@ resource "helm_release" "budget-tracker" {
   values = [
     file("./../budgetTrackerTestVars.yaml")
   ]
+
+  set {
+    name = "transaction-service.storage.connectionString"
+    value = azurerm_storage_account.cad-storage-account.primary_connection_string
+  }
+  set {
+    name = "transaction-service.storage.containerName"
+    value = azurerm_storage_container.cad-storage-container.name
+  }
 }
 
 

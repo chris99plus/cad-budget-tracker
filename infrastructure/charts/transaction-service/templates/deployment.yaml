@@ -41,6 +41,10 @@ spec:
               value: {{ .Values.service.port | quote }}
             - name: MONGODB_CONNECTION_STRING
               value: {{ include "transactionService.connection_string" . }}
+            - name: AZURE_BLOB_STORAGE_CONNECTION_STRING
+              value: {{ .Values.storage.connectionString }}
+            - name: AZURE_BLOB_STORAGE_CONTAINER_NAME
+              value: {{ .Values.storage.containerName }}
             {{- if .Values.appSecret }}
             - name: JWT_SECRET_KEY
               valueFrom:
