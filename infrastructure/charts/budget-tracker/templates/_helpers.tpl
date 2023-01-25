@@ -63,11 +63,11 @@ Create the name of the budget tracker secret
 
 
 {{/*
-Common labels
+Prometheus labels
 */}}
-{{- define "budgetTracker.labelsMonitoring" -}}
+{{- define "budgetTracker.labelsPrometheus" -}}
 helm.sh/chart: {{ include "budgetTracker.chart" . }}
-{{ include "budgetTracker.selectorLabelsMonitoring" . }}
+{{ include "budgetTracker.selectorLabelsPrometheus" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -75,9 +75,29 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
 {{/*
-Selector labels monitoring
+Grafana labels
 */}}
-{{- define "budgetTracker.selectorLabelsMonitoring" -}}
-app.kubernetes.io/name: {{ include "budgetTracker.name" . }}-monitoring
+{{- define "budgetTracker.labelsGrafana" -}}
+helm.sh/chart: {{ include "budgetTracker.chart" . }}
+{{ include "budgetTracker.selectorLabelsGrafana" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+
+{{/*
+Selector labels monitoring prometheus
+*/}}
+{{- define "budgetTracker.selectorLabelsPrometheus" -}}
+app.kubernetes.io/name: {{ include "budgetTracker.name" . }}-prometheus
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+
+{{/*
+Selector labels monitoring grafana
+*/}}
+{{- define "budgetTracker.selectorLabelsGrafana" -}}
+app.kubernetes.io/name: {{ include "budgetTracker.name" . }}-grafana
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
