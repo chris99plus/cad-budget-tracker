@@ -79,6 +79,27 @@ export class InfrastructureController {
         await this.executeShellCommand(`kubectl config use-context cfc`);
     }
 
+
+    async updateInfrastructure(rootNamespace: string) {
+        await this.executeShellCommand(`kubectl rollout restart deployment authentication-service -n ${rootNamespace}`);
+        await this.executeShellCommand(`kubectl rollout restart deployment frontend -n ${rootNamespace}`);
+        await this.executeShellCommand(`kubectl rollout restart deployment start-page -n ${rootNamespace}`);
+        
+        await this.executeShellCommand(`kubectl rollout restart deployment report-service -n free`);
+        await this.executeShellCommand(`kubectl rollout restart deployment transaction-service -n free`);
+        
+        await this.executeShellCommand(`kubectl rollout restart deployment report-service -n premium`);
+        await this.executeShellCommand(`kubectl rollout restart deployment transaction-service -n premium`);
+        
+        let tenants = await this.tenantRepository.getAllTenants();
+        for (let tenant of tenants) {
+            await this.executeShellCommand(`kubectl rollout restart deployment report-service -n ${tenant}`);
+            await this.executeShellCommand(`kubectl rollout restart deployment transaction-service -n ${tenant}`);
+        }
+        
+        await this.executeShellCommand(`kubectl rollout restart deployment tenant-service -n ${rootNamespace}`);
+    }
+
     async executeShellCommand(cmd: string): Promise<number> {
         console.log(`Executing: ${cmd}`);
 
