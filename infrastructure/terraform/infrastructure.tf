@@ -167,11 +167,11 @@ resource "helm_release" "budget-tracker" {
   ]
 
   set {
-    name = "transaction-service.storage.connectionString"
+    name = "tenant-service.storage.connectionString"
     value = azurerm_storage_account.cad-storage-account.primary_connection_string
   }
   set {
-    name = "transaction-service.storage.containerName"
+    name = "tenant-service.storage.containerName"
     value = azurerm_storage_container.cad-storage-container.name
   }
 }

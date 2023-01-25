@@ -65,7 +65,7 @@ export class InfrastructureController {
         await this.executeShellCommand(`kubectl get secret regcred -n ${rootNamespace} -o yaml | sed s/"namespace: ${rootNamespace}"/"namespace: ${namespace}"/| kubectl apply -n ${namespace} -f -`);
 
         let helmInstallCmd = `helm install ${tenantName} ./../infrastructure/charts/tenant -n ${namespace} -f -`;
-        let helmVarsYaml = helmVars.replace('"', '\\"');
+        let helmVarsYaml = helmVars.replace(new RegExp('"', "g"), '\\"');
         let cmd = `echo "${helmVarsYaml}" | ${helmInstallCmd}`;
 
         await this.executeShellCommand(cmd);
