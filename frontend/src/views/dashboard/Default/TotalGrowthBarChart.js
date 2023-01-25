@@ -51,22 +51,26 @@ const TotalGrowthBarChart = ({ isLoading, rerenderTransaktions }) => {
             .then((response) => {
                     setExpenseArray([]);
                     setIncomeeArray([]);
-                    response.data.data.forEach(oneWeek => {
-                        setExpenseArray(expenseArray =>[...expenseArray,oneWeek.expense.total])
+                    let weeklyReports = response.data.data
+                    weeklyReports.sort(function(a, b) {
+                        return new Date(a.start) - new Date(b.start);
+                    });
+
+                    weeklyReports.slice(-9).forEach(oneWeek => {
+                        setExpenseArray(expenseArray =>[...expenseArray,oneWeek.expenses.total])
                         setIncomeeArray(incomeArray =>[...incomeArray,oneWeek.income.total])
                         var comparisonTime = Date.parse(oneWeek.end);
+                        var comparisonTimeStart = Date.parse(oneWeek.start);
                         var dateObject = new Date(comparisonTime);
-                        var oneJan = new Date(dateObject.getFullYear(),0,1);
-                        var numberOfDays = Math.floor((currentdate - oneJan) / (24 * 60 * 60 * 1000));
-                        var result = Math.ceil(( currentdate.getDay() + 1 + numberOfDays) / 7);
-                        setWeekNumberArray(weekNumberArray =>[...weekNumberArray, result])
+                        var dateObjectStart = new Date(comparisonTimeStart);
+                        var timeString = (dateObjectStart.getDate()+"."+(dateObjectStart.getMonth()+1)+"-"+dateObject.getDate()+"."+(dateObject.getMonth()+1))
+                        setWeekNumberArray(weekNumberArray =>[...weekNumberArray, timeString])
                  });
             })
             .catch((e) => {
                 console.log(e);
             });
-    }, [rerenderTransaktions]);
-
+    }, []);
 
     useEffect(() => {
         const newChartData = {
@@ -100,16 +104,16 @@ const TotalGrowthBarChart = ({ isLoading, rerenderTransaktions }) => {
             series: [
                 {
                     name: 'Income',
-                    data: incomeArray.slice(11)
+                    data: incomeArray
                 },
                 {
                     name: 'Expenses',
-                    data: expenseArray.slice(11)
+                    data: expenseArray
                 }
             ],
             xaxis: {
                 type: 'category',
-                categories: weekNumberArray.slice(11)
+                categories: weekNumberArray
             },
         };
 
@@ -117,7 +121,7 @@ const TotalGrowthBarChart = ({ isLoading, rerenderTransaktions }) => {
         if (!isLoading) {
             ApexCharts.exec(`bar-chart`, 'updateOptions', newChartData);
         }
-    }, [navType, primary200, primaryDark, secondaryMain, secondaryLight, primary, darkLight, grey200, isLoading, grey500]);
+    }, [navType, primary200, primaryDark, secondaryMain, secondaryLight, primary, darkLight, grey200, isLoading, grey500, expenseArray ,incomeArray]);
 
     return (
         <>

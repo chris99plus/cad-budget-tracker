@@ -68,7 +68,7 @@ const Login = () => {
                                     <Grid item xs={12}>
                                         <Grid item container direction="column" alignItems="center" xs={12}>
                                             <a
-                                                href="http://localhost:3001"
+                                                href="/start"
                                                 variant="subtitle1"
                                                 style={{ textDecoration: 'none', color: 'black', fontWeight: '500' }}
                                             >
