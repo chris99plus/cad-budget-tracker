@@ -13,10 +13,10 @@ export function AuthProvider({ children }) {
     const [tokenState, setTokenState] = useState(token);
 
     function login(token) {
-        cookies.set('userDetails', token.data.authToken, { path: '/', domain: token.data.tenantDomain, sameSite: 'lax' });
+        cookies.set('userDetails', token.data.authToken, { path: '/', domain: "cad.christians-software-schmiede.de", sameSite: 'lax' });
     }
     function signIn(token) {
-        cookies.set('userDetails', token.data.authToken, { path: '/', domain: token.data.tenantDomain, sameSite: 'lax' });
+        cookies.set('userDetails', token.data.authToken, { path: '/', domain: "cad.christians-software-schmiede.de", sameSite: 'lax' });
     }
     function logout() {
         cookies.remove('userDetails', { path: '/' });
