@@ -30,6 +30,7 @@ authentication-service:
     collection: authentication
   appSecret: budget-tracker
   tenantServiceUrl: tenant-service
+  host: ""
 
 tenant-service:
   fullnameOverride: tenant-service

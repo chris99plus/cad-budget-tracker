@@ -9,3 +9,6 @@ ingress:
 
 tenant-service:
   host: "cad.christians-software-schmiede.de"
+
+authentication-service:
+  host: "cad.christians-software-schmiede.de"
