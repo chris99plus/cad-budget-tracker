@@ -39,7 +39,8 @@ app.get('/api/v1/tenants/:tenant_secret', auth, apiHandler(async (req, res) => {
     return await tenantService.getTenantBySecret(req.params.tenant_secret);
 }));
 
-app.post('/api/v1/infrastructure/update', auth, apiHandler(async (req, res) => {
+app.post('/api/v1/infrastructure/update', apiHandler(async (req, res) => {
+    // TODO: Secure this endpoint
     return await controller.updateInfrastructure(namespace);
 }));
 
