@@ -90,7 +90,7 @@ export class AuthenticationService {
             user.licenseType === 'standard' ? 'premium' :
             user.tenantName || 'invalid';
 
-        return tenantSubdomainName.replace(' ', '-') + process.env.HOST_DOMAIN ?? ""
+        return tenantSubdomainName.replace(' ', '-') + '.' + process.env.HOST_DOMAIN ?? ""
     }
 
     private validateUserData(data: CreateUserRequest) {
