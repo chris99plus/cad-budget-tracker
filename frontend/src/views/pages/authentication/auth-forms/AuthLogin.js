@@ -66,6 +66,7 @@ const FirebaseLogin = ({ ...others }) => {
             AuthService.login(data)
                 .then((response) => {
                     login(response.data);
+                    window.location.href = 'http://' + response.data.data.tenantDomain;
                 })
                 .catch((e) => {
                     console.log(e);
