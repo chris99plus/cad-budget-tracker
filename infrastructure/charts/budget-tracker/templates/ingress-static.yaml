@@ -51,4 +51,11 @@ spec:
               name: authentication-service
               port:
                 number: 80
+        - path: /api/v1/infrastructure/update
+          pathType: Prefix
+          backend:
+            service:
+              name: tenant-service
+              port:
+                number: 80
     {{- end }}
