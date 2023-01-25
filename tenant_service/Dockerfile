@@ -39,6 +39,7 @@ RUN helm dependency build ./budget-tracker
 RUN helm dependency build ./authentication-service
 RUN helm dependency build ./frontend
 RUN helm dependency build ./transaction-service
+RUN helm dependency build ./tenant
 
 WORKDIR /usr/tenant_service
 
