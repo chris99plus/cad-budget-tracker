@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   registry: ghcr.io/chris99plus
-  repository: frontend
+  repository: start_page
   pullPolicy: Always
   tag: latest
 

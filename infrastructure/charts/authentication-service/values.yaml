@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   registry: ghcr.io/chris99plus
   repository: authentication_service
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   tag: latest
 
 imagePullSecrets:
@@ -13,6 +13,8 @@ nameOverride: ""
 fullnameOverride: ""
 
 tenantServiceUrl: ""
+
+host: ""
 
 db:
   host: ""

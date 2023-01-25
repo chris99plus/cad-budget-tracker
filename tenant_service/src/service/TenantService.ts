@@ -27,13 +27,14 @@ export class TenantService {
             charset: 'alphabetic'
         });
 
-        await this.tenantRepository.createTenant(new Tenant(
+        const tenant = await this.tenantRepository.createTenant(new Tenant(
             data.tenant_name,
             secret
         ));
 
         return {
-            tenant_secret: secret
+            tenant_secret: secret,
+            tenant_domain: tenant.getDomain()
         };
     }
 
@@ -61,7 +62,8 @@ export class TenantService {
         }
 
         return {
-            tenant_name: tenant.name
+            tenant_name: tenant.name,
+            tenant_domain: tenant.getDomain()
         };
     }
 }

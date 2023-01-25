@@ -6,3 +6,9 @@ appSecret:
 ingress:
   hosts:
     - host: cad.christians-software-schmiede.de
+
+tenant-service:
+  host: "cad.christians-software-schmiede.de"
+
+authentication-service:
+  host: "cad.christians-software-schmiede.de"

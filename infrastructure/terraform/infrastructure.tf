@@ -91,6 +91,22 @@ resource "azurerm_kubernetes_cluster" "kubernetes_cluster" {
   }
 }
 
+
+resource "azurerm_storage_account" "cad-storage-account" {
+  name                     = "budgettrackerstorageacc1"
+  resource_group_name      = azurerm_resource_group.rg.name
+  location                 = azurerm_resource_group.rg.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+}
+
+resource "azurerm_storage_container" "cad-storage-container" {
+  name                  = "cad-storage-container"
+  storage_account_name  = azurerm_storage_account.cad-storage-account.name
+  container_access_type = "private"
+}
+
+
 # -------------------- Kubernetes setup --------------------
 provider "kubernetes" {
   host                   = azurerm_kubernetes_cluster.kubernetes_cluster.kube_config.0.host
@@ -149,14 +165,26 @@ resource "helm_release" "budget-tracker" {
   values = [
     file("./../budgetTrackerTestVars.yaml")
   ]
+
+  set {
+    name = "tenant-service.storage.connectionString"
+    value = azurerm_storage_account.cad-storage-account.primary_connection_string
+  }
+  set {
+    name = "tenant-service.storage.containerName"
+    value = azurerm_storage_container.cad-storage-container.name
+  }
 }
 
 
 resource "helm_release" "ingress-controller" {
   name      = "cad-ingress-controller"
-  chart     = "nginx-ingress"
-  repository = "https://helm.nginx.com/stable"
-  
+  chart     = "ingress-nginx"
+  repository = "https://kubernetes.github.io/ingress-nginx"
+
+  values = [
+    file("ingress-controller-config.yaml")
+  ]
 }
 
 
@@ -179,6 +207,14 @@ provider "hetznerdns" {
 }
 
 resource "hetznerdns_record" "hetzner_subdomain" {
+  zone_id = var.HETZNER_DNS_ZONE_ID
+  name    = "*.cad"
+  value   = data.kubernetes_ingress_v1.ingress.status.0.load_balancer.0.ingress.0.ip
+  type    = "A"
+}
+
+
+resource "hetznerdns_record" "hetzner_subdomain1" {
   zone_id = var.HETZNER_DNS_ZONE_ID
   name    = "cad"
   value   = data.kubernetes_ingress_v1.ingress.status.0.load_balancer.0.ingress.0.ip

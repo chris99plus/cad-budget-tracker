@@ -47,6 +47,12 @@ spec:
               value: {{ .Values.service.port | quote }}
             - name: MONGODB_CONNECTION_STRING
               value: {{ include "tenantService.connection_string" . }}
+            - name: AZURE_BLOB_STORAGE_CONNECTION_STRING
+              value: {{ .Values.storage.connectionString }}
+            - name: AZURE_BLOB_STORAGE_CONTAINER_NAME
+              value: {{ .Values.storage.containerName }}
+            - name: HOST_DOMAIN
+              value: {{ .Values.host | quote }}
             {{- if .Values.appSecret }}
             - name: JWT_SECRET_KEY
               valueFrom:

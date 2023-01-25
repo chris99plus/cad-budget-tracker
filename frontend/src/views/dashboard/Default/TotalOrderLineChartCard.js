@@ -142,7 +142,7 @@ const TotalOrderLineChartCard = ({ isLoading, rerenderTransaktions }) => {
                                     </Grid>
                                 </Grid>
                             </Grid>
-                            <Grid item sx={{ mb: 0.75 }}>
+                            <Grid item sx={{ mb: -1.3 }}>
                                 <Grid container alignItems="center">
                                     <Grid item xs={6}>
                                         <Grid container alignItems="center">
@@ -182,8 +182,8 @@ const TotalOrderLineChartCard = ({ isLoading, rerenderTransaktions }) => {
                                             </Grid>
                                         </Grid>
                                     </Grid>
-                                    <Grid item xs={6}>
-                                        {timeValue ? <Chart {...ChartDataMonth} /> : <Chart {...ChartDataYear} />}
+                                    <Grid item xs={10}>
+                                    
                                     </Grid>
                                 </Grid>
                             </Grid>

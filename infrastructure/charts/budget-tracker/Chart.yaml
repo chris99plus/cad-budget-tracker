@@ -18,6 +18,9 @@ dependencies:
 - name: frontend
   version: "0.1.0"
   repository: "file://../frontend"
+- name: start-page
+  version: "0.1.0"
+  repository: "file://../start_page"
 - name: mongodb
   version: 13.6.*
   repository: "https://charts.bitnami.com/bitnami"

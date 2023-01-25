@@ -15,6 +15,8 @@ yarn install
 Create a `.env` file with the following variables:
 
 ```
+JWT_SECRET_KEY=" < any at least 32 characters long password >"
+HOST_DOMAIN="e.g.: cad.io"
 SERVER_PORT=4002
 MONGODB_CONNECTION_STRING="mongodb://localhost:27017/authentication"
 ```

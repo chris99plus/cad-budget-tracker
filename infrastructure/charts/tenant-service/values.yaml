@@ -3,11 +3,17 @@ replicaCount: 1
 image:
   registry: ghcr.io/chris99plus
   repository: tenant_service
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   tag: "latest"
+
+storage:
+  connectionString: ""
+  containerName: ""
 
 imagePullSecrets:
   - name: regcred
+
+host: ""
 
 nameOverride: ""
 fullnameOverride: ""
