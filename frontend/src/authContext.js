@@ -13,10 +13,10 @@ export function AuthProvider({ children }) {
     const [tokenState, setTokenState] = useState(token);
 
     function login(token) {
-        cookies.set('userDetails', token.data.authToken, { path: '/' });
+        cookies.set('userDetails', token.data.authToken, { path: '/', domain: token.data.tenantDomain });
     }
     function signIn(token) {
-        cookies.set('userDetails', token.data.authToken, { path: '/' });
+        cookies.set('userDetails', token.data.authToken, { path: '/', domain: token.data.tenantDomain });
     }
     function logout() {
         cookies.remove('userDetails', { path: '/' });

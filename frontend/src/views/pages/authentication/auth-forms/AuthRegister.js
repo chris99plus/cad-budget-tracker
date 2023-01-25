@@ -88,7 +88,7 @@ const Register = ({ ...others }) => {
                 AuthService.createUser(data)
                     .then((response) => {
                         signIn(response.data);
-                        navigate('/');
+                        navigate(response.data.data.tenantDomain);
                     })
                     .catch((e) => {
                         setError('This Username or Email is already in use!');
@@ -98,7 +98,7 @@ const Register = ({ ...others }) => {
                 AuthService.createUser(data)
                     .then((response) => {
                         signIn(response.data);
-                        navigate('/');
+                        navigate(response.data.data.tenantDomain);
                     })
                     .catch((e) => {
                         setError('This Username or Email is already in use!');
@@ -108,7 +108,7 @@ const Register = ({ ...others }) => {
                 AuthService.createUser(data)
                     .then((response) => {
                         signIn(response.data);
-                        navigate('/');
+                        navigate(response.data.data.tenantDomain);
                     })
                     .catch((e) => {
                         setError('This Username or Email is already in use!');
