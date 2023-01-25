@@ -5,7 +5,7 @@ appSecret:
 
 ingress:
   hosts:
-    - host: cad.local
+    - host: cad.christians-software-schmiede.de
 
 tenant-service:
-  host: "cad.local"
+  host: "cad.christians-software-schmiede.de"

@@ -154,9 +154,12 @@ resource "helm_release" "budget-tracker" {
 
 resource "helm_release" "ingress-controller" {
   name      = "cad-ingress-controller"
-  chart     = "nginx-ingress"
-  repository = "https://helm.nginx.com/stable"
-  
+  chart     = "ingress-nginx"
+  repository = "https://kubernetes.github.io/ingress-nginx"
+
+  values = [
+    file("ingress-controller-config.yaml")
+  ]
 }
 
 
@@ -180,8 +183,15 @@ provider "hetznerdns" {
 
 resource "hetznerdns_record" "hetzner_subdomain" {
   zone_id = var.HETZNER_DNS_ZONE_ID
-  name    = "cad"
+  name    = "*.cad"
   value   = data.kubernetes_ingress_v1.ingress.status.0.load_balancer.0.ingress.0.ip
   type    = "A"
 }
 
+
+resource "hetznerdns_record" "hetzner_subdomain1" {
+  zone_id = var.HETZNER_DNS_ZONE_ID
+  name    = "cad"
+  value   = data.kubernetes_ingress_v1.ingress.status.0.load_balancer.0.ingress.0.ip
+  type    = "A"
+}

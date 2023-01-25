@@ -34,5 +34,4 @@ jobs:
           context: .
           file: start_page/Dockerfile
           tags: ghcr.io/chris99plus/start_page:latest
-          push: true #${{ github.ref == 'refs/heads/main' }}
-#          push: ${{ github.ref == 'refs/heads/main' }}
+          push: ${{ github.ref == 'refs/heads/main' }}

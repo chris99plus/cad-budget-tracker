@@ -41,3 +41,6 @@ tenant-service:
 
 frontend:
   fullnameOverride: frontend
+
+start-page:
+  fullnameOverride: start-page
