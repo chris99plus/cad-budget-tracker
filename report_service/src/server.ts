@@ -35,7 +35,7 @@ async function main() {
         const startOfWeek = new Date(monday.getTime() - (7 * 24 * 60 * 60 * 1000));
         console.log("start of week: " + startOfWeek);
         console.log("end of week: " + monday);
-        await reportService.createWeeklyReports(startOfWeek, monday)
+        //await reportService.createWeeklyReports(startOfWeek, monday)
         exit();
     }
 }

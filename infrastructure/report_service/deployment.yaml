@@ -1,0 +1,33 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: report-service-cronjob
+  namespace: free
+spec:
+  schedule: "28 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          imagePullSecrets:
+          - name: regcred
+          containers:
+          - name: report-service-cronjob
+            image: report-service:latest
+            imagePullPolicy: IfNotPresent
+            command:
+            - /bin/sh
+            - -c
+            - date; echo Hello from the Report Service cronjob
+            env:
+            - name: EXECUTION_MODE
+              valueFrom:
+                configMapKeyRef:
+                  name: report-service-envs
+                  key: executionMode
+            - name: MONGODB_CONNECTION_STRING
+              valueFrom:
+                configMapKeyRef:
+                  name: report-service-envs
+                  key: mongodbConnectionString
+          restartPolicy: Never
