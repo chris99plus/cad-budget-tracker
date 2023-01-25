@@ -265,6 +265,15 @@ data:
                 "type": "prometheus",
                 "url": "http://prometheus-service:9090",
                 "version": 1
+            },
+            {
+                "access":"proxy",
+                "editable": true,
+                "name": "loki",
+                "orgId": 1,
+                "type": "loki",
+                "url": "http://loki-stack:3100",
+                "version": 1
             }
         ]
     }
