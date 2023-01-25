@@ -3,5 +3,6 @@ export interface CreateTenantRequest {
 }
 
 export interface CreateTenantResult {
-    tenant_secret: string
+    tenant_secret: string;
+    tenant_domain: string;
 }

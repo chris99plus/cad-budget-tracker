@@ -11,6 +11,10 @@ export class Tenant {
         this.name = name;
         this.tenant_secret = tenant_secret;
     }
+
+    getDomain(): string {
+        return this.name.replace(' ', '-') + process.env.HOST_DOMAIN ?? ""
+    }
 }
 
 /**
