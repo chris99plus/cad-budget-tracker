@@ -34,6 +34,7 @@ import MainCard from 'ui-component/cards/MainCard';
 import Transitions from 'ui-component/extended/Transitions';
 import AuthService from '../../../../services/auth';
 import { useAuth } from '../../../../authContext';
+import Customization from '../../../Customization';
 
 // assets
 import { IconLogout, IconSearch, IconSettings, IconUser } from '@tabler/icons';
@@ -166,22 +167,17 @@ const ProfileSection = () => {
                                         </Stack>
                                         <Divider />
                                     </Box>
-                                    <PerfectScrollbar style={{ height: '100%', maxHeight: 'calc(100vh - 250px)', overflowX: 'hidden' }}>
-                                        <Box sx={{ p: 2 }}>
+                                    
+                                        <Box sx={{ pr: 1, pl: 1, mt: -2}}>
                                             <List
                                                 component="nav"
                                                 sx={{
-                                                    width: '100%',
+                                                   
                                                     maxWidth: 350,
                                                     minWidth: 300,
                                                     backgroundColor: theme.palette.background.paper,
                                                     borderRadius: '10px',
-                                                    [theme.breakpoints.down('md')]: {
-                                                        minWidth: '100%'
-                                                    },
-                                                    '& .MuiListItemButton-root': {
-                                                        mt: 0.5
-                                                    }
+                                                   
                                                 }}
                                             >
                                                 <ListItemButton
@@ -196,7 +192,10 @@ const ProfileSection = () => {
                                                 </ListItemButton>
                                             </List>
                                         </Box>
-                                    </PerfectScrollbar>
+                                        
+                                        
+                                        <Customization />
+                              
                                 </MainCard>
                             </ClickAwayListener>
                         </Paper>
