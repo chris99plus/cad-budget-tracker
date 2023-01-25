@@ -11,6 +11,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - uses: azure/setup-helm@v3
+        name: Setup helm
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }} # only needed if version is 'latest'
+        id: install
+
+      - name: Helm build
+        run: |
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm dependency build
+  
+        working-directory: ./infrastructure/charts/budget-tracker
+        shell: bash
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:

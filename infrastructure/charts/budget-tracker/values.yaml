@@ -33,10 +33,14 @@ authentication-service:
 
 tenant-service:
   fullnameOverride: tenant-service
-  db:
+  db: 
     host: mongodb
     collection: tenants
   appSecret: budget-tracker
+  host: ""
 
 frontend:
   fullnameOverride: frontend
+
+start-page:
+  fullnameOverride: start-page

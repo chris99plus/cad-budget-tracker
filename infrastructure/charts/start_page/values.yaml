@@ -2,26 +2,15 @@ replicaCount: 1
 
 image:
   registry: ghcr.io/chris99plus
-  repository: tenant_service
+  repository: start_page
   pullPolicy: IfNotPresent
-  tag: "latest"
+  tag: latest
 
 imagePullSecrets:
   - name: regcred
 
-host: ""
-
 nameOverride: ""
 fullnameOverride: ""
-
-db:
-  host: ""
-  port: 27017
-  collection: tenants
-
-mongodb:
-  auth:
-    enabled: false
 
 podAnnotations: {}
 

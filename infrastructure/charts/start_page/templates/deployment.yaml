@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "tenantService.fullname" . }}
+  name: {{ include "start_page.fullname" . }}
   labels:
-    {{- include "tenantService.labels" . | nindent 4 }}
+    {{- include "start_page.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "tenantService.selectorLabels" . | nindent 6 }}
+      {{- include "start_page.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -18,40 +18,24 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "tenantService.selectorLabels" . | nindent 8 }}
+        {{- include "start_page.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: cluster-control
-      automountServiceAccountToken: true
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: {{ include "tenantService.image" . | quote }}
+          image: {{ include "start_page.image" . | quote }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: {{ .Values.service.port }}
+              containerPort: 80
               protocol: TCP
-          env:
-            - name: SERVER_PORT
-              value: {{ .Values.service.port | quote }}
-            - name: MONGODB_CONNECTION_STRING
-              value: {{ include "tenantService.connection_string" . }}
-            - name: HOST_DOMAIN
-              value: {{ .Values.host | quote }}
-            {{- if .Values.appSecret }}
-            - name: JWT_SECRET_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.appSecret }}
-                  key: jwtSecret
-            {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
