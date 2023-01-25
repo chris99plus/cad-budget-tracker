@@ -59,6 +59,6 @@ export class MongooseTenantRepository implements TenantRepository {
     }
 
     async getAllTenants(): Promise<Tenant[]> {
-        return await TenantModel.find([]);
+        return await TenantModel.find({});
     }
 }
