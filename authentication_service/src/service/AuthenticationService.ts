@@ -41,7 +41,8 @@ export class AuthenticationService {
 
         return {
             authToken: this.createJwt(createdUser),
-            tenantDomain: this.getTenantDomain(createdUser)
+            tenantDomain: this.getTenantDomain(createdUser),
+            hostDomain: this.getHostDomain()
         };
     }
 
@@ -75,12 +76,17 @@ export class AuthenticationService {
         if (isPasswordCorrect) {
             return {
                 authToken: this.createJwt(user),
-                tenantDomain: this.getTenantDomain(user)
+                tenantDomain: this.getTenantDomain(user),
+                hostDomain: this.getHostDomain()
             };
         }
         else {
             throw "Wrong username or password";
         }
+    }
+
+    private getHostDomain(): string {
+        return process.env.HOST_DOMAIN ?? ""
     }
 
     // Function exists in tenant service too!
@@ -90,7 +96,7 @@ export class AuthenticationService {
             user.licenseType === 'standard' ? 'premium' :
             user.tenantName || 'invalid';
 
-        return tenantSubdomainName.replace(' ', '-') + '.' + process.env.HOST_DOMAIN ?? ""
+        return tenantSubdomainName.replace(' ', '-') + '.' + this.getHostDomain()
     }
 
     private validateUserData(data: CreateUserRequest) {

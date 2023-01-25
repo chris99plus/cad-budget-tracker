@@ -6,4 +6,5 @@ export interface LoginRequest {
 export interface LoginResponse {
     authToken: string;
     tenantDomain: string;
+    hostDomain: string;
 }
