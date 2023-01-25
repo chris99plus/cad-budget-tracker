@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   registry: ghcr.io/chris99plus
   repository: start_page
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   tag: latest
 
 imagePullSecrets:
