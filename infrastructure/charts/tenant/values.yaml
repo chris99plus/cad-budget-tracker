@@ -39,6 +39,9 @@ transaction-service:
   db:
     host: mongodb
   tenantSecret: tenant
+  storage:
+    connectionString: ""
+    containerName: ""
 
 report-service:
   fullnameOverride: report-service

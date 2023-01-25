@@ -38,6 +38,9 @@ tenant-service:
     collection: tenants
   appSecret: budget-tracker
   host: ""
+  storage:
+    connectionString: ""
+    containerName: ""
 
 frontend:
   fullnameOverride: frontend

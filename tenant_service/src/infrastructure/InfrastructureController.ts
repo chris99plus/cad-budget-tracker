@@ -137,6 +137,12 @@ export class InfrastructureController {
                 name: "frontend",
                 namespace: "cad"
             },
+            "transaction-service": {
+                storage: {
+                    connectionString: process.env.AZURE_BLOB_STORAGE_CONNECTION_STRING,
+                    containerName: process.env.AZURE_BLOB_STORAGE_CONTAINER_NAME
+                }
+            },
             authenticationService: {
                 name: "authentication-service",
                 namespace: "cad"
