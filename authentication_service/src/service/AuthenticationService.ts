@@ -40,15 +40,16 @@ export class AuthenticationService {
         ));
 
         return {
-            authToken: this.createJwt(createdUser)
+            authToken: this.createJwt(createdUser),
+            tenantDomain: this.getTenantDomain(createdUser)
         };
     }
 
     async createTenantOrResolveSecret(data: CreateUserRequest): Promise<string> {
         if (data.createTenant == false && data.tenantSecret != null) {
-            return await this.tenantService.validateTenantSecretAndGetTenantNameOrThrow(
+            return (await this.tenantService.validateTenantSecretAndGetTenantNameOrThrow(
                 data.tenantSecret
-            );
+            )).tenant_name;
         }
         else if (data.createTenant == true && data.tenantName != null) {
             await this.tenantService.createNewTenantOrThrow(
@@ -73,12 +74,23 @@ export class AuthenticationService {
 
         if (isPasswordCorrect) {
             return {
-                authToken: this.createJwt(user)
+                authToken: this.createJwt(user),
+                tenantDomain: this.getTenantDomain(user)
             };
         }
         else {
             throw "Wrong username or password";
         }
+    }
+
+    // Function exists in tenant service too!
+    private getTenantDomain(user: User): string {
+        const tenantSubdomainName = 
+            user.licenseType === 'free' ? 'free' :
+            user.licenseType === 'standard' ? 'premium' :
+            user.tenantName || 'invalid';
+
+        return tenantSubdomainName.replace(' ', '-') + process.env.HOST_DOMAIN ?? ""
     }
 
     private validateUserData(data: CreateUserRequest) {

@@ -9,5 +9,6 @@ export interface CreateUserRequest {
 }
 
 export interface CreateUserResponse {
-    authToken: string
+    authToken: string,
+    tenantDomain: string
 }

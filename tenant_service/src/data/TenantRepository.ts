@@ -12,6 +12,8 @@ export class Tenant {
         this.tenant_secret = tenant_secret;
     }
 
+    // Function exists in authentication service too. At the
+    // moment this function is not needed.
     getDomain(): string {
         return this.name.replace(' ', '-') + process.env.HOST_DOMAIN ?? ""
     }
