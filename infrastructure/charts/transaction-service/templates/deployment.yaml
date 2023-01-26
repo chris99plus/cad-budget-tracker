@@ -45,11 +45,11 @@ spec:
               value: {{ .Values.storage.connectionString }}
             - name: AZURE_BLOB_STORAGE_CONTAINER_NAME
               value: {{ .Values.storage.containerName }}
-            {{- if .Values.appSecret }}
+            {{- if .Values.tenantSecret }}
             - name: JWT_SECRET_KEY
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.appSecret }}
+                  name: {{ .Values.tenantSecret }}
                   key: jwtSecret
             {{- end }}
           resources:
