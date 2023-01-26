@@ -4,10 +4,6 @@ metadata:
   name: {{ include "authenticationService.fullname" . }}
   labels:
     {{- include "authenticationService.labels" . | nindent 4 }}
-  annotations:
-    prometheus.io/scrape: "true"
-    prometheus.io/port:   {{ .Values.service.port | quote }}
-    prometheus.io/path: "/swagger-stats/metrics"
 spec:
   type: {{ .Values.service.type }}
   ports:

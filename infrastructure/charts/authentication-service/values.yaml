@@ -21,11 +21,7 @@ db:
   port: 27017
   collection: authentication
 
-annotations: {
-  prometheus.io/port: "80",
-  prometheus.io/scrape: "true",
-  prometheus.io/path: "/swagger-stats/metrics"
-}
+podAnnotations: {}
 
 podSecurityContext: {}
 
