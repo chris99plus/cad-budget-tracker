@@ -35,7 +35,15 @@ app.post('/api/v1/auth/login', apiHandler(async (req, res) => {
 app.get('/api/v1/auth/me', auth, apiHandler(async (req, res) => {
     let userInfo =  getUserInformation(req);
     if(userInfo != null)  {
-        return await repository.getUserByName(userInfo.name);
+        let user = await repository.getUserByName(userInfo.name);
+
+        return {
+            _id:user?._id,
+            username:user?.username,
+            email:user?.email,
+            licenseType:user?.licenseType,
+            tenantName:user?.tenantName,
+        }
     }
     return null;
 }));

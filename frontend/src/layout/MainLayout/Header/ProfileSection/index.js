@@ -41,7 +41,8 @@ import { IconLogout, IconSearch, IconSettings, IconUser } from '@tabler/icons';
 
 // ==============================|| PROFILE MENU ||============================== //
 
-const ProfileSection = () => {
+const ProfileSection = (userInformation) => {
+    var userInformation = userInformation.userInformation;
     const theme = useTheme();
     const customization = useSelector((state) => state.customization);
     const navigate = useNavigate();
@@ -49,10 +50,9 @@ const ProfileSection = () => {
     const [sdm, setSdm] = useState(true);
     const [value, setValue] = useState('');
     const [notification, setNotification] = useState(false);
-    const [userInformation, setUserInformation] = useState();
     const [selectedIndex, setSelectedIndex] = useState(-1);
     const [open, setOpen] = useState(false);
-    const { logout, tokenState } = useAuth();
+    const { logout } = useAuth();
 
     /**
      * anchorRef is used on different componets and specifying one type leads to other components throwing an error
@@ -82,16 +82,6 @@ const ProfileSection = () => {
     };
 
     const prevOpen = useRef(open);
-    
-    useEffect(() => {
-        AuthService.getUserInformation(tokenState)
-            .then((response) => {
-                setUserInformation(response.data.data);
-            })
-            .catch((e) => {
-                console.log(e);
-            });
-    }, []);
 
     useEffect(() => {
         if (prevOpen.current === true && open === false) {
@@ -160,7 +150,7 @@ const ProfileSection = () => {
                                             <Stack direction="row" spacing={0.5} alignItems="center">
                                                 <Typography variant="h4">Good Morning,</Typography>
                                                 <Typography component="span" variant="h4" sx={{ fontWeight: 400 }}>
-                                                    {userInformation&&userInformation.name||""}
+                                                    {userInformation&&userInformation.username||""}
                                                 </Typography>
                                             </Stack>
                                             <Typography variant="subtitle2">{userInformation&&userInformation.email||""}</Typography>
@@ -192,10 +182,7 @@ const ProfileSection = () => {
                                                 </ListItemButton>
                                             </List>
                                         </Box>
-                                        
-                                        
-                                        <Customization />
-                              
+                                    {userInformation.licenseType== 'enterprise' && <Customization />}
                                 </MainCard>
                             </ClickAwayListener>
                         </Paper>

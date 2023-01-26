@@ -7,6 +7,10 @@ import { Avatar, Box, ButtonBase } from '@mui/material';
 // project imports
 import LogoSection from '../LogoSection';
 import ProfileSection from './ProfileSection';
+import AuthService from '../../../services/auth';
+import { useAuth } from '../../../authContext';
+import { useState, useEffect } from 'react';
+ 
 
 // assets
 import { IconMenu2 } from '@tabler/icons';
@@ -14,7 +18,21 @@ import { IconMenu2 } from '@tabler/icons';
 // ==============================|| MAIN NAVBAR / HEADER ||============================== //
 
 const Header = ({ handleLeftDrawerToggle }) => {
+
     const theme = useTheme();
+
+    const [userInformation, setUserInformation] = useState();
+    const { tokenState } = useAuth();
+
+    useEffect(() => {
+        AuthService.getUserInformation(tokenState)
+            .then((response) => {
+                setUserInformation(response.data.data);
+            })
+            .catch((e) => {
+                console.log(e);
+            });
+    }, []);
 
     return (
         <>
@@ -29,7 +47,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
                 }}
             >
                 <Box component="span" sx={{ display: { xs: 'none', md: 'block' }, flexGrow: 1 }}>
-                    <LogoSection />
+                    <LogoSection userInformation={userInformation} />
                 </Box>
                 <ButtonBase sx={{ borderRadius: '12px', overflow: 'hidden' }}>
                     <Avatar
@@ -58,7 +76,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
             <Box sx={{ flexGrow: 1 }} />
 
             {/* notification & profile */}
-            <ProfileSection />
+            <ProfileSection userInformation={userInformation} />
         </>
     );
 };

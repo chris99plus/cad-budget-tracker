@@ -12,3 +12,10 @@
     font-weight: 900;
     text-decoration: none;
 }
+.logoSubText{
+    margin-left: 3px;
+    font-size:17px;
+    color: rgb(18, 165, 116);
+    font-variant: small-caps;
+    font-weight: 900;
+}
