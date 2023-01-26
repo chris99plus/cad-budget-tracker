@@ -13,13 +13,13 @@ const port = process.env.SERVER_PORT ?? 4000;
 const mongoDbConnectionString = process.env.MONGODB_CONNECTION_STRING ?? "";
 
 const repository = new MongooseTenantRepository(mongoDbConnectionString);
-const tenantService = new TenantService(repository);
 
-let controller = new InfrastructureController(repository);
+const token = fs.readFileSync("/var/run/secrets/kubernetes.io/serviceaccount/token", "utf8");
+const namespace = fs.readFileSync("/var/run/secrets/kubernetes.io/serviceaccount/namespace", "utf8");
+const cacertPath = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt";
+const controller = new InfrastructureController(repository, namespace);
 
-let token = fs.readFileSync("/var/run/secrets/kubernetes.io/serviceaccount/token", "utf8");
-let namespace = fs.readFileSync("/var/run/secrets/kubernetes.io/serviceaccount/namespace", "utf8");
-let cacertPath = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt";
+const tenantService = new TenantService(repository, controller);
 
 const app = express();
 app.use(express.json());
@@ -31,17 +31,13 @@ app.post('/api/v1/tenants', auth, apiHandler(async (req, res) => {
     return await tenantService.createTenant(req.body);
 }));
 
-app.get('/api/v1/tenants/:tenant_secret/status', auth, apiHandler(async (req, res) => {
-    return await tenantService.getTenantStatus(req.params.tenant_secret);
-}));
-
 app.get('/api/v1/tenants/:tenant_secret', auth, apiHandler(async (req, res) => {
     return await tenantService.getTenantBySecret(req.params.tenant_secret);
 }));
 
 app.post('/api/v1/infrastructure/update', apiHandler(async (req, res) => {
     // TODO: Secure this endpoint
-    return await controller.updateInfrastructure(namespace);
+    return await controller.updateInfrastructure();
 }));
 
 async function main() {
@@ -51,8 +47,9 @@ async function main() {
         console.log(`The tenant service is listening on port ${port}!`);
 
         await controller.configureKubectl(token, cacertPath);
-        await controller.createFreeTierInfrastructure(namespace);
-        await controller.createPremiumTierInfrastructure(namespace);
+        await controller.createFreeTierInfrastructure();
+        await controller.createPremiumTierInfrastructure();
+        await controller.createInfrastructureForAllTenants();
     });
 }
 

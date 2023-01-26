@@ -50,7 +50,7 @@ const Register = ({ ...others }) => {
     const [password, setPassword] = useState(false);
     const [createTenant, setCreateTenant] = useState(false);
     const [tenantID, setTenantID] = useState(false);
-    const [tenantName, setTenantName] = useState(false);
+    const [tenantName, setTenantName] = useState(null);
     const [error, setError] = useState(false);
     const navigate = useNavigate();
 
@@ -81,9 +81,9 @@ const Register = ({ ...others }) => {
                 licenseType: others.licencetype,
                 createTenant: createTenant,
                 tenantSecret: tenantID,
-                tenantName: tenantName
+                tenantName: tenantName != null ? tenantName : null
             };
-            if (others.licencetype == 'enterprise' && !createTenant && tenantName) {
+            if (others.licencetype == 'enterprise' && !createTenant && tenantID) {
                 console.log(tenantName);
                 AuthService.createUser(data)
                     .then((response) => {
@@ -94,7 +94,7 @@ const Register = ({ ...others }) => {
                         setError('This Username or Email is already in use!');
                     });
             }
-            if (others.licencetype == 'enterprise' && createTenant && tenantID) {
+            if (others.licencetype == 'enterprise' && createTenant && tenantName != null) {
                 AuthService.createUser(data)
                     .then((response) => {
                         signIn(response.data);

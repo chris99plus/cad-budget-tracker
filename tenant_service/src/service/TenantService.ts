@@ -1,8 +1,8 @@
 import { Tenant, TenantRepository } from "../data/TenantRepository";
-import { CheckTenantResponse } from "../requests/CheckTenantStatusRequest";
 import { CreateTenantRequest, CreateTenantResult } from "../requests/CreateTenantRequest";
 import { GetTenantResponse } from "../requests/GetTenantResponse";
 import * as randomstring from 'randomstring';
+import { InfrastructureController } from "../infrastructure/InfrastructureController";
 
 
 /**
@@ -10,9 +10,11 @@ import * as randomstring from 'randomstring';
  */
 export class TenantService {
     tenantRepository: TenantRepository;
+    infrastructureController: InfrastructureController;
 
-    constructor(tenantRepository: TenantRepository) {
+    constructor(tenantRepository: TenantRepository, infrastructureController: InfrastructureController) {
         this.tenantRepository = tenantRepository;
+        this.infrastructureController = infrastructureController;
     }
 
     async createTenant(data: CreateTenantRequest): Promise<CreateTenantResult> {
@@ -20,7 +22,9 @@ export class TenantService {
             throw "Tenant name too short";
         }
 
-        // TODO: Trigger infrastructure scaling
+        this.infrastructureController.createEnterpriseInfrastructure(
+            data.tenant_name
+        )
 
         let secret = randomstring.generate({
             length: 12,
@@ -37,22 +41,6 @@ export class TenantService {
             tenant_domain: tenant.getDomain()
         };
     }
-
-
-    async getTenantStatus(tenant_secret: string): Promise<CheckTenantResponse> {
-        let tenant = await this.tenantRepository.getTenantBySecret(tenant_secret);
-
-        if (tenant == null) {
-            throw "Invalid tenant secret";
-        }
-
-        // TODO: Query tenant creation status
-
-        return {
-            status: "creating"
-        };
-    }
-
 
     async getTenantBySecret(tenant_secret: string): Promise<GetTenantResponse> {
         let tenant = await this.tenantRepository.getTenantBySecret(tenant_secret);

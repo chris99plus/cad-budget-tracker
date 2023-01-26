@@ -35,6 +35,7 @@ COPY ./infrastructure/charts/ /usr/infrastructure/charts
 WORKDIR /usr/infrastructure/charts
 
 RUN helm repo add bitnami https://charts.bitnami.com/bitnami
+RUN helm repo add grafana https://grafana.github.io/helm-charts
 RUN helm dependency build ./budget-tracker
 RUN helm dependency build ./authentication-service
 RUN helm dependency build ./frontend
