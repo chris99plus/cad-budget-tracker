@@ -41,6 +41,8 @@ spec:
               value: {{ .Values.service.port | quote }}
             - name: MONGODB_CONNECTION_STRING
               value: {{ include "reportService.connection_string" . }}
+            - name: TRANSACTION_SERVICE_URL
+              value: {{ .Values.transactionServiceUrl }}
             - name: EXECUTION_MODE
               value: "service"
             {{- if .Values.tenantSecret }}

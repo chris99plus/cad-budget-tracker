@@ -22,7 +22,7 @@ authentication-service:
     host: mongodb
     collection: authentication
   appSecret: budget-tracker
-  tenantServiceUrl: tenant-service
+  tenantServiceUrl: http://tenant-service
   host: ""
 
 tenant-service:

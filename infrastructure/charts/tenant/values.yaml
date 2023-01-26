@@ -37,3 +37,4 @@ report-service:
   db:
     host: mongodb
   tenantSecret: tenant
+  transactionServiceUrl: http://transaction-service
