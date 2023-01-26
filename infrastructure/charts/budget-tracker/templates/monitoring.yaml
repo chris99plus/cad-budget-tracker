@@ -292,13 +292,15 @@ spec:
       labels:
         {{- include "budgetTracker.selectorLabelsGrafana" . | nindent 8 }}
     spec:
+      imagePullSecrets:
+      - name: regcred
       containers:
       - name: grafana
-        image: cad-grafana
+        image: ghcr.io/chris99plus/cad-grafana:latest
         ports:
         - name: grafana
           containerPort: 3000
-        imagePullPolicy: IfNotPresent # Image should not be pulled
+        imagePullPolicy: Always
         resources:
           limits:
             memory: "1Gi"
