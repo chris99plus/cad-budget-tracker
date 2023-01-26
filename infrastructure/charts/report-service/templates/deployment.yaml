@@ -8,9 +8,9 @@ metadata:
     prometheus.io/port: "80",
     prometheus.io/scrape: "true",
     prometheus.io/path: "/swagger-stats/metrics"
-  {{- with .Values.podAnnotations }}
+    {{- with .Values.podAnnotations }}
     {{- toYaml . | nindent 4 }}
-  {{- end }}
+    {{- end }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
@@ -24,9 +24,9 @@ spec:
         prometheus.io/port: "80",
         prometheus.io/scrape: "true",
         prometheus.io/path: "/swagger-stats/metrics"
-      {{- with .Values.podAnnotations }}
+        {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- end }}
       labels:
         {{- include "reportService.selectorLabels" . | nindent 8 }}
     spec:
