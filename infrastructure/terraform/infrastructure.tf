@@ -103,7 +103,7 @@ resource "azurerm_storage_account" "cad-storage-account" {
 resource "azurerm_storage_container" "cad-storage-container" {
   name                  = "cad-storage-container"
   storage_account_name  = azurerm_storage_account.cad-storage-account.name
-  container_access_type = "private"
+  container_access_type = "blob"
 }
 
 
