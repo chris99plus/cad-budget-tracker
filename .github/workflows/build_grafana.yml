@@ -31,7 +31,6 @@ jobs:
       - name: Build docker image
         uses: docker/build-push-action@v3
         with:
-          context: infrastructure/grafana
-          file: Dockerfile
+          file: infrastructure/grafana/Dockerfile
           tags: ghcr.io/chris99plus/cad-grafana:latest
           push: ${{ github.ref == 'refs/heads/main' }}
