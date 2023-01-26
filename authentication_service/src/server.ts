@@ -1,7 +1,7 @@
 import express from 'express';
 import { MongooseUserRepository } from './data/MongooseUserRepository';
 import { AuthenticationService } from './service/AuthenticationService';
-import { apiHandler, auth, getUserInformation } from '../../microservice_helpers';
+import { apiHandler, auth, getUserInformation} from '../../microservice_helpers';
 import { TenantServiceWrapperImpl } from './service/TenantServiceWrapper';
 import * as dotenv from 'dotenv';
 import * as swStats from "swagger-stats";
