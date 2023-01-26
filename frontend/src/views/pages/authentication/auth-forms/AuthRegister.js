@@ -48,8 +48,8 @@ const Register = ({ ...others }) => {
     const [username, setUsername] = useState(false);
     const [email, setEmail] = useState(false);
     const [password, setPassword] = useState(false);
-    const [createTenant, setCreateTenant] = useState(false);
-    const [tenantID, setTenantID] = useState(false);
+    const [joinTenant, setJoinTenant] = useState(false);
+    const [tenantID, setTenantID] = useState("");
     const [tenantName, setTenantName] = useState(null);
     const [error, setError] = useState(false);
     const navigate = useNavigate();
@@ -73,50 +73,54 @@ const Register = ({ ...others }) => {
     };
 
     function signUpCall() {
-        if (username && email && password) {
-            var data = {
-                username: username,
-                email: email,
-                password: password,
-                licenseType: others.licencetype,
-                createTenant: createTenant,
-                tenantSecret: tenantID,
-                tenantName: tenantName != null ? tenantName : null
-            };
-            if (others.licencetype == 'enterprise' && !createTenant && tenantID) {
-                console.log(tenantName);
-                AuthService.createUser(data)
-                    .then((response) => {
-                        signIn(response.data);
-                        window.location.href = 'http://' + response.data.data.tenantDomain;
-                    })
-                    .catch((e) => {
-                        setError('This Username or Email is already in use!');
-                    });
-            }
-            if (others.licencetype == 'enterprise' && createTenant && tenantName != null) {
-                AuthService.createUser(data)
-                    .then((response) => {
-                        signIn(response.data);
-                        window.location.href = 'http://' + response.data.data.tenantDomain;
-                    })
-                    .catch((e) => {
-                        setError('This Username or Email is already in use!');
-                    });
-            }
-            if (others.licencetype == 'free' || others.licencetype == 'standard') {
-                AuthService.createUser(data)
-                    .then((response) => {
-                        signIn(response.data);
-                        window.location.href = 'http://' + response.data.data.tenantDomain;
-                    })
-                    .catch((e) => {
-                        setError('This Username or Email is already in use!');
-                    });
-            }
+        let createTenant = !joinTenant;
+        let tenantSecret = createTenant ? null : tenantID;
+        let name = createTenant ? tenantName : null;
+
+        var data = {
+            username: username,
+            email: email,
+            password: password,
+            licenseType: others.licencetype,
+            createTenant: createTenant && others.licencetype == 'enterprise',
+            tenantSecret: tenantSecret,
+            tenantName: name
+        };
+
+        var valid =
+            others.licencetype == 'enterprise' &&
+            !createTenant &&
+            tenantID.trim() != "";
+
+        valid = valid ||
+            others.licencetype == 'enterprise' &&
+            createTenant &&
+            name.trim() != "";
+
+        valid = valid ||
+            others.licencetype == 'free' ||
+            others.licencetype == 'standard';
+
+        valid = valid &&
+            username.trim() != "" &&
+            email.trim() != "" &&
+            password.trim() != ""
+
+
+            console.log(data);
+        if (valid) {
+            AuthService.createUser(data)
+                .then((response) => {
+                    signIn(response.data);
+                    window.location.href = 'http://' + response.data.data.tenantDomain;
+                })
+                .catch((e) => {
+                    setError('This Username or Email is already in use!');
+                });
         } else {
             setError('Please fill all fields!');
         }
+
     }
 
     return (
@@ -260,12 +264,12 @@ const Register = ({ ...others }) => {
                         {others.licencetype == 'enterprise' && (
                             <FormControl>
                                 <FormControlLabel
-                                    control={<Checkbox onClick={() => setCreateTenant(!createTenant)} />}
+                                    control={<Checkbox onClick={() => setJoinTenant(!joinTenant)} />}
                                     label="Join existing Tenant"
                                 />
                             </FormControl>
                         )}
-                        {createTenant && others.licencetype == 'enterprise' && (
+                        {joinTenant && others.licencetype == 'enterprise' && (
                             <TextField
                                 fullWidth
                                 label="Tenant-ID"
@@ -277,7 +281,7 @@ const Register = ({ ...others }) => {
                                 defaultValue=""
                             />
                         )}
-                        {!createTenant && others.licencetype == 'enterprise' && (
+                        {!joinTenant && others.licencetype == 'enterprise' && (
                             <TextField
                                 fullWidth
                                 label="Tenant-Name"
@@ -289,7 +293,7 @@ const Register = ({ ...others }) => {
                                 defaultValue=""
                             />
                         )}
-                        {!createTenant && others.licencetype == 'enterprise' && (
+                        {!joinTenant && others.licencetype == 'enterprise' && (
                             <TextField
                                 fullWidth
                                 label="Credit-Card Number"
