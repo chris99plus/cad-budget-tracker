@@ -48,3 +48,9 @@ frontend:
 
 start-page:
   fullnameOverride: start-page
+
+loki-stack:
+  loki:
+    enabled: true
+  promtail:
+    enabled: true
