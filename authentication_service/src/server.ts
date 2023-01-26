@@ -1,7 +1,7 @@
 import express from 'express';
 import { MongooseUserRepository } from './data/MongooseUserRepository';
 import { AuthenticationService } from './service/AuthenticationService';
-import { apiHandler, auth, getUserInformation } from '../../microservice_helpers';
+import { apiHandler, auth, getUserInformation} from '../../microservice_helpers';
 import { TenantServiceWrapperImpl } from './service/TenantServiceWrapper';
 import * as dotenv from 'dotenv';
 import * as swStats from "swagger-stats";
@@ -33,7 +33,19 @@ app.post('/api/v1/auth/login', apiHandler(async (req, res) => {
 }));
 
 app.get('/api/v1/auth/me', auth, apiHandler(async (req, res) => {
-    return getUserInformation(req);
+    let userInfo =  getUserInformation(req);
+    if(userInfo != null)  {
+        let user = await repository.getUserByName(userInfo.name);
+
+        return {
+            _id:user?._id,
+            username:user?.username,
+            email:user?.email,
+            licenseType:user?.licenseType,
+            tenantName:user?.tenantName,
+        }
+    }
+    return null;
 }));
 
 
