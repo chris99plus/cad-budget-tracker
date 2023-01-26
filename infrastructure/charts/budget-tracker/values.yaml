@@ -45,9 +45,10 @@ start-page:
 loki-stack:
   loki:
     enabled: true
-    serviceName: loki-stack
+    fullnameOverride: "loki" 
+    serviceName: loki
   promtail:
     enabled: true
     config:
       clients:
-        - url: http://loki-stack:3100/loki/api/v1/push
+        - url: http://loki:3100/loki/api/v1/push
