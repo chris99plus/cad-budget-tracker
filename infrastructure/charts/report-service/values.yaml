@@ -40,3 +40,8 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+cronjob:
+  containerName: report-service-cronjob
+  executionMode: cron-job
+  restartPolicy: OnFailure
