@@ -235,9 +235,6 @@ metadata:
   name: prometheus-service
   labels:
     {{- include "budgetTracker.labelsPrometheus" . | nindent 4 }}
-  annotations:
-      prometheus.io/scrape: "true"
-      prometheus.io/port:   "9090"
 spec:
   selector: 
     {{- include "budgetTracker.selectorLabelsPrometheus" . | nindent 4 }}
@@ -329,9 +326,6 @@ metadata:
   name: grafana
   labels:
     {{- include "budgetTracker.labelsGrafana" . | nindent 4 }}
-  annotations:
-      prometheus.io/scrape: 'true'
-      prometheus.io/port:   '3000'
 spec:
   selector: 
     {{- include "budgetTracker.selectorLabelsGrafana" . | nindent 4 }}
