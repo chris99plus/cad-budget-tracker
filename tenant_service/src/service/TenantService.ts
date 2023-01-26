@@ -26,19 +26,26 @@ export class TenantService {
             data.tenant_name
         )
 
+        console.log("Created tenant infrastructure");
+
         let secret = randomstring.generate({
             length: 12,
             charset: 'alphabetic'
         });
+
+        console.log("Created tenant secret: " + secret);
 
         const tenant = await this.tenantRepository.createTenant(new Tenant(
             data.tenant_name,
             secret
         ));
 
+        console.log("Created tenant in db");
+        console.log(JSON.stringify(tenant));
+
         return {
             tenant_secret: secret,
-            tenant_domain: tenant.getDomain()
+            tenant_domain: ""
         };
     }
 

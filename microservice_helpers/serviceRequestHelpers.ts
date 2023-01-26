@@ -18,7 +18,7 @@ export async function makeServiceCallGet<T>(serviceUrl: string, path: string, to
 
     if (!responseJson.successful) {
         console.log("Service call not successful: " + JSON.stringify(responseJson));
-        
+
         throw responseJson.message;
     }
 
@@ -36,7 +36,7 @@ export async function makeServiceCallPost<T>(
     token: string | null = null
 ): Promise<T | null> {
 
-    console.log("Making service call to " + serviceUrl)
+    console.log("Making service call to " + serviceUrl + path)
 
 
     let response = await fetch(
