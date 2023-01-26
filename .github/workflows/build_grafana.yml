@@ -9,7 +9,7 @@ on:
       - main
   workflow_dispatch:
 
-run-name: Build transaction service
+run-name: Build grafana
 
 jobs:
   build:
