@@ -8,7 +8,7 @@ RUN yarn build
 
 FROM nginx:alpine as server
 
-#COPY nginx.conf /etc/nginx/nginx.conf
+COPY ./frontend/nginx.conf /etc/nginx/nginx.conf
 COPY --from=builder /usr/frontend/build /usr/share/nginx/html
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

@@ -8,15 +8,14 @@ apiVersion: extensions/v1beta1
 
 kind: Ingress
 metadata:
-  name: {{ include "budgetTracker.fullname" . }}
+  name: {{ include "budgetTracker.fullname" . }}-static
   labels:
     {{- include "budgetTracker.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    nginx.ingress.kubernetes.io/use-regex: "true"
-    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/use-regex: "false"
   {{- end }}
 spec:
   {{- if and .Values.ingress.className (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
@@ -38,11 +37,25 @@ spec:
       http:
         paths:
 
-        - path: /start(.*)
+        - path: /
           pathType: Prefix
           backend:
             service:
-              name: start-page
+              name: frontend
+              port:
+                number: 80
+        - path: /api/v1/auth
+          pathType: Prefix
+          backend:
+            service:
+              name: authentication-service
+              port:
+                number: 80
+        - path: /api/v1/infrastructure/update
+          pathType: Prefix
+          backend:
+            service:
+              name: tenant-service
               port:
                 number: 80
     {{- end }}

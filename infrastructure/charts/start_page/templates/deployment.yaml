@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "reportService.fullname" . }}
+  name: {{ include "start_page.fullname" . }}
   labels:
-    {{- include "reportService.labels" . | nindent 4 }}
+    {{- include "start_page.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "reportService.selectorLabels" . | nindent 6 }}
+      {{- include "start_page.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -18,7 +18,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "reportService.selectorLabels" . | nindent 8 }}
+        {{- include "start_page.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -30,28 +30,12 @@ spec:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: {{ include "reportService.image" . | quote }}
+          image: {{ include "start_page.image" . | quote }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: {{ .Values.service.port }}
+              containerPort: 80
               protocol: TCP
-          env:
-            - name: SERVER_PORT
-              value: {{ .Values.service.port | quote }}
-            - name: MONGODB_CONNECTION_STRING
-              value: {{ include "reportService.connection_string" . }}
-            - name: TRANSACTION_SERVICE_URL
-              value: {{ .Values.transactionServiceUrl }}
-            - name: EXECUTION_MODE
-              value: "service"
-            {{- if .Values.tenantSecret }}
-            - name: JWT_SECRET_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.tenantSecret }}
-                  key: jwtSecret
-            {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

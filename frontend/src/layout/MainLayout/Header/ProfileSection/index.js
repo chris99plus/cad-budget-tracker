@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from 'react';
-
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
@@ -33,6 +32,7 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 import Transitions from 'ui-component/extended/Transitions';
+import AuthService from '../../../../services/auth';
 import { useAuth } from '../../../../authContext';
 
 // assets
@@ -48,9 +48,11 @@ const ProfileSection = () => {
     const [sdm, setSdm] = useState(true);
     const [value, setValue] = useState('');
     const [notification, setNotification] = useState(false);
+    const [userInformation, setUserInformation] = useState();
     const [selectedIndex, setSelectedIndex] = useState(-1);
     const [open, setOpen] = useState(false);
-    const { logout } = useAuth();
+    const { logout, tokenState } = useAuth();
+
     /**
      * anchorRef is used on different componets and specifying one type leads to other components throwing an error
      * */
@@ -79,6 +81,17 @@ const ProfileSection = () => {
     };
 
     const prevOpen = useRef(open);
+    
+    useEffect(() => {
+        AuthService.getUserInformation(tokenState)
+            .then((response) => {
+                setUserInformation(response.data.data);
+            })
+            .catch((e) => {
+                console.log(e);
+            });
+    }, []);
+
     useEffect(() => {
         if (prevOpen.current === true && open === false) {
             anchorRef.current.focus();
@@ -146,10 +159,10 @@ const ProfileSection = () => {
                                             <Stack direction="row" spacing={0.5} alignItems="center">
                                                 <Typography variant="h4">Good Morning,</Typography>
                                                 <Typography component="span" variant="h4" sx={{ fontWeight: 400 }}>
-                                                    Johne Doe
+                                                    {userInformation.name||""}
                                                 </Typography>
                                             </Stack>
-                                            <Typography variant="subtitle2">Project Admin</Typography>
+                                            <Typography variant="subtitle2">{userInformation.email||""}</Typography>
                                         </Stack>
                                         <Divider />
                                     </Box>

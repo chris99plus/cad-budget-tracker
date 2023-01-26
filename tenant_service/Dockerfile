@@ -31,7 +31,6 @@ RUN curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | b
 
 
 COPY ./infrastructure/charts/ /usr/infrastructure/charts
-COPY ./infrastructure/tenantVars.yaml /usr/infrastructure/tenantVars.yaml
 
 WORKDIR /usr/infrastructure/charts
 
@@ -40,6 +39,7 @@ RUN helm dependency build ./budget-tracker
 RUN helm dependency build ./authentication-service
 RUN helm dependency build ./frontend
 RUN helm dependency build ./transaction-service
+RUN helm dependency build ./tenant
 
 WORKDIR /usr/tenant_service
 

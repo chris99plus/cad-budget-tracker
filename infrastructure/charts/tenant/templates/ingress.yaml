@@ -55,7 +55,14 @@ spec:
               name: transaction-service
               port:
                 number: 80
-        - path: /api/v1/cashbooks
+        - path: /api/v1/reports
+          pathType: Prefix
+          backend:
+            service:
+              name: report-service
+              port:
+                number: 80
+        - path: /api/v1/cashbook
           pathType: Prefix
           backend:
             service:

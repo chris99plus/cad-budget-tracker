@@ -43,6 +43,8 @@ spec:
               value: {{ include "authenticationService.connection_string" . }}
             - name: TENANT_SERVICE_URL
               value: {{ .Values.tenantServiceUrl }}
+            - name: HOST_DOMAIN
+              value: {{ .Values.host | quote }}
             {{- if .Values.appSecret }}
             - name: JWT_SECRET_KEY
               valueFrom:

@@ -5,13 +5,6 @@ ingress:
   className: ""
   annotations: 
     kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
-  hosts: []
-    # - host: cad.local
-  tls: []
-  #  - secretName: tenant-tls
-  #    hosts:
-  #      - cad.local
 
 appSecret:
   create: true
@@ -29,14 +22,22 @@ authentication-service:
     host: mongodb
     collection: authentication
   appSecret: budget-tracker
-  tenantServiceUrl: tenant-service
+  tenantServiceUrl: http://tenant-service
+  host: ""
 
 tenant-service:
   fullnameOverride: tenant-service
-  db:
+  db: 
     host: mongodb
     collection: tenants
   appSecret: budget-tracker
+  host: ""
+  storage:
+    connectionString: ""
+    containerName: ""
 
 frontend:
   fullnameOverride: frontend
+
+start-page:
+  fullnameOverride: start-page

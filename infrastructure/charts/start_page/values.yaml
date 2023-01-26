@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   registry: ghcr.io/chris99plus
-  repository: authentication_service
+  repository: start_page
   pullPolicy: Always
   tag: latest
 
@@ -11,15 +11,6 @@ imagePullSecrets:
 
 nameOverride: ""
 fullnameOverride: ""
-
-tenantServiceUrl: ""
-
-host: ""
-
-db:
-  host: ""
-  port: 27017
-  collection: authentication
 
 podAnnotations: {}
 
