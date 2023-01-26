@@ -30,7 +30,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
+        "uid": "P1809F7CD0C75ACF3"
       },
       "description": "",
       "fieldConfig": {
@@ -47,10 +47,35 @@
           },
           "mappings": []
         },
-        "overrides": []
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "authentication-service"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
-        "h": 8,
+        "h": 6,
         "w": 9,
         "x": 0,
         "y": 0
@@ -80,14 +105,13 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
+            "uid": "P1809F7CD0C75ACF3"
           },
           "editorMode": "builder",
-          "expr": "api_all_request_total",
-          "interval": "",
-          "legendFormat": "{{job}}",
+          "expr": "sum by(app_kubernetes_io_name) (api_all_request_total)",
+          "legendFormat": "{{kubernetes_name}}",
           "range": true,
-          "refId": "api_all_request_total"
+          "refId": "A"
         }
       ],
       "title": "Total Requests",
@@ -96,7 +120,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
+        "uid": "P1809F7CD0C75ACF3"
       },
       "description": "",
       "fieldConfig": {
@@ -152,7 +176,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
+        "h": 6,
         "w": 7,
         "x": 9,
         "y": 0
@@ -174,10 +198,10 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
+            "uid": "P1809F7CD0C75ACF3"
           },
           "editorMode": "builder",
-          "expr": "api_request_total{job=\"authentication_service\"}",
+          "expr": "api_all_request_total{kubernetes_name=\"authentication-service\"}",
           "interval": "",
           "legendFormat": "{{method}} {{path}}",
           "range": true,
@@ -190,7 +214,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
+        "uid": "P1809F7CD0C75ACF3"
       },
       "description": "",
       "fieldConfig": {
@@ -246,7 +270,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
+        "h": 6,
         "w": 8,
         "x": 16,
         "y": 0
@@ -268,14 +292,13 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
+            "uid": "P1809F7CD0C75ACF3"
           },
-          "editorMode": "code",
-          "expr": "api_all_request_total{job=\"tenant_service\"}",
-          "interval": "",
+          "editorMode": "builder",
+          "expr": "api_all_request_total{app_kubernetes_io_name=\"tenant-service\"}",
           "legendFormat": "{{method}} {{path}}",
           "range": true,
-          "refId": "api_all_request_total{job=\"tenant_service\"}"
+          "refId": "A"
         }
       ],
       "title": "Tenant Service",
@@ -284,7 +307,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
+        "uid": "P1809F7CD0C75ACF3"
       },
       "description": "",
       "fieldConfig": {
@@ -310,10 +333,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 9,
+        "h": 7,
         "w": 12,
         "x": 0,
-        "y": 8
+        "y": 6
       },
       "id": 6,
       "options": {
@@ -335,14 +358,13 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
+            "uid": "P1809F7CD0C75ACF3"
           },
-          "editorMode": "code",
-          "expr": "api_request_total{job=\"report_service\"}",
-          "interval": "",
-          "legendFormat": "{{method}} {{path}}",
+          "editorMode": "builder",
+          "expr": "api_all_request_total{kubernetes_name=\"report-service\"}",
+          "legendFormat": "{{namespace}}  {{method}} {{path}}",
           "range": true,
-          "refId": "api_request_total{job=\"report_service\"}"
+          "refId": "A"
         }
       ],
       "title": "Report Service",
@@ -351,7 +373,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
+        "uid": "P1809F7CD0C75ACF3"
       },
       "description": "",
       "fieldConfig": {
@@ -377,10 +399,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 9,
+        "h": 7,
         "w": 12,
         "x": 12,
-        "y": 8
+        "y": 6
       },
       "id": 4,
       "options": {
@@ -402,14 +424,13 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
+            "uid": "P1809F7CD0C75ACF3"
           },
           "editorMode": "code",
-          "expr": "api_request_total{job=\"transaction_service\"}",
-          "interval": "",
-          "legendFormat": "{{method}} {{path}}",
+          "expr": "api_all_request_total{kubernetes_name=\"transaction-service\"}",
+          "legendFormat": "{{namespace}} {{method}} {{path}}",
           "range": true,
-          "refId": "api_request_total{job=\"transaction_service\"}"
+          "refId": "A"
         }
       ],
       "title": "Transaction Service",
@@ -418,7 +439,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
+        "uid": "P1809F7CD0C75ACF3"
       },
       "fieldConfig": {
         "defaults": {
@@ -446,7 +467,7 @@
         "h": 5,
         "w": 24,
         "x": 0,
-        "y": 17
+        "y": 13
       },
       "id": 12,
       "options": {
@@ -466,14 +487,14 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
+            "uid": "P1809F7CD0C75ACF3"
           },
           "editorMode": "builder",
-          "expr": "api_all_errors_total",
-          "format": "time_series",
-          "legendFormat": "{{job}}",
+          "expr": "sum by(app_kubernetes_io_name) (api_all_errors_total)",
+          "interval": "",
+          "legendFormat": "{{kubernetes_name}}",
           "range": true,
-          "refId": "api_all_errors_total"
+          "refId": "A"
         }
       ],
       "title": "Total Errors",

@@ -60,3 +60,44 @@ Create the name of the budget tracker secret
 {{- default "default" .Values.appSecret.name }}
 {{- end }}
 {{- end }}
+
+
+{{/*
+Prometheus labels
+*/}}
+{{- define "budgetTracker.labelsPrometheus" -}}
+helm.sh/chart: {{ include "budgetTracker.chart" . }}
+{{ include "budgetTracker.selectorLabelsPrometheus" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+
+{{/*
+Grafana labels
+*/}}
+{{- define "budgetTracker.labelsGrafana" -}}
+helm.sh/chart: {{ include "budgetTracker.chart" . }}
+{{ include "budgetTracker.selectorLabelsGrafana" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+
+{{/*
+Selector labels monitoring prometheus
+*/}}
+{{- define "budgetTracker.selectorLabelsPrometheus" -}}
+app.kubernetes.io/name: {{ include "budgetTracker.name" . }}-prometheus
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+
+{{/*
+Selector labels monitoring grafana
+*/}}
+{{- define "budgetTracker.selectorLabelsGrafana" -}}
+app.kubernetes.io/name: {{ include "budgetTracker.name" . }}-grafana
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}

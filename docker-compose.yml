@@ -85,17 +85,11 @@ services:
     - cad_backend_network
 
   grafana:
-    image: grafana/grafana-oss:9.1.0
-    container_name: grafana
-    user: "0"
-    volumes:
-    # defining our main config parameters for provisioning prometheus datasource
-    - ./infrastructure/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources/
-   # defining our main config parameters for provisioning for dashboards
-    - ./infrastructure/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards/
+    build: 
+      context: ./infrastructure/grafana
+      dockerfile: Dockerfile
     ports:
       - "3000:3000"
-    restart: unless-stopped
     networks:
       - cad_backend_network
 

@@ -11,8 +11,11 @@ dependencies:
 - name: start-page
   repository: file://../start_page
   version: 0.1.0
+- name: loki-stack
+  repository: https://grafana.github.io/helm-charts
+  version: 2.8.9
 - name: mongodb
   repository: https://charts.bitnami.com/bitnami
-  version: 13.6.4
-digest: sha256:e9a3a0e7ac54b7afeb42038e1184d4d2352473935726b60832d50cfec93de619
-generated: "2023-01-24T12:37:44.8353488+01:00"
+  version: 13.6.6
+digest: sha256:1ad505500b4f210d236220f3ae08c7b3141ea3a8a296e3320839ae47de86a4e9
+generated: "2023-01-26T08:43:30.403445551+01:00"

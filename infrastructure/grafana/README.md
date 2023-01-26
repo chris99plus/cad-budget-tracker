@@ -14,3 +14,8 @@ https://community.grafana.com/t/docker-provisioned-dashboard-not-showing-up/8321
 ```password=admin```
 
 4. On the left panel go to Dashboards, then select browse. Now you can selet the CAD-Budget-Tracking_Monitoring dashboard
+
+## Tutorials for Kubernetes
+- https://theekshanawj.medium.com/kubminiernetes-deploying-a-nodejs-app-in-minikube-local-development-92df31e0b037
+- https://devopscube.com/setup-prometheus-monitoring-on-kubernetes/
+- https://devopscube.com/setup-grafana-kubernetes/
