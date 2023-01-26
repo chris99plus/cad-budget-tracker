@@ -1,8 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: report-service-envs
-  namespace: free
-data:
-  mongodbConnectionString: mongodb+srv://simba:theLionKing@cluster-fra.vm27r7k.mongodb.net/budget-tracker
-  executionMode: cron-job
