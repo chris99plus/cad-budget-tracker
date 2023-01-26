@@ -96,8 +96,8 @@ export class InfrastructureController {
         
         let tenants = await this.tenantRepository.getAllTenants();
         for (let tenant of tenants) {
-            await this.executeShellCommand(`kubectl rollout restart deployment report-service -n ${tenant}`);
-            await this.executeShellCommand(`kubectl rollout restart deployment transaction-service -n ${tenant}`);
+            await this.executeShellCommand(`kubectl rollout restart deployment report-service -n ${tenant.name}`);
+            await this.executeShellCommand(`kubectl rollout restart deployment transaction-service -n ${tenant.name}`);
         }
         
         await this.executeShellCommand(`kubectl rollout restart deployment tenant-service -n ${this.rootNamespace}`);

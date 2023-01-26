@@ -52,13 +52,15 @@ export class TenantService {
     async getTenantBySecret(tenant_secret: string): Promise<GetTenantResponse> {
         let tenant = await this.tenantRepository.getTenantBySecret(tenant_secret);
 
+        console.log("Got tenant by id: " + JSON.stringify(tenant));
+
         if (tenant == null) {
             throw "Invalid tenant secret";
         }
 
         return {
             tenant_name: tenant.name,
-            tenant_domain: tenant.getDomain()
+            tenant_domain: ""
         };
     }
 }
