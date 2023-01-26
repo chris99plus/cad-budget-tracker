@@ -4,7 +4,7 @@ metadata:
   name: report-service-cronjob
   namespace: free
 spec:
-  schedule: "28 * * * *"
+  schedule: "33 * * * *"
   jobTemplate:
     spec:
       template:
@@ -15,10 +15,6 @@ spec:
           - name: report-service-cronjob
             image: report-service:latest
             imagePullPolicy: IfNotPresent
-            command:
-            - /bin/sh
-            - -c
-            - date; echo Hello from the Report Service cronjob
             env:
             - name: EXECUTION_MODE
               valueFrom:
