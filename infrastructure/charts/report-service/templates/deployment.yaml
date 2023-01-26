@@ -41,11 +41,15 @@ spec:
               value: {{ .Values.service.port | quote }}
             - name: MONGODB_CONNECTION_STRING
               value: {{ include "reportService.connection_string" . }}
-            {{- if .Values.appSecret }}
+            - name: TRANSACTION_SERVICE_URL
+              value: {{ .Values.transactionServiceUrl }}
+            - name: EXECUTION_MODE
+              value: "service"
+            {{- if .Values.tenantSecret }}
             - name: JWT_SECRET_KEY
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.appSecret }}
+                  name: {{ .Values.tenantSecret }}
                   key: jwtSecret
             {{- end }}
           resources:
