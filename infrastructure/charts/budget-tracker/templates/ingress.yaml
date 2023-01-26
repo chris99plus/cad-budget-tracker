@@ -45,11 +45,4 @@ spec:
               name: start-page
               port:
                 number: 80
-        - path: /monitoring
-          pathType: Prefix
-          backend:
-            service:
-              name: grafana
-              port:
-                number: 80
     {{- end }}

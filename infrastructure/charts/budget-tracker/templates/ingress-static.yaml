@@ -44,6 +44,13 @@ spec:
               name: frontend
               port:
                 number: 80
+        - path: /monitoring
+          pathType: Prefix
+          backend:
+            service:
+              name: grafana
+              port:
+                number: 80
         - path: /api/v1/auth
           pathType: Prefix
           backend:
