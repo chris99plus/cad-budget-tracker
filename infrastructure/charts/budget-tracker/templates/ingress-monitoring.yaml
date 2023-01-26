@@ -8,7 +8,7 @@ apiVersion: extensions/v1beta1
 
 kind: Ingress
 metadata:
-  name: {{ include "budgetTracker.fullname" . }}-static
+  name: {{ include "budgetTracker.fullname" . }}-monitoring
   labels:
     {{- include "budgetTracker.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}
@@ -33,7 +33,7 @@ spec:
   {{- end }}
   rules:
     {{- range .Values.ingress.hosts }}
-    - host: {{ .host | quote }}
+    - host: "monitoring.{{ .host }}"
       http:
         paths:
 
@@ -41,21 +41,7 @@ spec:
           pathType: Prefix
           backend:
             service:
-              name: frontend
-              port:
-                number: 80
-        - path: /api/v1/auth
-          pathType: Prefix
-          backend:
-            service:
-              name: authentication-service
-              port:
-                number: 80
-        - path: /api/v1/infrastructure/update
-          pathType: Prefix
-          backend:
-            service:
-              name: tenant-service
+              name: grafana
               port:
                 number: 80
     {{- end }}

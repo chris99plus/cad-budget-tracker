@@ -269,7 +269,7 @@ data:
                 "name": "loki",
                 "orgId": 1,
                 "type": "loki",
-                "url": "http://loki-stack:3100",
+                "url": "http://loki:3100",
                 "version": 1
             }
         ]
@@ -292,13 +292,15 @@ spec:
       labels:
         {{- include "budgetTracker.selectorLabelsGrafana" . | nindent 8 }}
     spec:
+      imagePullSecrets:
+      - name: regcred
       containers:
       - name: grafana
-        image: cad-grafana
+        image: ghcr.io/chris99plus/cad-grafana:latest
         ports:
         - name: grafana
           containerPort: 3000
-        imagePullPolicy: IfNotPresent # Image should not be pulled
+        imagePullPolicy: Always
         resources:
           limits:
             memory: "1Gi"
