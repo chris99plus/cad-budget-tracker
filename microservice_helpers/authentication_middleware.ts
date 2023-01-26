@@ -3,6 +3,7 @@ import { Request, Response, NextFunction } from 'express';
 
 export interface AuthenticatedRequest extends Request {
     user: UserInformation | null;
+    extendedUser: ExtendedUserInformation | null;
     token: string;
 }
 
@@ -81,9 +82,36 @@ export class UserInformation {
     }
 }
 
+export class ExtendedUserInformation {
+    _id: string;
+    name: string;
+    email: string;
+    cashbookId: string;
+    licenseType: string;
+    tenantName: string;
+
+    constructor(id: string, name: string, email: string, cashbookId: string, licenseType: string, tenantName: string) {
+        this._id = id;
+        this.name = name;
+        this.email = email;
+        this.cashbookId = cashbookId;
+        this.licenseType = licenseType;
+        this.tenantName = tenantName;
+    }
+}
+
 export function getUserInformation(req: Request): UserInformation | null {
     if (req.hasOwnProperty("user")) {
         return (req as AuthenticatedRequest).user ?? null;
+    }
+    else {
+        return null;
+    }
+}
+
+export function getExtendedUserInformation(req: Request): ExtendedUserInformation | null {
+    if (req.hasOwnProperty("extendedUser")) {
+        return (req as AuthenticatedRequest).extendedUser ?? null;
     }
     else {
         return null;
