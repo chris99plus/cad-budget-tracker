@@ -29,6 +29,9 @@ export class AuthenticationService {
             tenantName = await this.createTenantOrResolveSecret(data);
         }
 
+
+        console.log("Successfully created tenant");
+
         let passwordHash = await this.getPasswordHash(data.password);
 
         let createdUser = await this.userRepository.createUser(new User(
@@ -38,6 +41,8 @@ export class AuthenticationService {
             passwordHash,
             tenantName
         ));
+        
+        console.log("Successfully created user");
 
         return {
             authToken: this.createJwt(createdUser),
@@ -48,14 +53,21 @@ export class AuthenticationService {
 
     async createTenantOrResolveSecret(data: CreateUserRequest): Promise<string> {
         if (data.createTenant == false && data.tenantSecret != null) {
-            return (await this.tenantService.validateTenantSecretAndGetTenantNameOrThrow(
+            let result = await this.tenantService.validateTenantSecretAndGetTenantNameOrThrow(
                 data.tenantSecret
-            )).tenant_name;
+            );
+
+
+            console.log(result);
+
+            return result.tenant_name;
         }
         else if (data.createTenant == true && data.tenantName != null) {
-            await this.tenantService.createNewTenantOrThrow(
+            let result = await this.tenantService.createNewTenantOrThrow(
                 data.tenantName
             );
+
+            console.log(result);
 
             return data.tenantName;
         }

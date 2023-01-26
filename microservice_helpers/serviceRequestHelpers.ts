@@ -6,6 +6,8 @@ import { Headers } from 'node-fetch';
  * Execute a GET request to the given microservice.
  */
 export async function makeServiceCallGet<T>(serviceUrl: string, path: string, token: string | null = null): Promise<T> {
+    console.log("Making service call to " + serviceUrl)
+
     let response = await fetch(
         serviceUrl + path,
         {
@@ -15,6 +17,8 @@ export async function makeServiceCallGet<T>(serviceUrl: string, path: string, to
     let responseJson = <any>await response.json();
 
     if (!responseJson.successful) {
+        console.log("Service call not successful: " + JSON.stringify(responseJson));
+        
         throw responseJson.message;
     }
 
@@ -31,6 +35,10 @@ export async function makeServiceCallPost<T>(
     body: any,
     token: string | null = null
 ): Promise<T | null> {
+
+    console.log("Making service call to " + serviceUrl)
+
+
     let response = await fetch(
         serviceUrl + path,
         {
@@ -42,6 +50,8 @@ export async function makeServiceCallPost<T>(
     let responseJson = <any>await response.json();
 
     if (!responseJson.successful) {
+        console.log("Service call not successful: " + JSON.stringify(responseJson));
+
         throw responseJson.message;
     }
 
