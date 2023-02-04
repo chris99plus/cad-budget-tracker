@@ -8,7 +8,7 @@ ingress:
   hosts:
     - host: cad.christians-software-schmiede.de
   acme:
-    email: chris.froh@live.com
+    email: "your-email"
 
 tenant-service:
   host: "cad.christians-software-schmiede.de"
