@@ -3,8 +3,14 @@ fullnameOverride: ""
 
 ingress:
   className: ""
+  acme:
+    server: "https://acme-staging-v02.api.letsencrypt.org/directory"
+    # email: "<your_email>"
   annotations: 
     kubernetes.io/ingress.class: nginx
+
+cert-manager:
+  installCRDs: "true"
 
 appSecret:
   create: true

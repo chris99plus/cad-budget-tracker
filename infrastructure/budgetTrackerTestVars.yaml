@@ -4,8 +4,11 @@ appSecret:
   jwtSecret: fdhfjkr3rhuvdw
 
 ingress:
+  tls: true
   hosts:
     - host: cad.christians-software-schmiede.de
+  acme:
+    email: "your-email"
 
 tenant-service:
   host: "cad.christians-software-schmiede.de"

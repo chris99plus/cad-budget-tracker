@@ -87,6 +87,17 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
 {{/*
+Issuer labels
+*/}}
+{{- define "budgetTracker.labelsIssuer" -}}
+helm.sh/chart: {{ include "budgetTracker.chart" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+
+{{/*
 Selector labels monitoring prometheus
 */}}
 {{- define "budgetTracker.selectorLabelsPrometheus" -}}
